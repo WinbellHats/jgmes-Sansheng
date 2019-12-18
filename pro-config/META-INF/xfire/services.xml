@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+  <!--<service  xmlns="http://xfire.codehaus.org/config/1.0">
+   <name>pcat</name>
+   <serviceClass>com.pc.services.PCATServices</serviceClass>
+    <implementationClass>com.pc.services.PCATServicesImpl</implementationClass>
+  </service>-->
+    <service xmlns="http://xfire.codehaus.org/config/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xfire.codehaus.org/config/1.0 ">
+        <name>demo</name>
+        <serviceClass>com.demo.service.DemoService</serviceClass>
+        <implementationClass>com.demo.service.DemoServiceImpl</implementationClass>
+    </service>
+  <service xmlns="http://xfire.codehaus.org/config/1.0">
+   <name>GZJDDeviceServices</name>
+   <serviceClass>com.jgmes.service.GZJDDeviceService</serviceClass>
+    <implementationClass>com.jgmes.service.GZJDDeviceServiceImpl</implementationClass>
+  </service>
+    <service xmlns="http://xfire.codehaus.org/config/1.0">
+        <name>GZJDDeviceSrv</name>
+        <serviceClass>com.jgmes.service.GZJDDeviceSrv</serviceClass>
+        <implementationClass>com.jgmes.service.GZJDDeviceSrvImpl</implementationClass>
+    </service>
+    <service xmlns="http://xfire.codehaus.org/config/1.0">
+        <name>DeviceProducConService</name>
+        <serviceClass>com.jgmes.service.DeviceProducConService</serviceClass>
+        <implementationClass>com.jgmes.service.DeviceProducConServiceImpl</implementationClass>
+    </service>
+    <service xmlns="http://xfire.codehaus.org/config/1.0">
+        <name>ERPService</name>
+        <serviceClass>com.jgmes.service.ERPService</serviceClass>
+        <implementationClass>com.jgmes.service.ERPServiceImpl</implementationClass>
+    </service>
+</beans>

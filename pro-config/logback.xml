@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--<property resource="application.properties" />-->
+
+    <property name="layout.pattern.default" value="[%d{yyyy-MM-dd HH:mm:ss} %p %c{1} %X{requestId}] %m%n" />
+    <property name="log.level" value="ERROR" />
+
+
+    <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <Pattern>${layout.pattern.default}</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="fileLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <prudent>true</prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs/console/console-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>33</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <Pattern>${layout.pattern.default}</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- 错误日志配置，只用在 diana/order/sundries上 -->
+    <appender name="errorLog"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <prudent>true</prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- monthly rollover -->
+            <fileNamePattern>logs/error/error-%d{yyyy-MM}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <Pattern>${layout.pattern.default}</Pattern>
+        </encoder>
+    </appender>
+    <logger name="com.je" >
+        <appender-ref ref="errorLog" />
+    </logger>
+
+    <!-- 警告日志配置，只用在 diana/order/sundries上 -->
+    <appender name="warnLog"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <prudent>true</prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- monthly rollover -->
+            <fileNamePattern>logs/warn/warn-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <Pattern>${layout.pattern.default}</Pattern>
+        </encoder>
+    </appender>
+    <logger name="com.je" >
+        <appender-ref ref="warnLog" />
+    </logger>
+
+
+
+    <logger name="org.springframework" level="${log.level}" />
+    <logger name="com.ibatis" level="${log.level}" />
+
+    <root>
+        <level value="${log.level}" />
+        <appender-ref ref="consoleLog" />
+        <appender-ref ref="fileLog" />
+    </root>
+
+</configuration>
