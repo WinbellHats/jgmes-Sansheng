@@ -1,0 +1,236 @@
+﻿<html lang="zh-CN">
+
+<head>
+    <title>登录精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG//Content//bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalMobileUserInfo.js"></script>
+    <script src="/JG/Content/Common.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-y: hidden;
+            overflow-x: hidden;
+            background: url("../Content/images/bg.jpg") no-repeat;
+            background-size: cover;
+        }
+
+        .logo_img {
+            text-align: center;
+            width: auto;
+        }
+
+        .logo_img>img {
+            width: 100%;
+        }
+
+        .register>span {
+            font-size: 1em;
+            color: #FFFFFF;
+            cursor: pointer;
+        }
+
+        .weui-cells {
+            margin-top: 3.17647059em;
+            background: rgba(0, 0, 0, 0);
+            line-height: 60px;
+            font-size: 1.3em;
+            overflow: hidden;
+            position: static;
+        }
+
+        .weui-input,
+        .weui-label {
+            color: #FFFFFF;
+        }
+
+        .weui-cells:after {
+            border-bottom: none;
+        }
+
+        .weui-cells:before {
+            border-top: none;
+        }
+
+        .weui-btn {
+            font-size: 1.5em;
+        }
+
+        .stationbtn {
+            display: inline-block;
+            width: 50%;
+            text-align: right;
+            text-align: -moz-right;
+            text-align: -webkit-right;
+        }
+
+        .stationbtn>button {
+            line-height: 60px;
+            background-color: rgba(0, 0, 0, 0);
+            font-size: 1.3em;
+            color: #FFFFFF;
+            padding: 0px 40px;
+            border-radius: 7px;
+            outline: none;
+        }
+
+        .clear {
+            content: "";
+            clear: both;
+        }
+    </style>
+</head>
+
+<body id="preloader">
+
+    <div id="MainPage">
+        <div class="logo_title">
+            <div class="logo_img">
+                <img src="/JG/Content/images/logo2.png" />
+            </div>
+        </div>
+        <div class="weui-cells weui-cells_form">
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label" for="LoginCode">
+                        登录账号
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input @keydown.13="LoginSystem()" class="weui-input" id="LoginCode" maxlength="20"
+                        v-model="LoginCode" type="text" placeholder="请输入登录账号">
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label" for="LoginPassword">
+                        登录密码
+                    </label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input @keydown.13="LoginSystem()" id="LoginPassword" class="weui-input" maxlength="20"
+                        v-model="LoginPassword" type="password" placeholder="请输入登录密码">
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="weui_btn_area">
+            <a href="javascript:" style="width:45%;margin-top: 55px;color: white" id="submitData"
+                v-on:click="LoginSystem()" class="weui-btn weui-btn_primary">登 录</a>
+        </div>
+    </div>
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content//bootstrap.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script type="text/javascript">
+
+        var login = new Vue({
+            el: "#MainPage",
+            data: {
+                LoginCode: "",
+                LoginPassword: "",
+                CurrMac:LocalConfig.ClientOSMac(),
+                CurrUser: "",
+                ProductionLineData: [],
+                StationData: [],
+                ProductionLineCode: "",
+                ProductionLineName: "",
+                StationCode: "",
+                StationName: "",
+            },
+            mounted: function () {
+                var currSelf = this;
+                var paraMac = currSelf.GetUrlParam("mac");
+                var userCode = Utils.GetCookie("userCode");
+                currSelf.LoginCode = userCode;
+                if (userCode)
+                    $("#LoginPassword").focus();
+                else
+                    $("#LoginCode").focus();
+
+                if (paraMac)
+                    currSelf.CurrMac = paraMac;
+            },
+            methods: {
+                LoginSystem: function () {
+                    var currSelf = this;
+                    if (!currSelf.LoginCode) {
+                        $.toast("账号不能为空", "forbidden");
+                        $("#LoginCode").focus();
+                        return;
+                    } else if (!currSelf.LoginPassword) {
+                        $.toast("密码不能为空", "forbidden");
+                        $("#LoginPassword").focus();
+                        return;
+                    }
+                    $.showLoading();
+                    $.ajax({
+                        url: LocalConfig.SrvPath + "/j_spring_security_check", async: false,
+                        data: {
+                            j_username: currSelf.LoginCode,
+                            j_password: currSelf.LoginPassword,
+                            j_dept: 'default',
+                            phone: '1'
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            var login = data;
+                            Utils.SetCookie("userCode", currSelf.LoginCode, 0);
+                            if (login.success) {
+                                $.ajax({
+                                    url: LocalConfig.SrvPath + "/jgmes/jgmesLoginAction!doSaveLoginForPDA.action",
+                                    data: { mac: currSelf.CurrMac, userCode: currSelf.LoginCode },
+                                    dataType: "json",
+                                    async: false,
+                                    success: function (ret) {
+                                        var retData = ret;
+                                        if (retData.IsSuccess) {
+                                            if (retData.Data) {
+                                                LocalUserInfo.Init(retData.Data.userCode, retData.Data.userName, retData.Data.deptCode, retData.Data.deptName, retData.Data.cxCode, retData.Data.cxName, retData.Data.gwCode, retData.Data.gwName, currSelf.CurrMac, retData.Data.photo);
+                                                var retUrl = currSelf.GetUrlParam("returnUrl");
+                                                if (!retUrl)
+                                                    window.location.href = "/JG/Home/MobileIndex.html";
+                                                else window.location.href = retUrl;
+                                            } else $.toptip("用户与设备未关联认证,请与管理员联系", "error");
+                                        } else {
+                                            $.toptip(ret.message, "error");
+                                        }
+                                    }, error: function (xhr, status, errorThrown) {
+                                        console.error(status);
+                                        $.toptip("发生异常错误", "error");
+                                    }
+                                });
+                            }
+                            else {
+                                $.toptip('登陆失败，请检查用户名密码！', 'warning');
+                            }
+                        },
+                        error: function (xhr, status, err) {
+                            console.error(status);
+                            $.toptip(xhr, 'error');
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+                GetUrlParam: function (name) {
+                    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                    var r = window.location.search.substr(1).match(reg);
+                    if (r != null) return unescape(r[2]); return null;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

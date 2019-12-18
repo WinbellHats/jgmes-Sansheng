@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <title>生产任务-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/bootstrap/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/TabletsGlobal.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/ProductionTask.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+
+<body>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="header_title">
+            <a href="javascript:;">生产任务</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+    <div id="MainPage" class="MainPage">
+        <div>
+            <!--生产任务单-->
+            <!-- <div class="navbar-form navbar-left">
+                计划日期
+                <div class="form-group">
+                    <div class="input-group date form_date col-md-5" data-date="" data-date-format="dd MM yyyy"
+                        data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                        <input class="form-control" size="16" type="text" value="" readonly>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                    </div>
+                    <input type="hidden" id="dtp_input2" value="" /><br />
+                </div>
+            </div> -->
+            <div class="navbar-form navbar-left">
+                单据信息
+                <div class="form-group">
+                    <input id="ProTaskCode" class="form-control" v-model="FormData.ProTaskCode" type="text"
+                        placeholder="输入订单/工单/任务单号模糊搜索">
+                </div>
+            </div>
+            <!--产品名称-->
+            <div class="navbar-form navbar-left">
+                产品信息
+                <div class="form-group">
+                    <input v-model="FormData.KeyWord" class="form-control" type="text" placeholder="输入产品编码/名称/型号模糊搜索">
+                </div>
+            </div>
+            <!--任务状态-->
+            <div class="navbar-form navbar-left">
+                任务状态
+                <div class="form-group" style="height:44px;">
+                    <select id="TaskStateData" class="selectpicker form-group" multiple="multiple"
+                        data-live-search="true" v-model="FormData.TaskState" style="background-color: #FFFFFF">
+                        <option v-for="(item,index) in TaskStateData" 
+                            :value="item.DICTIONARYITEM_ITEMCODE">
+                            {{item.DICTIONARYITEM_ITEMNAME}}</option>
+                    </select>
+                </div>
+            </div>
+            <button type="button" class="btn btn-success search_btn" style="width:70px" v-on:click="GetProductTask()">搜
+                索</button>
+        </div>
+
+        <!--列表部分-->
+        <div>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>计划日期</td>
+                        <td class="second_th">订单/工单/任务单号</td>
+                        <td class="second_th">产品编码/名称/型号</td>
+                        <td>订单数量</td>
+                        <td>计划/完工数量</td>
+                        <td>生产状态</td>
+                        <td>操作</td>
+                    </tr>
+                    <tr v-for="(item,index) in TableListData">
+                        <td>{{item.ProductionDate}}</td>
+                        <td class="second_td">{{item.OrderCode}}<br />{{item.WorkOrder}}<br />{{item.TaskCode}}</td>
+                        <td class="second_td"> {{item.ProductCode}}<br />
+                            {{item.ProductName}}<br />{{item.ProductStd}}</td>
+                        <td>{{item.OrderNum}}</td>
+                        <td>{{item.PlanNum}}<br />{{item.FinishNum}}</td>
+                        <td>{{item.StatusName}}</td>
+                        <td>
+                            <button class="btns" v-on:click="StartProduction(item)">查看明细</button><br />
+                            <button style="margin-top: 5px;" class="btns"
+                                v-on:click="LookProduction(item)">查看进度</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js"></script>
+    <script src="/JG/Content/bootstrap.min.js"></script>
+    <script src="/JG/Content/bootstrap-select.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootstrap-datetimepicker.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+
+    <script type="text/javascript">
+        // $('.form_date').datetimepicker({
+        //     weekStart: 1,
+        //     todayBtn: 1,
+        //     autoclose: 1,
+        //     todayHighlight: 1,
+        //     startView: 2,
+        //     minView: 2,
+        //     forceParse: 0
+        // });
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                FormData: {
+                    ProductionLineCode: LocalUserInfo.GetUserInfo().ProductionLineCode,   //产线编码
+                    //ProdLine: "",   //产线名称
+                    TaskState: [],    //任务状态
+                    ProTaskCode: "",    //任务单号
+                    KeyWord: "",     //关键字
+                },
+                TaskStateData: [],   // 任务状态集合
+                //ProLineData: [],   //产线集合
+                TableListData: [],   //列表集合
+                NowTaskStateData: [],   //当前选中的状态集合
+            },
+            mounted: function () {
+                var currSelf = this;
+                // currSelf.ProLineStation();
+                currSelf.initData();
+            },
+            methods: {
+                //初始化
+                initData: function () {
+                    var currSelf = this;
+
+                    var data = GetDictionary("JGMES_DIC_RWZT");
+                    if (data && data.IsSuccess) {
+                        currSelf.TaskStateData = data.Data;
+                        currSelf.FormData.TaskState.push("RWZT01");
+                        currSelf.FormData.TaskState.push("RWZT02");
+                    }
+                    currSelf.GetProductTask();
+                },
+                GetProductTask: function () {
+                    var currSelf = this;
+                    $.showLoading();
+                    currSelf.TableListData = [];
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrw.action",
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            "cxCode": currSelf.FormData.ProductionLineCode,
+                            "zt": currSelf.FormData.TaskState.join(','),
+                            "noLike": currSelf.FormData.ProTaskCode,    //获取当前用户输入任务单号
+                            "cpLike": currSelf.FormData.KeyWord,     //获取当前用户输入产品关键字
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess && retData.Data.length > 0) {
+                                for (var i in retData.Data) {
+                                    var item = retData.Data[i];
+                                    currSelf.TableListData.push({
+                                        ProductionDate: item.SCRW_PCRQ,
+                                        OrderCode: item.SCRW_DDHM,
+                                        TaskCode: item.SCRW_RWDH,
+                                        WorkOrder: item.SCRW_GDHM,   //工单号
+                                        ProductCode: item.SCRW_CPBH,
+                                        ProductName: item.SCRW_NAME,
+                                        ProductStd: item.SCRW_CPGG,
+                                        OrderNum: item.SCRW_DDSL,
+                                        FinishNum: item.SCRW_WCSL,
+                                        PlanNum: item.SCRW_PCSL,
+                                        StatusName: item.SCRW_RWZT_NAME,  //状态
+                                        VouchCode: item.SCRW_GDHM,
+                                        TaskID: item.JGMES_PLAN_SCRW_ID,
+                                    });
+                                }
+                            } else if (retData.IsSuccess)
+                                $.toptip("未搜索到相关数据", "success");
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            console.error(status);
+                            $.alert("请求失败");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+
+                StartProduction: function (item) {
+                    //console.log(item);
+                    window.location.href = "/JG/Features/ProductionTaskDetail.html?taskID=" + item.TaskID;
+                },
+                LookProduction: function (item) {
+                    //console.log(item);
+                    window.location.href = "/JG/Features/ProductionTaskProgress.html?taskID=" + item.TaskID;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

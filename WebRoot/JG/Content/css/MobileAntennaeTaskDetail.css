@@ -1,0 +1,515 @@
+body{
+    background-color:#E7F0EF;
+    overflow: auto;   
+}
+ul li{
+    list-style: none;
+}
+/*heder部分样式*/
+.header{
+    background-color: #231A15;
+    padding: .5em 1em;
+    font-size: 1.2em;
+    z-index: 100;
+    position: fixed;
+    width: 100%;
+    color: #fff;
+    top:0px;
+}
+.header img{
+    width: 27px;
+    height: 27px;
+}
+.proce {
+    background-color: #fff;
+}
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 90px;
+}
+
+/* .header {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index:50;
+}
+
+.item, .header_title,.empty {
+    width:33.33%;
+    
+}
+.header_title {
+    padding-left: 15px;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title>a {
+    font-size: 3em;
+    color: #FFFFFF;
+}
+.user_img{
+    float: right;
+    padding-right: 15px;
+} */
+
+caption{
+    background-color: #DDEED8;
+    color:#4C8652;
+    font-weight: bold;
+    font-size: 2em;
+}
+table{
+    background-color:#fff;
+}
+.table thead>tr>th {
+    font-size: 1.5em;
+}
+tbody>tr>td{
+    font-size: 1.5em;
+}
+tbody>tr{
+    background-color: #FFFFFF;
+}
+
+.btn {
+    padding: 6px 13px;
+    font-size: 0.8em;
+   
+}
+
+.back{
+    width:85px;
+    height:30px;
+    display: inline-block;
+}
+.back>img{
+    width:60%;
+}
+.wordproduct>span{
+    display: inline-block;
+    width: 20%;
+}
+tr{
+    border-top: 1px solid #ddd;
+}
+.shade1{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0,.5);
+    z-index: 50;
+    top: 0;
+    left: 0;
+}
+.shade2{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0,.5);
+    z-index: 50;
+    top: 0;
+    left: 0;
+}
+.popup{
+    position: fixed;
+    width: 100%;
+   
+    left: 50%;
+    top: 50%;
+    margin-left: -50%;
+    z-index: 1000;
+    overflow: hidden;
+}
+.closebtn{
+    position: fixed;
+    z-index: 1000;
+    bottom: 1%;
+    font-size: 2em;
+    width: 100%;
+    text-align: center;
+}
+.closebtn>button{
+    padding: 1% 5%;
+}
+.divbody>div>span{
+    display: inline-block;
+    padding-top:1%;
+    padding-bottom: 1%;
+}
+.comfirm button{
+    font-size: 1em;
+}
+.produ{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+#ProductionLineCode{
+    height: 34px;   
+    font-size: 14px;  
+    color: #555;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.prosaom{
+    height: 34px;
+    font-size: 15px;
+    color: #555;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/**************** ConfirmedTaskList.html *******************/
+.shade3{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0,.5);
+    z-index: 50;
+    top: 0;
+    left: 0;
+}
+.sectiontwo{
+    margin-bottom: 20px;
+}
+.nobo{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.popup button{
+    font-size: 1.2em;
+}
+/**********************平板端的媒体查询*********************************/
+@media screen and (min-width:1921px){
+    #MainPage {
+        margin-top: 110px;
+    }
+}
+
+@media screen and (min-width:1280px) and (max-width:1920px){
+    #MainPage {
+        margin-top: 90px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.8em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+    .table thead>tr>th {
+        font-size: 1.3em;
+    }
+    tbody>tr>td{
+        font-size: 1.3em;
+    }
+    
+}
+@media all and (min-height:1024px) and (max-height:1080px){}
+
+
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (min-width:1024px) and (max-width:1280px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.2em;
+    }
+    .back {
+        width: 70px;
+        height: 30px;
+    }
+    .table thead>tr>th {
+        font-size: 1.2em;
+    }
+    tbody>tr>td{
+        font-size: 1.1em;
+    }
+    
+}
+@media all and (min-height:891px) and (max-height:1024px){}
+
+
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (min-width:768px) and (max-width:1024px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+    .table thead>tr>th {
+        font-size: 1em;
+    }
+    tbody>tr>td{
+        font-size: 1em;
+    }
+    .btn {
+        padding: 5px 7px;
+        font-size: 0.8em;
+    }
+   
+   
+}
+@media screen and (min-width:557px) and (max-width:768px){
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 1.5em;
+    }
+    .back {
+        width: 60px;
+        height: 30px;
+    }
+    .item, .header_title {
+        line-height: 40px;
+    }
+    .table thead>tr>th {
+        font-size: 0.8em;
+    }
+
+    tbody>tr>td{
+        font-size: 0.8em;
+    }
+    
+}
+@media screen and (max-width:556px){
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 1.5em;
+    }
+    .back {
+        width: 60px;
+        height: 30px;
+    }
+    .item, .header_title {
+        line-height: 40px;
+    }
+    .table thead>tr>th {
+        font-size: 0.8em;
+    }
+
+    tbody>tr>td{
+        font-size: 0.7em;
+    }
+   
+}
+ 
+/*************** ConfirmedTaskList.html ********************/
+@media screen and (min-width:1920px){
+    .divbody{
+        font-size: 1.5em !important;
+    }
+    /* .check{
+        font-size: 1.5em !important;
+    } */
+}
+@media screen and (min-width:1200px){
+    .divbody,.selecttask{
+        font-size: 1.2em;
+    }
+    .divbody>div>span{
+        display: inline-block;
+        padding-top:3%;
+        padding-bottom: 3%;
+    }
+    .comfirm {
+        font-size: 1.2em;
+    }
+    .comcontent{
+        border-top: 1px solid #ddd;
+        padding-bottom: 1%;
+        padding-top: 1%;
+    }
+    .comcontent .butt{
+        padding-left:0px;
+    }
+    .nob{
+        white-space: nowrap;
+        overflow: hidden;
+        /* max-width: 550px; */
+        text-overflow: ellipsis;
+    }
+    .check{
+        padding-left: 10%;
+        padding-right: 10%;
+        font-size: 1.2em;
+    }
+    .checkbtn{
+        padding-top: 1%;
+    }
+    .statu{
+        padding-top: 1%;
+        display: inline-block;
+    }
+}
+@media screen and (min-width:992px) and (max-width:1199px){
+    .divbody,.selecttask{
+        font-size: 1.5em;
+    }
+    .divbody>div>span{
+        padding-top:3%;
+        padding-bottom: 3%;
+    }
+    .divbody input{
+        width: 90%;
+    }
+    .comfirm {
+        font-size: 1.5em;
+    }
+    .comcontent{
+        border-top: 1px solid #ddd;
+        padding-bottom: 3%;
+    }
+    .demand{
+        
+        margin: .7% 0;
+    }
+    .checkbtn{
+        padding-top: 2.5%;
+    }
+   
+}
+
+@media screen and (min-width:768px) and (max-width:991px){
+    .divbody,.selecttask{
+        font-size: 1.2em;
+    }
+    .divbody>div>span{
+        display: inline-block;
+        padding-top:3%;
+        padding-bottom: 3%;
+    }
+    .divbody input{
+        width: 100%;
+    }
+    .comfirm {
+        font-size: 1.2em;
+    }
+    .comcontent{
+        border-top: 1px solid #ddd;
+        padding-bottom: 3%
+    }
+    .check{
+        font-size: 1em;
+        /* padding: .3em 1.5em; */
+    }
+    .demand{
+        margin: 0;
+    }
+    .checkbtn{
+        padding-top: 2.5%;
+    }
+}
+@media screen and (max-width:767px){
+    .divbody,.selecttask{
+        font-size: 1.2em;
+    }
+    .divbody>div>span{
+        display: inline-block;
+        padding-top:3%;
+        padding-bottom: 3%;
+    }
+    .comfirm{
+        font-size: 1.2em;
+    }
+    .comcontent{
+        border-top: 1px solid #ddd;
+        padding-bottom: 3%
+    }
+    .nobr{
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 750px;
+        text-overflow: ellipsis;
+    }
+    .demand{
+        margin: 1% 0;
+    }
+    .checkbtn{
+        padding: 0.6%;
+    }
+    .pop{
+        margin-top: 45px;
+        
+    }
+    .pop button{
+        font-size: 1.5em;
+    }
+}
+@media screen and (max-width:557px){
+    .divbody, .selecttask {
+        font-size: 1.2em;
+    }
+    .nobr{
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 550px;
+        text-overflow: ellipsis;
+    }
+    .checkbtn{
+        padding-top: 31px;
+    }
+    .divbody input{
+        width: 50%;
+    }
+    .pop{
+        margin-top: 45px;
+
+    }
+    .pop button{
+        font-size: 1.5em;
+    }
+}
+@media screen and (max-width:350px){
+    .checkbtn {
+        padding-right: 0px;
+    }
+    .statu button{
+        width: 90% !important;
+    }
+}
+

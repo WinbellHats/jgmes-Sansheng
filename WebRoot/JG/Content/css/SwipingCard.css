@@ -1,0 +1,154 @@
+body{
+    background-color: #FFFFFF;
+    min-width: 557px;
+    overflow: auto;
+    font-size: 1.5em
+}
+/*heder部分样式*/
+.header {
+    width:100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index:50;
+}
+ul li{
+    list-style: none;
+}
+.item,.header_title,.empty{
+    width:33.33%;
+    line-height: 39px;
+}
+.empty>span{
+    font-size: 1.2em;
+    color:#FFFFFF;
+    margin-left: 10px;
+}
+.header_title{
+    /* padding-left: 15px; */
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title,.empty{
+    padding-top: .2rem;
+}
+.header_title>a{
+    font-size: 2em;
+    color:#FFFFFF;
+}
+.user_img{
+    float: right;
+    padding-right: 15px;
+}
+.back{
+    width:85px;
+    height:30px;
+    display: inline-block;
+}
+.back>img{
+    width:60%;
+}
+.clean{
+    content: "";
+    clear: both;
+}
+
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 90px;
+}
+.content{
+    
+    padding: 1rem 0;
+}
+.strong{
+    font-size: 1rem;
+    vertical-align: middle;
+    width: 150px;
+    display: inline-block;
+}
+.content>.select>button{
+    margin-right: 1rem;
+    font-size: 1.5rem;
+}
+.select,.current,.card,.record{
+    padding-bottom: 1.5rem;
+}
+.current>button{
+    font-size: 1.5rem;
+}
+.card input{
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    padding: .5rem 0;
+    width: 30%;
+}
+.recordtitle{
+    background-color: #DEEFD8;
+    color: #49874D;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: .3rem 0;
+}
+.recorddetial{
+    padding: .5rem;
+    font-size: .8rem;
+}
+.recordnum{
+    padding-bottom: .3rem;
+}
+.datetime{
+    padding-right: 1rem;
+}
+.showcont{
+    color: #fff;
+    background-color: #d2322d;
+    border-color: #d43f3a;
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+   
+    font-weight: normal;
+    line-height: 1.428571429;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    margin-right: 1.2rem;
+}
+.select .btn-success{  
+    background-color: #96d196;
+}
+.btnactive{
+    color: #fff;
+    background-color: #5cb85c !important;
+    border-color: #4cae4c;
+}
+.selectline{
+    vertical-align: middle;
+    padding: 1em;
+    border-radius: 5px;
+    font-size: .8rem;
+}
+.weui-toptips{
+    z-index: 1051;
+    font-size: 2.8em !important;
+    height: 70px !important;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 50px;
+    border-radius: 0.1em;
+    width: 75%;
+    margin: auto 12.5%;
+}

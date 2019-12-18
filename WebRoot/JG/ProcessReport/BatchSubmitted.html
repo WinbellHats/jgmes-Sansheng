@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>工序报工-精工云MES系统移动端</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/BatchSubmitted.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+<body>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty">
+            <span id="stations"></span>
+        </div>
+        <div class="header_title">
+            <a href="javascript:;">工序报工</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+    <div id="MainPage">
+        <div class="textbox">
+            <ul class="row">
+                <li class="input-group col-lg-10 col-md-10 col-sm-8 col-xs-8">
+                    <label class="input-group-addon" for="barCode">条形码:</label>
+                    <input maxlength="50" class="form-control" type="text" id="BarCode" placeholder="请输入条形码"
+                    v-model="barCode">
+                </li>
+                <li class="input-group col-lg-2 col-md-2 col-sm-4 col-xs-4" style="text-align: center">
+                    <button v-on:click="SaveData()" style="width:100%;font-size: 1.5em" type="button" class="btn btn-success">报工</button>
+                </li>
+            </ul>
+            <div class="row centerdiv">
+                <ul class="col-lg-6 col-md-6 col-sm-12 list-group">
+                    <li class="list-group-item">
+                        已扫码&nbsp;&nbsp;&nbsp;&nbsp;<span>{{SaveCode}}</span>
+                    </li>
+                    <li class="list-group-item">
+                        产品编号&nbsp;&nbsp;&nbsp;&nbsp;<span>{{FormData.InvCode}}</span>
+                    </li>
+                    <li class="list-group-item">
+                        产品名称&nbsp;&nbsp;&nbsp;&nbsp;<span>{{FormData.InvName}}</span>
+                    </li>
+                    <li class="list-group-item">
+                        工位&nbsp;&nbsp;&nbsp;&nbsp;<span>{{FormData.InvStd}}</span>
+                    </li>
+                    <li class="list-group-item prolist">
+                        工序
+                        <span class="proitem" v-for="(item,index) in InvProcess" :key="index" @click="clickAddBgColor(index)">
+                            <button v-bind:class="{'clickBgColor':i==index}" type="button">{{item.InvProcessItem}}</button>
+                        </span>
+                    </li>
+                    <li class="list-group-item">
+                        合格数量
+                        <input id="hgCount" v-model="Hgs" maxlength="50" class="form-control" type="text" style="cursor: pointer" placeholder="点击输入框填入合格数量">
+                    </li>
+                    <li class="list-group-item">
+                        不良数量
+                        <input id="nhgCount" v-model="Nhgs" maxlength="50" class="form-control" type="text" placeholder="点击输入框填入不良数量">
+                    </li>
+                </ul>
+
+                <!--操作记录部分-->
+                <div class="right_pro panel panel-default col-lg-6 col-md-6 col-sm-12">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#OperateRecord" data-toggle="tab">操作记录</a>
+                        </li>
+                        <li>
+                            <a href="#Swiper" data-toggle="tab">操作指导</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content tabs tab_code">
+                        <div class="tab-pane fade in active" id="OperateRecord">
+                            <ul style="height:100%;overflow-y:auto;">
+                                <li style="font-size: 1.2em" v-for="(item,index) in OperateRecord" :style="{'color':item.Status?'blue':'red'}">
+                                    {{item.Content}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tab-pane fade" id="Swiper">
+                            <div class="swiper-container">
+                                <div class="swiper-wrapper" id="Top_Swiper">
+                                </div>
+                                <div class="swiper-pagination"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--不良项部分-->
+        <div class="tables">
+            <table class="table">
+                <thead class="row">
+                    <tr class="row">
+                        <th class="col-lg-12" style="font-size:1.5em;text-align: center;border-bottom:none;">不良项明细</th>
+                    </tr>
+                </thead>
+                <tbody class="row">
+                    <tr v-for="(item,index) in DefectiveItemData" class="row">
+                        <td class="col-lg-8">{{item.ItemName}}</td>
+                        <td class="col-lg-4">
+                            <input id="pwd" class="pwd" v-model="item.Qty" type="number" placeholder="请输入数量">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/Utils.js?v=1"></script>
+<script src="/JG/Content/Common.js"></script>
+<script type="text/javascript" src="/JG/Content/AudioUtils.js"></script>
+<script src="/JG/Content/Numkeyboard.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/jquery/fastclick.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        //获取当前用户的产线工位
+        var stations = LocalUserInfo.GetUserInfo();
+        $("#stations").html(stations.ProductionLineName + " - " + stations.StationName);
+
+
+        //数字键盘部分的逻辑绑定
+        $("#hgCount").mynumkb();
+        $("#nhgCount").mynumkb();
+        $(".pwd").mynumkb();
+    });
+</script>
+
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el:"#MainPage",
+        data:{
+            i:null,   // 保存当前选中的工序下标
+            barCode:"",   //当前用户输入产品条形码
+            IsSubmit: true,//是否Pass
+            //disabled:false,  //按钮状态
+            Hgs:"",  //合格数
+            Nhgs:"",  //不良数
+            SaveCode:"",   //保存用户输入的条形码
+            FormData:{
+                InvName:"",   //产品名称
+                InvStd:"",   //工位名
+                InvProcessItem:"",   //工序名称
+                InvCode:"",     //产品编码
+                SubType:"1",     //报工类型
+            },
+            ScanCodeResult:"",    //保存获取数据失败弹窗变量
+            InvProcess:[],   //工序名集合
+            DefectiveItemData:[],   //不良集合
+            OperateRecord:[],   //操作记录集合
+            ItemName:"",   //不良项名称
+            Qty:"",   //不良项数量
+        },
+        mounted:function(){
+            var currSelf = this;
+            //给input绑定键盘输入事件
+            $("#BarCode").bind("keypress", currSelf.SearchBarCode);
+            //绑定input获取聚焦事件
+            $("#BarCode").focus();
+            //Utils.AutoBarCodeFocus();   //给input自动绑定聚焦方法
+            //currSelf.BadnessData();
+        },
+        methods:{
+            //操作记录方法
+            SetOperateRecord: function (content, status) {
+                var currSelf = this;
+                var content = (new Date().Format("hh:mm:sss")) + ' ' + content;
+                currSelf.OperateRecord.splice(0, 0, { Content: content, Status: status });
+            },
+
+            //   工序部分点击选择显示样式方法
+            clickAddBgColor:function(index){
+                var currSelf = this;
+                currSelf.i=index;
+            },
+
+            //扫码方法
+            SearchBarCode: function (event) {
+                var currSelf = this;
+                // debugger;
+
+                //判断回车键
+                if (event.which == 13) {
+                    var barCode = currSelf.barCode;
+                    currSelf.SaveCode = barCode;    //把用户输入的条形码保存起来
+                    currSelf.barCode = "";  //清空input输入的内容
+                    var showMsg;
+                    //currSelf.IsDisable = true;
+
+                    //扫码不能为空或不是条形码判断
+                    if (!currSelf.SaveCode || currSelf.SaveCode.length <= 0) {
+                        showMsg = '条形码不能为空';
+                        $.toptip(showMsg, "warning");
+                        currSelf.SetOperateRecord(showMsg, false);
+                        AudioUtils.Play(AudioUtils.ScanCodeFail);
+                    } else {     //扫码成功后
+                        $.showLoading();
+                        //根据条码获取条码对应的信息接口
+                        $.ajax({
+                            type:"post",
+                            url:LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!getInfoByBarCode.action",
+                            data:{
+                                "userCode":LocalUserInfo.GetUserInfo().UserCode,
+                                "barCode":currSelf.SaveCode,
+                            },
+                            dataType:"json",
+                            success:function(result){
+                                //console.log(result);
+                                var retData = ReturnData(result);
+                                //判断成功
+                                if(retData.IsSuccess) {
+                                    AudioUtils.Play(AudioUtils.ScanCodeSuccess);
+                                    showMsg = '扫码成功！';
+                                    $.toptip(showMsg, "warning");
+                                    currSelf.SetOperateRecord(currSelf.SaveCode + "," + showMsg, true);
+
+                                    if (currSelf.FormData.InvCode != retData.Data.detailData.values.PRODUCTDA_TABH) {
+
+                                        currSelf.FormData.InvCode = retData.Data.detailData.values.PRODUCTDATA_BH;   //获取当前编号
+                                        currSelf.FormData.InvName = retData.Data.detailData.values.PRODUCTDATA_NAME;  //获取产品名称
+                                        currSelf.FormData.InvStd = LocalUserInfo.GetUserInfo().StationName;   //获取当前工位
+
+                                        //清空原有工序和原有不良项
+                                        currSelf.InvProcess=[];
+                                        currSelf.DefectiveItemData=[];
+                                        //根据产品获取工序列表接口
+                                        $.ajax({
+                                            type: "post",
+                                            async: false,
+                                            cache: true,
+                                            url: LocalConfig.SrvPath + "/jgmes/commonAction!getGXList.action",
+                                            data: {
+                                                "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                                "mac": LocalUserInfo.GetUserInfo().Mac,
+                                                "cpCode": currSelf.FormData.InvCode,
+                                            },
+                                            dataType: "json",
+                                            success: function (ret) {
+                                                //console.log(ret);
+                                                var retData = ReturnData(ret);
+                                                if (retData.IsSuccess) {
+                                                    if (retData.Data) {
+                                                        for (var i in retData.Data) {
+                                                            var element = retData.Data[i];
+                                                            currSelf.InvProcess.push({
+                                                                InvProcessItem: element.GYLXGX_GXNAME,
+                                                            })
+                                                        }
+                                                    }
+                                                } else {
+                                                    currSelf.ScanCodeResult = "未查找到相关条形码的对应产品工序信息";
+                                                    $.toptip(currSelf.ScanCodeResult, "warning");
+                                                }
+                                            },
+                                            error: function (xhr, status, errorThrown) {
+                                                //console.error(status);
+                                                $.alert("获取工序列表失败！");
+                                            },
+                                            // complete: function () {
+                                            //     $.hideLoading();
+                                            // }
+                                        });
+
+                                        //获取不良类型列表接口
+                                        $.ajax({
+                                            type: "post",
+                                            async: false,
+                                            cache: true,
+                                            url: LocalConfig.SrvPath + "/jgmes/jgmesQmsAction!getBlList.action",
+                                            data: {
+                                                "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                            },
+                                            dataType: "json",
+                                            success: function (result) {
+                                                //console.log(result);
+                                                var retData = ReturnData(result);
+                                                if (retData.IsSuccess) {
+                                                    if (retData.Data) {
+                                                        for (var i in retData.Data) {
+                                                            var element = retData.Data[i];
+                                                            currSelf.DefectiveItemData.push({
+                                                                ItemName: element.values.BLLX_BLLXMC,   //不良名称
+                                                                //Qty: element.GXBLX_BLXMC
+                                                            });
+                                                        }
+                                                    } else {
+                                                        currSelf.ScanCodeResult = "未找到产品相关不良项目";
+                                                        $.toptip(currSelf.ScanCodeResult, "warning");
+                                                    }
+                                                }
+                                            },
+                                            error: function (xhr, status, errorThrow) {
+                                                //console.error(status);
+                                                $.alert("获取不良项失败！");
+                                            },
+                                            // complete: function () {
+                                            //     $.hideLoading();
+                                            // }
+                                        })
+
+                                    } else {
+                                        currSelf.ScanCodeResult = "未查找到相关条形码的对应产品名称和工位信息";
+                                        $.toptip(currSelf.ScanCodeResult, "warning");
+                                    }
+                                }
+                            },
+                            error:function(xhr, status, errorThrown){
+                                //console.error(status);
+                                $.alert("未查找到相关条形码的对应产品信息！");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+
+                    //currSelf.IsDisable = false;
+                    }
+                }
+            },
+
+            //批量保存方法
+            SaveData:function(){
+                var currSelf = this;
+                var gongx=currSelf.InvProcess[currSelf.i];   //保存当前选中的工序
+                var msg;
+                if(currSelf.FormData.InvName == "" ){
+                    msg = '产品名称没填';
+                    $.toptip(msg, "warning");
+                    // currSelf.SetOperateRecord(msg, false);
+                }else if(currSelf.FormData.InvStd == ""){
+                    msg = '工位名称没填';
+                    $.toptip(msg, "warning");
+                }else if(gongx == null){
+                    msg = '工序名称未选';
+                    $.toptip(msg, "warning");
+                }else if(currSelf.Hgs == ""){
+                    msg = '合格数量不能为空';
+                    $.toptip(msg, "warning");
+                }else{
+                    $.confirm("确定要报工吗？","操作提示",function(){
+                        //主表数据
+                        var jsonStr = JSON.stringify({
+                            "BGSJ_BGLX":currSelf.FormData.SubType,
+                            "BGSJ_CPMC": currSelf.FormData.InvName,
+                            "BGSJ_GWMC": currSelf.FormData.InvStd,
+                            "BGSJ_GXMC": gongx,
+                            "BGSJ_SL":currSelf.Hgs,
+                            "BGSJ_BLSL":currSelf.Nhgs,
+                        });
+                        //不良项子表数据
+                        var jsonStrDetail=[];
+                        for(var i in currSelf.DefectiveItemData){
+                            var element = currSelf.DefectiveItemData[i];
+                            jsonStrDetail.push({
+                                "BGSJZB_BLMC": element.ItemName,
+                                "BGSJZB_SL": element.Qty
+                            })
+                        }
+
+                        //$.showLoading();
+                        //批量保存数据接口
+                        $.ajax({
+                            type:"post",
+                            async:false,
+                            cache: true,
+                            url:LocalConfig.SrvPath + "/jgmes/jgmesBgBatchAction!doJsonSave.action",
+                            data:{
+                                "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                "jsonStr":jsonStr,
+                                "jsonStrDetail":JSON.stringify(jsonStrDetail),
+                            },
+                            dataType:"json",
+                            success:function(result){
+                                var retData = ReturnData(result);
+                                console.log(retData);
+                            },
+                            error:function(xhr, status, errorThrow){
+                                //console.error(status);
+                                $.alert("批量保存数据失败！");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+
+                        //清空原有数据
+                        currSelf.InvProcess=[];
+                        currSelf.DefectiveItemData=[];
+                        currSelf.Hgs="";
+                        currSelf.Nhgs="";
+                        currSelf.SaveCode="";
+                        currSelf.FormData.InvCode="";
+                        currSelf.FormData.InvName="";
+                        currSelf.FormData.InvStd="";
+                        currSelf.OperateRecord=[];
+                    })
+                }
+            },
+
+         //currSelf.IsDisable = false;
+        }
+    })
+</script>
+</html>

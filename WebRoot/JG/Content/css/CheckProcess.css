@@ -1,0 +1,394 @@
+/* body{
+    background-color:#E7F0EF;
+    min-width: 557px;
+}
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 90px;
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index:50;
+}
+
+.item, .header_title,.empty {
+    width:33.33%;
+    /* line-height: 50px; */
+/* }
+.header_title {
+    padding-left: 15px;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title>a {
+    font-size: 3em;
+    color: #FFFFFF;
+}
+.user_img{
+    float: right;
+    padding-right: 15px;
+}  */
+
+table{
+    background-color:#fff;
+}
+.proreport{
+    font-size: 1.5em;
+
+    
+}
+.bton{
+    font-size: 1em;
+    padding: 6px 6px;
+}
+.proreport>span{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+.container {
+    max-width: 100%;
+}
+.divbdy{
+    border-bottom: 1px solid #ddd;
+}
+
+.weui-toptips {
+    z-index: 1051;
+    font-size: 3em !important;
+    height: 70px !important;
+    padding-top: 10;
+    padding-bottom: 10;
+    line-height: 50px;
+}
+.cxtent{
+    position: fixed;
+    z-index: 500;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background-color: #fff;
+}
+/* .productcode{
+
+} */
+.input{
+    font-size: 1rem;
+    padding: .15rem 0rem;
+    width: 80%;
+}
+.procode{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
+/**********************平板端的媒体查询*********************************/
+/* @media screen and (min-width:1280px) and (max-width:1920px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.8em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+    .table thead>tr>th {
+        font-size: 1.3em;
+    }
+    tbody>tr>td{
+        font-size: 1.3em;
+    }
+    .check{
+        padding-left: 15%;
+        padding-right: 15%;
+    }
+} */
+
+
+@media screen and (min-width:1921px) {
+    /* #MainPage {
+        margin-top: 100px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.8em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    } */
+    .table thead>tr>th {
+        font-size: 1.3em;
+    }
+    tbody>tr>td{
+        font-size: 1.3em;
+    }
+    .check{
+        padding-left: 15%;
+        padding-right: 15%;
+    }
+    .proreport {
+        font-size: 1.5em;
+        padding-top: 1.5%;
+    }
+    .processbtn{
+        padding-top: .75%;
+        padding-bottom: .75%;
+    }
+    .sncode{
+        font-size: 1.5em;
+        padding-top: 1%;
+        padding-bottom: 1%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    .content>div{
+        border-bottom: 1px solid #ddd;
+    }
+    .strong{
+        width: 110px;
+        display: inline-block;
+       
+    }
+    .snno{
+        border-bottom: 1px solid #fff;
+    }
+    .processbtn button{
+        font-size: 1.5em;
+    }
+    .sncode button{
+        font-size: 1em;
+    }
+    .modal-footer button{
+        font-size: 1em;
+        padding: .5em 2em;
+    }
+}
+
+
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (min-width:1200px) and (max-width:1920px){
+    /* #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.2em;
+    }
+    .back {
+        width: 70px;
+        height: 30px;
+    } */
+    .table thead>tr>th {
+        font-size: 1.2em;
+    }
+    tbody>tr>td{
+        font-size: 1.2em;
+    }
+    .proreport {
+        font-size: 1.5em;
+        padding-top: 2%;
+    }
+    .processbtn{
+        padding-top: .75%;
+        padding-bottom: .75%;
+    }
+    .sncode{
+        font-size: 1.5em;
+        padding-top: 1%;
+        padding-bottom: 1%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    .content>div{
+        border-bottom: 1px solid #ddd;
+    }
+    .strong{
+        width: 110px;
+        display: inline-block;
+       
+    }
+    .snno{
+        border-bottom: 1px solid #fff;
+    }
+    .processbtn button{
+        font-size: 1.5em;
+    }
+    .sncode button{
+        font-size: 1em;
+    }
+    .modal-footer button{
+        font-size: 1em;
+        padding: .5em 2em;
+    }
+}
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (min-width:768px) and (max-width:1199px){
+    /* #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    } */
+    .table thead>tr>th {
+        font-size: 1em;
+    }
+    tbody>tr>td{
+        font-size: 1.2em;
+    }
+    /* .btn {
+        padding: 5px 7px;
+        font-size: 0.8em;
+    } */
+    .proreport {
+        font-size: 1.5em;
+        padding-top: 1.5%;
+        text-align: left;
+    }
+    .processbtn{
+        padding-top: .5%;
+    }
+    .processbtn button{
+        font-size: 1.5em;
+    }
+    .sncode{
+        font-size: 1.5em;
+        padding-top: 2%;
+        padding-bottom: 2%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    .content>div{
+        border-bottom: 1px solid #ddd;
+    }
+    .strong{
+        width: 110px;
+        display: inline-block;
+       
+    }
+    .snno{
+        border-bottom: 1px solid #fff;
+    }
+    .sncode button{
+        font-size: 1em;
+    }
+    
+}
+@media screen and (max-width:767px){
+    /* #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2em;
+    }
+    .back {
+        width: 60px;
+        height: 30px;
+    } */
+    .item, .header_title {
+        line-height: 40px;
+    }
+    .table thead>tr>th {
+        font-size: 0.8em;
+    }
+
+    tbody>tr>td{
+        font-size: 1.2em;
+    }
+    .proreport{
+        font-size: 1.5em;
+        padding-top: 1.5%;
+        text-align: left;
+    }
+    .processbtn{
+        padding-top: 1.5%;
+    }
+    .sncode{
+        font-size: 1.5em;
+        padding-top: 2%;
+        padding-bottom: 2%;
+        border-bottom: 1px solid #ddd;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    .strong{
+        width: 110px;
+        display: inline-block;
+       
+    }
+}
+@media screen and (max-width:520px){
+    /* .header_title>a {
+        font-size: 1.5em;
+    }
+    .back img{
+        width: 30px;
+    } */
+    .proreport{
+        font-size: 1.5em;
+        padding-top: 1.5%;
+        text-align: left;
+    }
+    .processbtn{
+        padding-top: 2%;
+    }
+    .sncode{
+        font-size: 1.5em;
+        padding-top: 2%;
+        padding-bottom: 2%;
+        border-bottom: 1px solid #ddd;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    .strong{
+        width: 110px;
+        display: inline-block;
+       
+    }
+}

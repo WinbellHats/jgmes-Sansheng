@@ -1,0 +1,307 @@
+body{
+    background-color:#E7F0EF;
+    min-width: 557px;
+    overflow: hidden;
+}
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 90px;
+    overflow-y: auto;
+}
+#MainPage::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 4px;
+}
+#MainPage::-webkit-scrollbar-thumb{/*滚动条里面的滚动滑块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.2);
+}
+#MainPage::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 0;
+    background: rgba(0,0,0,0.1);
+}
+/*heder部分样式*/
+.header {
+    width:100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index:50;
+}
+
+.item,.header_title,.empty{
+    width:33.33%;
+    line-height: 39px;
+}
+.header_title{
+    padding-left: 15px;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title>a{
+    font-size: 3em;
+    color:#FFFFFF;
+}
+
+
+.user_img>img{
+    width:auto;
+    max-width:100%;
+    max-height:100%;
+    flex: 0 0 50%;
+}
+
+.user_img{
+    float: right;
+    padding-right: 15px;
+}
+
+.item_btn>button{
+    padding: 0px 20px;
+    font-size: 1.2em;
+    color:#FFFFFF;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+    outline: none;
+    background-color: #1DDA44;
+    border-radius: 6px;
+    border: 1px solid #FFFFFF;
+    box-shadow: #1DDA44 0px 2px 0px 1px;
+}
+.item_btn>button:hover{
+    box-shadow:none;
+    transition: all 0.5s ease;
+}
+.details_btn{
+    width: 105px;
+    /* padding: 0px 10px; */
+    font-size: 0.8em;
+    background-color: #8AC007;
+    border: 1px solid #8AC007;
+    color: #FFFFFF;
+    border-radius: 5px;
+    outline: none;
+    line-height: 50px;
+}
+.details_btn:hover{
+    background-color: #F3F2F3;
+    color:#3B3B3B;
+    border: 1px solid #B5B2B4;
+}
+.panel-success>.panel-heading {
+    font-size: 1.5em;
+}
+thead>tr>th:nth-child(1){
+    width:10%;
+}
+thead>tr>th:nth-child(2){
+    width:65%;
+}
+thead>tr>th:nth-child(3){
+    width:15%;
+}
+thead>tr>th:nth-child(4){
+    width:10%;
+}
+.table tbody>tr>td:nth-child(1){
+    width:10%;
+}
+.table tbody>tr>td:nth-child(2){
+    width:65%;
+}
+.table tbody>tr>td:nth-child(3){
+    width:15%;
+}
+.table tbody>tr>td:nth-child(4){
+    width:10%;
+}
+.table tbody>tr>td{
+    font-size: 1.5em;
+}
+.table tbody>tr{
+    border-bottom: 1px solid #DCDCDC;
+}
+
+.back{
+    width:85px;
+    height:30px;
+    display: inline-block;
+}
+.back>img{
+    width:60%;
+}
+
+.weui-toptips{z-index: 1051;font-size: 3.0em; height: 70px;padding-top: 10;padding-bottom: 10;}
+
+/**********************平板端的媒体查询*********************************/
+@media screen and (min-width:1280px) and (max-width:1920px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 11px;
+    }
+    .header_title>a {
+        font-size: 2.8em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+    .details_btn {
+        width: 105px;
+        font-size: 0.8em;
+        line-height: 42px;
+    }
+}
+@media all and (min-height:1024px) and (max-height:1080px){}
+
+
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (min-width:1024px) and (max-width:1280px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 12px;
+        padding-top: 12px;
+    }
+    .header_title>a {
+        font-size: 2.2em;
+    }
+    .back {
+        width: 70px;
+        height: 30px;
+    }
+    .panel-success>.panel-heading {
+        font-size: 1.3em;
+    }
+    .details_btn {
+        width: 95px;
+        font-size: 0.8em;
+        line-height: 38px;
+    }
+    .table tbody>tr>td {
+        font-size: 1.3em;
+    }
+    thead>tr>th:nth-child(1){
+        width:12%;
+    }
+    thead>tr>th:nth-child(2){
+        width:63%;
+    }
+    .table tbody>tr>td:nth-child(1){
+        width:12%;
+    }
+    .table tbody>tr>td:nth-child(2){
+        width:63%;
+    }
+}
+@media all and (min-height:891px) and (max-height:1024px){}
+
+
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (min-width:768px) and (max-width:1024px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+    .item, .header_title, .empty {
+        line-height: 45px;
+    }
+    .panel-success>.panel-heading {
+        font-size: 1.3em;
+    }
+    .table tbody>tr>td {
+        font-size: 1.1em;
+    }
+    .details_btn {
+        width: 78px;
+        font-size: 0.9em;
+        line-height: 32px;
+    }
+    thead>tr>th:nth-child(1){
+        width:15%;
+    }
+    thead>tr>th:nth-child(4){
+        width:5%;
+    }
+    .table tbody>tr>td:nth-child(1){
+        width:15%;
+    }
+    .table tbody>tr>td:nth-child(4){
+        width:5%;
+    }
+}
+@media screen and (min-width:557px) and (max-width:768px){
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 1.5em;
+    }
+    .back {
+        width: 60px;
+        height: 30px;
+    }
+    .item, .header_title, .empty {
+        line-height: 37px;
+    }
+    .panel-success>.panel-heading {
+        font-size: 1em;
+    }
+    .table tbody>tr>td {
+        font-size: 1em;
+    }
+    .details_btn {
+        width: 75px;
+        font-size: 1em;
+        line-height: 32px;
+    }
+    thead>tr>th:nth-child(1){
+        width:20%;
+    }
+    thead>tr>th:nth-child(2) {
+        width: 50%;
+    }
+    thead>tr>th:nth-child(3) {
+        width: 17%;
+    }
+    thead>tr>th:nth-child(4){
+        width:13%;
+    }
+    .table tbody>tr>td:nth-child(1){
+        width:15%;
+    }
+    .table tbody>tr>td:nth-child(4){
+        width:5%;
+    }
+}
+@media all and (min-height:768px) and (max-height:891px){}

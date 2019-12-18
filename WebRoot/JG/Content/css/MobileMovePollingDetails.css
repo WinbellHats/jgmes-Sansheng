@@ -1,0 +1,61 @@
+/*header部分*/
+body{
+    background-color: #E6EFEE;
+}
+.header {
+    background-color: #231A15;
+    line-height: 50px;
+    font-size: 1.2em;
+    z-index: 100;
+    position: fixed;
+    width: 100%;
+    color: #FFFFFF;
+    top: 0px;
+}
+/*清除浮动*/
+.empty_div{
+    content: "";
+    height:60px;
+}
+#MainPage {
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow-y: auto;
+    background-color: #ffff;
+}
+
+
+/*列表部分*/
+.task_code,.text_title{
+    width:100%;
+}
+.text_title{
+    padding-bottom: 20px;
+    padding-top: 10px;
+    border-bottom: 1px solid #F3F3F3;
+}
+.polling_list>p{
+    width:100%;
+}
+.polling_p>span{
+    display: inline-block;
+    width:36%;
+}
+.polling_p>span:last-child{
+    text-align: right;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

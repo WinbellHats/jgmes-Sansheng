@@ -1,0 +1,260 @@
+body{
+    background-color:#E7F0EF;
+    min-width: 557px;
+}
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 90px;
+}
+.body_part {
+    width: 100%;
+    /* overflow: hidden; */
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 12px;
+    padding-top: 12px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index:50;
+}
+.header_title{
+    width:50%;
+    line-height: 50px;
+}
+.item,.empty {
+    width:25%;
+    line-height: 50px;
+}
+.header_title {
+    padding-left: 15px;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title>a {
+    font-size: 2.2em;
+    color: #FFFFFF;
+}
+.user_img{
+    float: right;
+    padding-right: 15px;
+}
+.back>img{
+    width: 42px;
+}
+
+
+/*下拉框部分*/
+.vessel,.vessel_top{
+    width:100%;
+}
+.list-group-item-heading{
+    display: inline-block;
+    width:75px;
+}
+.list-group-item{
+    display: flex;
+    justify-content: space-between;
+}
+.list-group-item>div{
+    width:49%;
+}
+.form-control {
+    display: inline-block;
+    width: 91%;
+}
+.div_input1{
+    border:1px solid #CBCACB !important;
+    border-radius: 3px;
+}
+.div_input{
+    width: 91%;
+    line-height: 32px;
+    border:none;
+    outline-style: none;
+}
+.div_span{
+    width:91%;
+    line-height: 32px;
+    border:none;
+    outline-style: none;
+    background-color: #FFFFFF;
+}
+
+/*检验项目部分*/
+.vessel_centre{
+    background-color: #FFFFFF;
+    padding-bottom: 1px;
+}
+caption{
+    font-size: 1.3em;
+    font-weight: bold;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.div_button{
+    width:100%;
+    padding-bottom: 10px;
+}
+.btns{
+    width:100%;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+    text-align:center;
+}
+
+/*任务信息弹窗页面*/
+.modal-dialog {
+    width: 100%;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding: 0px;
+}
+.modal-title {
+    text-align:center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+.modal-header .close {
+    font-size: 2.5em;
+}
+.modal-header {
+    height: 55px;
+}
+.modal-body {
+    padding: 0px;
+}
+#btable tbody>tr>td{
+    vertical-align: middle;
+}
+#btable thead>tr>th {
+    white-space: nowrap;
+}
+.radio_input{
+    width:50px;
+    line-height: 33px;
+    color:#FFFFFF;
+    border: none;
+    background-color: #4BA250;
+    border-radius: 5px;
+}
+
+
+
+
+
+
+/**********************平板端的媒体查询*********************************/
+@media screen and (max-width:1920px){
+    .header {
+        padding-bottom: 11px;
+    }
+
+    /*下拉框部分*/
+    .form-control {
+        width: 86%;
+    }
+    .div_input {
+        width: 86%;
+    }
+    .div_span {
+        width: 86%;
+    }
+}
+
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (max-width:1280px){
+    /*下拉框部分*/
+    .form-control {
+        width: 83%;
+    }
+    .div_input {
+        width: 83%;
+    }
+    .div_span {
+        width: 83%;
+    }
+}
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (max-width:1024px){
+    /*下拉框部分*/
+    .form-control {
+        width: 77%;
+    }
+    .div_input {
+        width: 77%;
+    }
+    .div_span {
+        width: 77%;
+    }
+}
+
+
+@media screen and (max-width:768px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 9px;
+        padding-top:8px;
+    }
+    .header_title>a {
+        font-size: 1.5em;
+    }
+    .back>img {
+        width: 37px;
+    }
+}
+@media screen and (max-width:556px){
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 5px;
+        padding-top:4px;
+    }
+    .header_title>a {
+        font-size: 1.2em;
+    }
+    .back>img {
+        width: 28px;
+    }
+    /*下拉框*/
+    .list-group-item {
+        display: block;
+        justify-content: normal;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

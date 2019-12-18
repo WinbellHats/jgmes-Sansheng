@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>作业SOP-精工云MES系统移动端</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/Operation.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+
+    <link type="text/css" href="/JG/Content/css/style.css" rel="stylesheet" />
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!--header部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="header_title">
+            <a href="javascript:;">作业SOP</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:history.back(-1)">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+    <div id="MainPage" class="MainPage" v-cloak>
+        <div class="nav">
+            <div class="weui-flex ">
+                <div class="weui-flex__item ">
+                    产品编号：
+                    <span>{{Products.ProductCode}}</span>
+                </div>
+                <div class="weui-flex__item">
+                    产品名称：
+                    <span>{{Products.ProductName}}</span>
+                </div>
+                <div class="weui-flex__item">
+                    规格型号：
+                    <span>{{Products.ProductSpe}}</span>
+                </div>
+            </div>
+            <div class="weui-flex">
+                <div class="weui-flex__item ">
+                    工序编号：
+                    <span>{{CurrGongXun.GYLXGX_GXNUM}}</span>
+                </div>
+                <div class="weui-flex__item" style="    white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                    工序名称：
+                    <span>{{CurrGongXun.GYLXGX_GXNAME}}</span>
+                </div>
+                <div class="weui-flex__item">
+                    工序顺序号：
+                    <span>{{CurrGongXun.SY_ORDERINDEX}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+
+            <div class="img_gallery">
+                <div class="point">
+                    <a v-for="(item,index) in CurrGongXun.Pictures" href="javascript:;"></a>
+                </div>
+                <div class="main_img">
+                    <ul>
+                        <li v-for="(item,index) in CurrGongXun.Pictures" :key="index"><img :src="item.path" alt=""></li>
+                    </ul>
+                    <a href="javascript:;" id="btn_prev"></a>
+                    <a href="javascript:;" id="btn_next"></a>
+                </div>
+            </div>
+            <!-- <div class="swiper-container main_img" >
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" v-for="(item,index) in CurrGongXun.Pictures"><img :src="item.path" alt="">
+                    </div>
+                 
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div> -->
+        </div>
+
+        <div class="footer">
+            <div class="weui-flex ">
+                <div class="weui-flex__item " v-if="showPre">
+                    <span class="process" v-on:click="OnProcess()">上工序</span>
+                </div>
+                <div class="weui-flex__item" v-if="showTail">
+                    <span class="process" v-on:click="UnderProcess()">下工序</span>
+                </div>
+                <div class="weui-flex__item" @click="jumpBaog">
+                    <span class="process">报工</span>
+
+                </div>
+                <div class="weui-flex__item" id="FullScreen">
+                    <span class="process">全屏</span>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- 图片双击全屏 -->
+    <div class="dbImg">
+        <span class="timg"><img src="/JG/Content/images/timg.jpg" alt="关闭"></span>
+        <img id="bgImg" src="" alt="">
+    </div>
+    <script src="/JG/Content/jquery.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js"></script>
+    <script type="text/javascript" src="/JG/Content/jquery.event.drag.js"></script>
+    <script type="text/javascript" src="/JG/Content/jquery.touchSlider.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/swiper.min.js"></script>
+    <script type="text/javascript">
+
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                //获取生产任务详情的参数
+                // sopID:$.getUrlParam("id"),
+                Products: {                    //生产任务单集合
+                    ProductCode: "",              //产品编号
+                    ProductName: "",             //产品名称
+                    ProductSpe: "",              //产品规格
+                    TaskNo: ""                   //任务单号
+                },
+                ProcessIndex: 0, //初始显示点击查看的链接数据
+                currentPage: "1",    //当前页码
+                total: "6",          //当前工序数
+                display: "1",        //页面要显示的条数
+                showTail: true,      //最后一页显示下工序按钮
+                showPre: false,      //初始隐藏上工序
+                TaskID: $.getUrlParam("TaskID"),//接收地址栏产品任务参数
+                ProcessId: $.getUrlParam("ProcessId"),//接收地址栏产品任务参数
+                ProcessList: [],       //工序集合
+                InvProcess: [],   //sop集合
+                ImgSOPs: [],
+                CurrGongXun: {},
+                TouchSlider: "",
+            },
+            computed: {
+
+            },
+            mounted: function () {
+                var currSelf = this;
+                //currSelf.GetDetail();
+                //currSelf.time();
+                currSelf.GetProductProcess();
+
+            },
+            methods: {
+                //上工序点击切换数据
+                CurrentProcess: function (index) {
+                    var currSelf = this;
+                    currSelf.ProcessIndex = index;
+                    currSelf.imgSOPs = [];
+                    var len = currSelf.ProcessList.length - 1;
+                    currSelf.showTail = true;
+                    currSelf.showPre = true;
+                    if (currSelf.ProcessIndex == 0) {
+                        currSelf.showPre = false;
+                        //console.log(this.ProcessIndex)
+                    }
+                    if (currSelf.ProcessIndex == len) {
+                        currSelf.showTail = false;
+                        //console.log(this.ProcessIndex)
+                    }
+                    var item = currSelf.ProcessList[currSelf.ProcessIndex];
+                    currSelf.CurrGongXun = item;
+                    // debugger;
+                    // if (currSelf.TouchSlider)
+                    //     TouchSlider.stop(); // 结束滚动
+
+                    if (item.GYLXGX_SOP) {
+                        var imgSOPs = JSON.parse(item.GYLXGX_SOP);
+
+                        currSelf.CurrGongXun.Pictures = imgSOPs;
+                    }
+
+                    // var htmlAppend = "";
+                    // var htmlIcon = "";
+                    // $(".main_img>ul").html(htmlAppend);
+                    // $(".point").html(htmlIcon);
+                    // if (currSelf.TouchSlider)
+                    //     currSelf.TouchSlider.start(); // 开始滚动
+                    if (item.GYLXGX_SOP) {
+                        // var imgSOPs = JSON.parse(item.GYLXGX_SOP);
+                        // for (var i in imgSOPs) {
+                        //     var item = imgSOPs[i];
+                        //     var currIndex = parseInt(i) + 1;
+                        //     htmlAppend += "<li><img src='" + LocalConfig.SrvPath + item.path + "'></li> ";
+                        //     htmlIcon += "<a >" + currIndex + "</a> ";
+                        // }
+                        // $(".main_img>ul").append(htmlAppend);
+                        // $(".point").append(htmlIcon);
+                        // $(".main_img").append("<a href='javascript:;' id='btn_prev'></a>");
+                        // $(".main_img").append("<a href='javascript:;' id='btn_next'></a>");
+                        var touchtime = new Date().getTime();
+                        currSelf.$nextTick(function () {     //$nextTick方法是进行获取数据后，对更新后的hmtl做操作
+                            // $(".swiper-container").swiper({
+                            //     loop: true,
+                            //     autoplay: 3000
+                            // });
+                                $(".main_img").touchSlider({
+                                    flexible: true,
+                                    auto:false,
+                                    speed: 200,
+                                    btn_prev: $("#btn_prev"),
+                                    btn_next: $("#btn_next"),
+                                    paging: $(".point a"),
+                                    counter: function (e) {
+                                        $(".point a").removeClass("on").eq(e.current - 1).addClass("on");//图片顺序点切换
+                                        $(".img_font span").hide().eq(e.current - 1).show();//图片文字切换
+                                    }
+                                });
+
+                                //双击显示
+                                $(".main_img>ul>li").each(function (index) {
+                                    //console.log(111)
+                                    $(this).on("click", function () {
+                                        if (new Date().getTime() - touchtime < 500) {
+                                            //获取双击图片的路径
+                                            var imgSrc = $(".main_img>ul>li").eq(index).children("img").attr("src");
+                                            //赋值图片路径
+                                            $(".dbImg").children("img").attr("src", imgSrc)
+                                            //console.log(imgSrc);
+                                            $(".dbImg").show()
+
+                                        } else {
+                                            touchtime = new Date().getTime();
+
+                                        }
+                                    })
+                                })
+
+                        });
+                    }
+                },
+                OnProcess: function () {
+                    var currSelf = this;
+                    currSelf.CurrentProcess(currSelf.ProcessIndex - 1);
+                },
+                //下工序点击切换数据
+                UnderProcess: function () {
+                    var currSelf = this;
+                    currSelf.CurrentProcess(currSelf.ProcessIndex + 1);
+                },
+                //获取生产任务单信息
+                GetProductProcess: function () {
+                    var currSelf = this;
+                    //console.log(currSelf.ProcessId)
+                    //获取点击查看链接的下标
+                    currSelf.ProcessIndex = currSelf.ProcessId;
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByScrwId.action",
+                        data: {
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            scrwId: currSelf.TaskID,
+                            ProcessId: currSelf.ProcessId, //工序传参
+                        },
+                        datatype: "json",
+                        success: function (ret) {
+                            //console.log(ret)
+                            var data = JSON.parse(ret);
+                            var retData = ReturnData(data);
+                            if (retData.IsSuccess) {
+                                currSelf.Products.ProductCode = retData.Data.SCRW_CPBH;
+                                currSelf.Products.ProductName = retData.Data.SCRW_NAME;
+                                currSelf.Products.ProductSpe = retData.Data.SCRW_CPGG;
+                                currSelf.Products.TaskNo = retData.Data.SCRW_RWDH;
+                            }
+                            //currSelf.GetProcessList();
+                            currSelf.GetProcessSop();
+
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(status);
+                            $.alert("请求失败!");
+                        }, complete: function () {
+                            //$.hideLoading();
+                        }
+                    });
+                },
+                //根据产品编号、生产任务单号获取工序
+                GetProcessList: function () {
+                    var currSelf = this;
+                    $.ajax({
+                        type: "post",
+                        async: "ture",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesBaseAction!getGXSum.action",
+                        data: {
+                            cpbm: currSelf.Products.ProductCode,
+                            scrwNo: currSelf.Products.TaskNo,
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            //console.log(ret)
+                            if (ret.IsSuccess) {
+                                for (var i in ret.Data) {
+                                    var item = ret.Data[i];
+                                    currSelf.ProcessList.push(item);
+                                }
+
+
+                            }
+                            currSelf.OnProcess();
+                            currSelf.UnderProcess();
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            $.alert("工序请求失败!");
+                        },
+                        complete: function () {
+                            //$.hideLoading();
+                        }
+                    })
+                },
+                //根据产品获取工序列表接口
+                GetProcessSop: function () {
+                    var currSelf = this;
+                    $.ajax({
+                        type: "post",
+                        async: true,
+                        cache: true,
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getGXList.action",
+                        data: {
+                            "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                            "mac": LocalUserInfo.GetUserInfo().Mac,
+                            "cpCode": currSelf.Products.ProductCode,
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            //console.log(ret)
+                            var retData = ReturnData(ret);
+
+                            if (retData.IsSuccess && retData.Data) {
+                                currSelf.ProcessList = retData.Data;
+                                currSelf.CurrentProcess(parseInt(currSelf.ProcessId));
+                                //currSelf.UnderProcess();
+                                // for (var i in retData.Data) {
+                                //     var element = retData.Data[i];
+
+
+
+                                //     currSelf.InvProcess.push({
+                                //         Pictures: element.GYLXGX_SOP,   //sop图片
+                                //     })
+
+
+                                //     ProcessList.push(element);
+
+                                // }
+                                //currSelf.ImgSOPs = [];
+                                // if (currSelf.InvProcess ) {
+                                //     var imgSOPs = JSON.parse(currSelf.InvProcess.Pictures);
+                                //     for (var index in imgSOPs) {
+                                //         var itemPic = imgSOPs[index];
+                                //         currSelf.ImgSOPs.push({ fileName: itemPic.name.split('.')[0], src: LocalConfig.SrvPath + itemPic.path });
+                                //     }
+                                // }
+
+                                // console.log(currSelf.ImgSOPs)
+                                //console.log(currSelf.InvProcess)
+                            } else if (!retData.Data) {
+                                var showMsg = "未能找到选择产品的工序信息";
+                                currSelf.SetOperateRecord(showMsg, false);
+                                $.toptip(showMsg, "warning");
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            console.error(status);
+                            $.alert("获取产品工序信息失败！");
+                        },
+                        complete: function () {
+                            //$.hideLoading();
+                        }
+                    });
+                },
+                //点击报工跳转相应的工序报工页面
+                jumpBaog: function () {
+                    //获取参数
+                    // var id=event.target.dataset.id;
+                    //工序报工要传相关产线、产品名称、工单号、订单数量、任务数量、完成数量、工序信息
+                    //跳转工序报工
+                    window.location.href = "/JG/ProcessReport/BatchSubmittedNo.html?ProcessesWorkID=" + this.TaskID + "&scrwNo=" + this.Products.TaskNo + "&index=" + this.ProcessIndex;
+                },
+
+            }
+
+        })
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".img_gallery").hover(function () {
+                $("#btn_prev,#btn_next").fadeIn()
+            }, function () {
+                $("#btn_prev,#btn_next").fadeOut()
+            });
+
+            $dragBln = false;
+            $(".main_img").bind("mousedown", function () {
+                $dragBln = false;
+            });
+
+            $(".main_img").bind("dragstart", function () {
+                $dragBln = true;
+            });
+
+            $(".main_img a").click(function () {
+                if ($dragBln) {
+                    return false;
+                }
+            });
+
+            timer = setInterval(function () {
+                $("#btn_next").click();
+            }, 30000);
+
+            $(".img_gallery").hover(function () {
+                clearInterval(timer);
+            }, function () {
+                timer = setInterval(function () {
+                    $("#btn_next").click();
+                }, 30000);
+            });
+
+            $(".main_img").bind("touchstart", function () {
+                clearInterval(timer);
+            }).bind("touchend", function () {
+                timer = setInterval(function () {
+                    $("#btn_next").click();
+                }, 30000);
+            });
+
+        });
+
+    </script>
+    <script type="text/javascript">
+        var touchtime = new Date().getTime();
+
+
+        // $(".main_img>ul>li").on("click", function () {
+        //     //console.log(111)
+
+        // })
+        //双击隐藏
+        $("#bgImg").on("click", function () {
+            if (new Date().getTime() - touchtime < 500) {
+                $(this).parent(".dbImg").hide();
+            } else {
+                touchtime = new Date().getTime();
+            }
+
+        })
+
+        //点击关闭退出全屏
+        $(".timg").on("click", function () {
+            $(this).parent(".dbImg").hide();
+        })
+
+        //点击全屏按钮显示全屏          
+        $("#FullScreen").on("click", function () {
+            //获取a标签文本序号
+            var imgNum = $(".point").find("a[class=on]").index();
+            //获取当前轮播图图片路径
+            var imgSrc = $(".main_img>ul>li").eq(imgNum).children("img").attr("src");
+            //赋值全屏图片路径
+            $(".dbImg").children("img").attr("src", imgSrc)
+            $(".dbImg").show();
+        })                                 
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1134 @@
+body{
+    background-color:#E7F0EF;
+    min-width: 557px;
+    overflow: auto;
+}
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 90px;
+}
+.sec_content{
+    width:100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.task_tbody::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 4px;
+}
+.task_tbody::-webkit-scrollbar-thumb{/*滚动条里面的滚动滑块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.2);
+}
+.task_tbody::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 0;
+    background: rgba(0,0,0,0.1);
+}
+/*heder部分样式*/
+.header {
+    width:100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index:50;
+}
+
+.item,.header_title,.empty{
+    width:33.33%;
+    line-height: 39px;
+}
+.empty>span{
+    font-size: 1.2em;
+    color:#FFFFFF;
+    margin-left: 10px;
+}
+.header_title{
+    padding-left: 15px;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title>a{
+    font-size: 3em;
+    color:#FFFFFF;
+}
+.user_img{
+    float: right;
+    padding-right: 15px;
+}
+
+
+/*body部分样式*/
+.textbox{
+    width:100%;
+}
+.input-group-addon {
+    padding: 10px 12px;
+    font-size: 1.5em;
+    background-color: #DEEFD8;
+    color: #49874D;
+}
+.form-control {
+    width: 100%;
+    height: 50px;
+    font-size: 25px;
+    display: inline-block;
+}
+.row{
+    width:100%;
+    margin-right: 0px;
+    margin-left: 0px;
+}
+.list-group>li{
+    font-size: 1.5em;
+}
+
+.nav-tabs>li {
+    background-color: #DDEED8;
+}
+.nav>li>a {
+    font-size: 1.5em;
+    color: #4C8670;
+}
+.right_pro{
+    padding-right: 0px;
+    padding-left: 0px;
+}
+.tab_code {
+height: 360px;
+overflow: hidden;
+padding: 5px 5px;
+}
+.tabs::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 4px;
+}
+.tabs::-webkit-scrollbar-thumb{/*滚动条里面的滚动滑块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.2);
+}
+.tabs::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 0;
+    background: rgba(0,0,0,0.1);
+}
+
+.tables{
+    background-color: #FFFFFF;
+}
+.weui-cell_select-after {
+     padding-left: 0px;
+}
+
+/*input框移入显示上下箭头按钮隐藏样式*/
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+}
+input[type="number"]{
+    -moz-appearance: textfield;
+}
+
+
+.proitem{
+    /*margin-left: 15px;*/
+    margin-left: 30px;
+}
+.proitem>button{
+    display: inline-block;
+    margin-top: 12px;
+    padding: 6px 12px;
+    cursor:pointer;
+    outline-style: none;
+    border:1px solid #DDE0E5;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+}
+.clickBgColor{
+    background-color: #0bb20c !important;
+    color:#FFFFFF;
+}
+.proitem>button:hover{
+    background-color: #0bb20c;
+    color:#FFFFFF;
+}
+/*.table tbody>tr>td{*/
+    /*font-size: 1.5em;*/
+/*}*/
+.qty_input{
+    padding: 5px 5px;
+    border-radius: 5px;
+    outline-style: none;
+}
+.tabs>div:first-child {
+    padding: 5px 5px;
+    /* height: 100%; */
+    height: 95%;
+}
+.badbtn{
+    font-size: 1.5em !important;
+    background-color: #0bb20c !important;
+}
+
+
+/************数字键盘弹窗部分样式******************/
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+.mykb-box{
+    width:390px;
+    height:370px;
+    background:rgba(0,0,0,0.6);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000,endColorstr=#99000000);
+    box-shadow:0 0 10px rgb(43, 42, 42);
+    padding:20px;
+    border-radius:10px;
+    user-select: none;
+    -ms-user-select: none;
+    position:absolute;
+    display: none;
+    left: 61% !important;
+    top:620px !important;;
+}
+.mykb-box ul,.mykb-box li{
+    list-style: none;
+}
+.mykb-box li{
+    width:60px;
+    height:60px;
+    line-height:60px;
+    text-align: center;
+    background:#f5f5f5;
+    border-radius:10px;
+    font-weight:bold;
+    margin:10px;
+    float:left;
+    box-shadow: 0px 2px 1px #000;
+    color:#1b50a2;
+    font-size:24px;
+    cursor:pointer;
+}
+.mykb-box li.active{
+    box-shadow:0px -2px 1px #000;
+}
+.mykb-box .func{color:#fff;width:90px;}
+.mykb-box .exit{background:#F44336;}
+.mykb-box .del{background:#ff9800}
+.mykb-box .clearall{background:#2196F3}
+.mykb-box .sure{background: #4CAF50;width:170px;}
+
+
+
+
+
+/**********************BatchSubmittedNo.html页面的样式部分*****************************/
+.pro_line>div{
+    display: inline-block;
+}
+.pro_line>div:last-child{
+    width:82%;
+}
+.right_oper{
+    width:40%;
+}
+.pro_ul{
+    width:59%;
+}
+.pro_ul{
+    float: left;
+}
+.right_oper{
+    float: right;
+}
+.clear{
+    content: "";
+    clear: both;
+}
+
+/*合格数与不良数部分加减按钮部分*/
+.sum_item{
+    width: 90%;
+    display: inline-block;
+}
+.sum_item>button{
+    width: 5%;
+    line-height: 48px;
+    border-radius: 3px;
+    display: inline-block;
+    text-align: center;
+    border: none;
+}
+.sum_item>span{
+    width:88%;
+    display: inline-block;
+    position: relative;
+}
+
+/*不良部分加减按钮部分*/
+.bad_div{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+.bad_div>input{
+    width: 215px;
+    line-height: 35px;
+    padding-left: 5px;
+}
+.dys_btn{
+    width: 50px;
+    line-height: 50px;
+    border: none;
+    font-weight: bold;
+    font-size: 2em;
+    vertical-align: middle;
+    border-radius: 3px;
+}
+.table tbody>tr>td{
+    vertical-align: middle;
+    font-size: 1.2em;
+}
+/*.bad_row>td{*/
+    /*font-weight: bold*/
+/*}*/
+table td[class*="col-"], table th[class*="col-"] {
+    float: none;
+}
+
+.shade{
+    display: table;
+}
+.shade_show{
+    display: table !important;
+}
+.shade_box{
+    /*width:1300px;*/
+    display: table-cell;
+    vertical-align: middle;
+}
+.task_title,.task_list,.sum_title,.sum_list{
+    display: inline-block;
+}
+.task_title,.sum_title{
+    width:200px;
+}
+.weui-label {
+    width: 110px;
+}
+.task_list{
+    width:85%;
+}
+.task_list>input{
+    position: relative;
+    outline-style: none;
+    border: none;
+    cursor: pointer;
+    /* width:100%; */
+}
+.icon-img{
+    position: absolute;
+    right:27px;
+    top:22px;
+    z-index: 5;
+    background: url("../images/xiaojiantou.png") no-repeat center center;
+    background-size: cover;
+    width:6px;
+    height:10px;
+    cursor: pointer;
+}
+.sum-img{
+    position: absolute;
+    right: 6px;
+    top: 8px;
+    z-index: 5;
+    background: url("../images/shuzi.png") no-repeat center center;
+    background-size: cover;
+    width:45px;
+    height:35px;
+    cursor: pointer;
+}
+
+/*任务弹窗列表部分*/
+.content_dialog {
+    width: 100% !important;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+.modal-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 5px;
+    text-align:center;
+    text-align: -webkit-center;
+    text-align: -moz-center;
+}
+.content_header {
+    padding: 0px;
+    height:108px;
+}
+.close_div{
+    margin-top: 2px;
+}
+.content_header>.close,.close_div>.close {
+    margin-top: 0px;
+    width: 50px;
+    font-size: 2.5em;
+    border: 1px solid #837E7E;
+    margin-right: 3px;
+    outline-style: none;
+}
+.modal-body {
+    padding-top: 18px;
+}
+.content_body{
+    padding-top: 0px;
+    padding: 0;
+}
+#btable thead>tr>th {
+    font-weight: bold;
+    font-size: 1.2em;
+    white-space:nowrap;
+}
+.radio_input{
+    width:50px;
+    line-height: 33px;
+    color:#FFFFFF;
+    border: none;
+    background-color: #4BA250;
+    border-radius: 5px;
+}
+.forcon{
+    margin: 0 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+
+
+
+/*搜索框部分*/
+.task_table{
+    background-color: #FFFFFF !important;
+}
+.task_table>tbody>tr>td{
+    font-size: 1.3em;
+    vertical-align: middle;
+}
+.task_table>tbody>tr>td:nth-child(5){
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+}
+.task_table>thead>tr>th {
+    font-size: 1.4em;
+}
+.task_table>tbody>tr{
+    cursor: pointer !important;
+}
+.table {
+     margin-bottom: 0px;
+}
+.spanBgColor{
+    background-color: #0bb20c !important;
+}
+.task_btn{
+    /*text-align: right;*/
+    /*text-align: -webkit-right;*/
+    /*text-align: -moz-right;*/
+    /*margin-bottom: 20px;*/
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #DEEFD8;
+}
+.search_item,.shut_btn{
+    display: inline-block;
+}
+.search_item>span{
+    /*color:#FFFFFF;*/
+    font-size: 1.2em;
+    /*font-weight: bold;*/
+}
+.search_item>input{
+    font-size: 1.2em;
+    list-style: none;
+    border: 1px solid #CFCFCF;
+    width:280px;
+    line-height: 40px;
+    border-radius: 3px;
+    padding-left: 5px;
+}
+.btn {
+    padding: 0px 30px;
+    font-size: 1.2em;
+    line-height: 2;
+}
+.badname{
+    font-size: 1.5em !important;
+}
+
+/*报工记录部分*/
+.record>table>thead>tr>th{
+    font-size:1.3em;
+}
+.record>table>tbody>tr>td{
+    font-size:1.3em;
+}
+.record{
+    margin-top: 20px;
+    padding-right: 0;
+    padding-left: 0;
+}
+.table_scroll>table>tbody>tr>td,.table_scroll>table>thead>tr>th{
+    white-space: nowrap;
+}
+.table_scroll>table>thead>tr>th {
+    font-size: 1.3em;
+}
+.table_scroll>table>tbody>tr>td {
+    font-size: 1.3em;
+}
+
+/**********操作指导部分图片布局样式************/
+.tabs {
+    overflow: hidden;
+    height: 490px;
+}
+#myCarousel {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+.carousel-inner {
+    height: 100%;
+}
+.left,.right{
+    position: absolute;
+    top: 50%;
+    z-index: 50;
+    color: #ffff;
+}
+.right{
+    right:0;
+}
+/************图片弹窗部分样式*************/
+.dialog{
+    position: fixed;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    background-color: #f6f6f6;
+    z-index: 9999;
+    display: none;
+}
+.dialog_show{
+    display: block;
+}
+
+.dialog>span{
+    position: absolute;
+    right: .3em;
+
+}
+.dialog>span>img{
+    float: right;
+    width: 15%;
+    margin: 10px;
+    border-radius: 50%;
+}
+.dialog_img>img{
+    display: block;
+    margin:auto;
+}
+.back{
+    width:85px;
+    height:30px;
+    display: inline-block;
+}
+.back>img{
+    width:60%;
+}
+
+.andon_icon{
+    width:80px;
+    height:80px;
+    margin: 0 auto;
+    background: url("../images/andon.png") no-repeat;
+}
+.andon1{
+    background-position: -80px -5px;
+}
+.andon2{
+    background-position: -240px -5px;
+}
+.andon3{
+    background-position: -160px -5px;
+}
+.andon4{
+    background-position: 0px 0px;
+}
+
+
+/***********不良项目弹窗部分*************/
+.badmodal-header {
+    padding: 0px;
+    height: 108px;
+}
+.badmodal-footer{
+    height: 80px;
+    padding: 19px 20px 20px;
+    margin-top: 0px;
+    text-align: right;
+    border-top: 1px solid #e5e5e5;
+}
+.badmodal-body{
+    padding-top: 0px;
+}
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+}
+
+.add_baditem{
+    display:none;
+}
+.show_baditem{
+    display:block;
+}
+.delete{
+    width: 60px;
+    line-height: 50px;
+    background-color: #0bb20c;
+    border: none;
+    color: #ffff;
+    border-radius: 3px;
+}
+
+
+
+/***********页码部分************/
+.page_footer{
+    height:60px;
+    width:100%;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+    margin-top: 0px;
+}
+.page_num{
+    width:100%;
+    text-align: center;
+    display: none;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+    font-size: 1.2em;
+}
+.show_page_footer{
+    display: block;
+}
+.page_num>.prev,.page_num>.next,.page_bad>.prev_bad,.page_bad>.next_bad{
+    display: inline-block;
+    /*width: 70px;*/
+    line-height: 30px;
+    font-size: 16px;
+    /*border-radius: 2px;*/
+    /*background-color: #8ABE33;*/
+    /*color: #FFFFFF;*/
+    /*border: none;*/
+}
+.prev_bad{
+    display: none;
+}
+/*.prev_bad_show{*/
+    /*display: inline-block;*/
+/*}*/
+
+.rwword{
+    border: 1px solid #ddd !important;
+    height: 51px;
+    vertical-align: middle;
+    border-radius: 4px;
+}
+
+
+
+
+
+
+
+
+
+/**********************平板端的媒体查询*********************************/
+@media screen and (max-width:1920px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.8em;
+    }
+    .task_list, .sum_list {
+        width: 80%;
+    }
+    .task_title, .sum_title {
+        /*width: 105px;*/
+        width: 160px;
+    }
+    .tabs {
+        height: 474px;
+    }
+    .task_table>thead>tr>th {
+        font-size: 1.2em;
+    }
+    .task_table>tbody>tr>td {
+        font-size: 1.2em;
+    }
+
+    /*合格数与不良数部分*/
+    .sum_item {
+        width: 80%;
+    }
+    .sum_item>span {
+        width: 69%;
+    }
+    .sum_item>button {
+        width: 14%;
+        line-height: 70px;
+        font-weight: bold;
+        font-size: 2em;
+        vertical-align: middle;
+    }
+    .form-control{
+        height: 70px;
+    }
+    .sum-img {
+        top: 20px;
+    }  
+    .rwword{
+       
+        height: 59px;
+      
+    }
+    
+.weui-toptips{
+    z-index: 1051;
+    font-size: 2.8em !important;
+    height: 70px !important;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 50px;
+    border-radius: 0.1em;
+    width: 75%;
+    margin: auto 12.5%;
+}
+    
+}
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (max-width:1280px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 11px;
+        padding-top: 12px;
+    }
+    .header_title>a {
+        font-size: 2.5em;
+    }
+    .back>img{
+        width: 45px;
+    }
+    .list-group>li {
+        font-size: 1.3em;
+    }
+    .task_title, .sum_title {
+        width: 105px;
+    }
+    .task_list, .sum_list {
+        width: 75%;
+    }
+    .form-control {
+        font-size: 21px;
+    }
+    .right_oper {
+        height: 505px;
+    }
+    .record>table>thead>tr>th {
+        font-size: 1.2em;
+    }
+    .task_table>thead>tr>th {
+        font-size: 1.2em;
+    }
+    .task_table>tbody>tr>td {
+        font-size: 1.2em;
+    }
+    .radio_input{
+        width: 55px;
+        line-height: 30px;
+    }
+    .tabs {
+        height: 455px;
+    }
+
+    /*搜索框部分*/
+    .btn {
+        padding: 0px 12px;
+    }
+    .search_list{
+        text-align: left !important;
+    }
+    .search_item>input {
+        width: 215px;
+    }
+
+    /*合格数与不良数部分*/
+    .sum-img {
+        top: 23px;
+        width: 30px;
+        height: 26px;
+    }
+    .sum_item {
+        width: 75%;
+        white-space: nowrap;
+    }
+    .sum_item>span {
+        width: 70%;
+    }
+    .sum_item>button {
+        width: 15%;
+    }
+
+    /*报工记录部分*/
+    table td[class*="col-"], table th[class*="col-"] {
+        float: none;
+    }
+    .badbtn{
+        font-size: 1.3em !important;
+    }
+    .rwword{
+       
+        height: 51px;
+      
+    }
+    .weui-toptips{
+        z-index: 1051;
+        font-size: 2em !important;
+        height: 70px !important;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        line-height: 50px;
+        border-radius: 0.1em;
+        width: 75%;
+        margin: auto 12.5%;
+    }
+    
+
+}
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (max-width:1024px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 12px;
+        padding-top: 12px;
+    }
+    .header_title>a {
+        font-size: 2.5em;
+    }
+    .back>img{
+        width:45px;
+    }
+    .list-group {
+        padding-left: 0;
+        margin-bottom: 20px;
+        padding-right: 0px;
+    }
+    .task_table>thead>tr>th {
+        font-size: 1.2em;
+    }
+    .task_table>tbody>tr>td {
+        font-size: 1.2em;
+    }
+    input[type="radio"] {
+        width: 30px;
+        height: 22px;
+    }
+    .pro_ul, .right_oper {
+        width: 100%;
+    }
+    .right_oper {
+        float: none;
+    }
+    .pro_ul, .right_oper {
+        float: none;
+    }
+    .task_list, .sum_list {
+        width: 84%;
+    }
+    .record>table>thead>tr>th {
+        font-size: 1em;
+    }
+    .mykb-box {
+        left: 25% !important;
+        top: 8px !important;
+    }
+    .tabs {
+        height: 474px;
+    }
+    .radio_input {
+        width: 45px;
+        line-height: 30px;
+    }
+    .table_scroll>table>tbody>tr>td {
+        font-size: 1.1em;
+    }
+
+    /*搜索框部分*/
+    .content_header {
+        height: 134px;
+    }
+    .badmodal-header {
+        height: 108px;
+    }
+    .search_item {
+         width: 30%;
+    }
+    .search_item2{
+        width: 43%;
+    }
+    .search_item>input {
+        width: 100%;
+    }
+    .search_item2>input {
+        width: 68%;
+    }
+    .btn {
+        padding: 0px 8px;
+    }
+    .btnn{
+        padding: 0px 20px;
+    }
+    .search_list {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+
+    /*合格数与不良数部分*/
+    .task_title, .sum_title {
+        width: 105px;
+    }
+    .sum_item {
+        width: 84%;
+    }
+    .sum_item>span {
+        width: 81%;
+    }
+    .sum_item>button {
+        width: 8%;
+    }
+
+    /*报工记录部分*/
+    table td[class*="col-"], table th[class*="col-"] {
+        float: none;
+    }
+    .weui-toptips{
+        
+        font-size: 1.5em !important;
+       
+    }
+}
+@media screen and (max-width:768px){
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 9px;
+        padding-top: 9px;
+    }
+    .header_title>a {
+        font-size: 1.5em;
+    }
+    .back>img{
+        width: 35px;
+    }
+    .list-group {
+        padding-left: 0;
+        margin-bottom: 20px;
+        padding-right: 0px;
+    }
+    .task_table>thead>tr>th {
+        font-size: 1.2em;
+    }
+    .task_table>tbody>tr>td {
+        font-size: 1.2em;
+        vertical-align: middle;
+        padding: 7px;
+    }
+    .task_btn>button {
+        width: 150px;
+    }
+    input[type="radio"] {
+        width: 25px;
+        height: 20px;
+    }
+    .pro_ul, .right_oper {
+        width: 100%;
+    }
+    .right_oper {
+        float: none;
+    }
+    .pro_ul, .right_oper {
+        float: none;
+    }
+    .list-group>li {
+        font-size: 1em;
+    }
+    .icon-img {
+        top: 12px;
+        width: 18px;
+        height: 18px;
+    }
+    .form-control {
+        height: 44px;
+        font-size: 16px;
+    }
+    .task_list, .sum_list {
+        width: 78%;
+    }
+    .sum-img {
+        top: 8px;
+        width: 35px;
+        height: 30px;
+    }
+    .nav>li>a {
+        font-size: 1.2em;
+    }
+    .right_oper {
+        height: 480px;
+    }
+    .table_scroll>table>thead>tr>th {
+        font-size: 1.1em;
+    }
+    .table_scroll>table>tbody>tr>td {
+        font-size: 1em;
+    }
+    .mykb-box {
+        width: 300px;
+        height: 260px;
+        left: 15% !important;
+        top:40px !important;
+    }
+    .mykb-box li {
+        width: 35px;
+        height: 35px;
+        line-height: 35px;
+        font-size: 19px;
+    }
+    .mykb-box .sure {
+        width: 130px;
+    }
+    .mykb-box .func {
+        color: #fff;
+        width: 73px;
+    }
+    .tabs {
+        height: 437px;
+    }
+    .icon-img {
+        width: 6px;
+        height: 11px;
+    }
+    .task_table>tbody>tr>td:nth-child(4){
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100px;
+    }
+    .radio_input {
+        width: 55px;
+        line-height: 30px;
+        font-size: 1em;
+    }
+
+    /*搜索框部分*/
+    .content_header {
+        height: 195px;
+    }
+    .badmodal-header {
+        height: 108px;
+    }
+    .search_item>span {
+        font-size: 1em;
+    }
+    .search_item {
+        width: 49%;
+    }
+    .state_div{
+        width: 100%;
+    }
+    .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+        width: 100% !important;
+    }
+    .btn {
+        padding: 0px 18px;
+    }
+    .search_item2{
+        width: 60%;
+    }
+    .search_item2>input {
+        width: 73%;
+    }
+    .btnn {
+        padding: 0px 20px;
+    }
+
+    /*合格数与不良数部分*/
+    .task_title, .sum_title {
+        width: 105px;
+    }
+    .task_list{
+        width: 78%;
+    }
+    .sum_item {
+        width: 78%;
+        display: inline-block;
+    }
+    .sum_item>span {
+        width: 77%;
+    }
+    .sum_item>button {
+        width: 10%;
+        line-height: 42px;
+    }
+
+    /*报工记录部分*/
+    table td[class*="col-"], table th[class*="col-"] {
+        float: none;
+    }
+    .weui-toptips{
+        
+        font-size: 1.5em !important;
+       
+    }
+}

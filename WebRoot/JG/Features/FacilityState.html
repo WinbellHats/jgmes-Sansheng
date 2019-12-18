@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>设备状态-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/FacilityState.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+<body>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="header_title">
+            <a href="javascript:;">设备状态</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+    <div id="MainPage">
+        <div class="facility_modal">
+            <table class="table">
+                <thead>
+                    <tr class="row">
+                        <th class="col-xs-3">设备编号</th>
+                        <th class="col-xs-4">设备名称</th>
+                        <th class="col-xs-3">设备状态</th>
+                        <th class="col-xs-2">详情</th>
+                    </tr>
+                </thead>
+                <tbody v-for="(item,index) in FacilityData">
+                    <tr class="row">
+                        <td class="col-xs-3">{{item.Serial}}</td>
+                        <td class="col-xs-4">{{item.FacName}}</td>
+                        <td class="col-xs-3">
+                            <span><img src="/JG/Content/images/bad_img.png" alt=""></span>
+                            <span>{{item.FacState}}</span>
+                        </td>
+                        <td class="col-xs-2">
+                            <span onclick="javascript:location.href='/JG/Features/FacilityStateDetails.html'">
+                                <img src="/JG/Content/images/1545908368(1).png" alt="">
+                            </span>
+                        </td>
+                    </tr>
+                    <!--<tr class="row">-->
+                        <!--<td class="col-xs-3">SB123456</td>-->
+                        <!--<td class="col-xs-4">测试设备名称测试设备名称</td>-->
+                        <!--<td class="col-xs-3">-->
+                            <!--<span><img src="/JG/Content/images/bad_img.png" alt=""></span>-->
+                            <!--<span>待机</span>-->
+                        <!--</td>-->
+                        <!--<td class="col-xs-2">-->
+                            <!--<span><img src="/JG/Content/images/1545908368(1).png" alt=""></span>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                    <!--<tr class="row">-->
+                        <!--<td class="col-xs-3">SB123456</td>-->
+                        <!--<td class="col-xs-4">测试设备名称测试设备名称</td>-->
+                        <!--<td class="col-xs-3">-->
+                            <!--<span><img src="/JG/Content/images/bad_img.png" alt=""></span>-->
+                            <!--<span>待机</span>-->
+                        <!--</td>-->
+                        <!--<td class="col-xs-2">-->
+                            <!--<span><img src="/JG/Content/images/1545908368(1).png" alt=""></span>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                </tbody>
+            </table>
+
+            <!--翻页部分-->
+            <div class="page">
+                <span>上一页</span>
+                <div class="page_list">
+                    <span>1</span>
+                    <span>2</span>
+                    <span>3</span>
+                </div>
+                <span>下一页</span>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/Utils.js?v=1"></script>
+
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el:"#MainPage",
+        data:{
+            FacilityData:[
+                {
+                    Serial:"SB123456",
+                    FacName:"测试设备名称",
+                    FacState:"运行中",
+                },
+                {
+                    Serial:"SB789456",
+                    FacName:"测试设备名称22",
+                    FacState:"运行中",
+                },
+                {
+                    Serial:"SB123456",
+                    FacName:"测试设备名称",
+                    FacState:"运行中",
+                },
+                {
+                    Serial:"SB159753",
+                    FacName:"测试设备名称333",
+                    FacState:"运行中",
+                },
+            ],
+        },
+        methods:{
+
+        },
+    });
+</script>
+</html>

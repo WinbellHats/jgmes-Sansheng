@@ -1,0 +1,257 @@
+body{
+    background-color:#E7F0EF;
+    min-width: 557px;
+}
+#MainPage{
+    /*margin-left: 10px;*/
+    /*margin-right: 10px;*/
+    margin-top: 80px;
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index: 50;
+}
+
+.item, .header_title,.empty {
+    width:33.33%;
+    line-height: 50px;
+}
+.header_title {
+    padding-left: 15px;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title>a {
+    font-size: 3em;
+    color: #FFFFFF;
+}
+.user_img{
+    float: right;
+    padding-right: 15px;
+}
+.weui-grid__icon {
+    width: 48px;
+    height: 60px;
+}
+.weui-grid__label {
+    font-size: 2.8em;
+    color:white;
+}
+
+.weui-grid {
+    width: 20%;
+    box-shadow: grey 2px 2px 14px -4px;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    margin-top: 60px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    /*background-color: #ffffff;*/
+}
+.weui-grids:after {
+    border-left:none;
+}
+.weui-grids>a:nth-child(1),.weui-grids>a:nth-child(10){
+    background-color: #F2B922;
+}
+.weui-grids>a:nth-child(2),.weui-grids>a:nth-child(11){
+    background-color: #18A14F;
+}
+.weui-grids>a:nth-child(3){
+    background-color: #BD1515;
+}
+.weui-grids>a:nth-child(4){
+    background-color: #02A4EF;
+}
+.weui-grids>a:nth-child(5){
+    background-color: #056E9E;
+}
+.weui-grids>a:nth-child(6){
+    background-color: #F44E24;
+}
+.weui-grids>a:nth-child(7){
+    background-color: #8A0988;
+}
+.weui-grids>a:nth-child(8){
+    background-color: #F2B922;
+}
+.weui-grids>a:nth-child(9){
+    background-color: #18A14F;
+}
+.weui-grids>a:nth-child(12){
+    background-color: rgb(103, 78, 167)
+}
+
+.station_icon{
+    width:45px;
+    height:45px;
+    display: inline-block;
+    background: url("../images/function.png") no-repeat;
+}
+.station1{
+    background-position: -386px -111px;
+}
+.station2{
+    background-position: -330px -110px;
+}
+.station3{
+    background-position: -220px -112px;
+}
+.station4{
+    background-position: -110px -111px;
+}
+.station5{
+    background-position: 0px -163px;
+}
+.station6{
+    background-position: -54px -163px;
+}
+.station7{
+    background-position: -330px -57px;
+}
+.station8{
+    background-position: -110px -170px;
+}
+.station9{
+    background-position: -55px -110px;
+}
+.station10{
+    background-position: -110px -111px;
+}
+
+
+.back{
+    width:85px;
+    height:50px;
+    display: inline-block;
+}
+.back>img{
+    width:60%;
+}
+
+.weui-toptips{
+    z-index: 1051;
+    width: 75%;
+    height: 70px !important;
+    font-size: 2.8em !important;
+    margin: auto 12.5%;
+    border-radius: 5px;
+}
+
+
+
+
+/**********************平板端的媒体查询*********************************/
+@media screen and (min-width:1280px) and (max-width:1920px){
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.8em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+    .weui-grid__label {
+        font-size: 2.5em;
+    }
+    
+}
+
+
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (min-width:1024px) and (max-width:1280px){
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.2em;
+    }
+    .back {
+        width: 70px;
+        height:50px;
+    }
+    .weui-grid__label {
+        font-size: 2em;
+    }
+    .weui-grid {
+        margin-top: 45px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+}
+
+
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (min-width:768px) and (max-width:1024px){
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2em;
+    }
+    .back {
+        width: 75px;
+        height: 50px;
+    }
+    .weui-grid {
+        margin-top: 40px;
+        padding-top: 15px;
+        padding-bottom: 0px;
+    }
+    .weui-grid__label {
+        font-size: 1.5em;
+    }
+}
+@media screen and (min-width:557px) and (max-width:768px){
+    #MainPage {
+        margin-top: 60px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 1.5em;
+    }
+    .back {
+        width: 60px;
+        height: 30px;
+    }
+    .item, .header_title {
+        line-height: 40px;
+    }
+    .weui-grid__label {
+        font-size: 1em;
+    }
+    .weui-grid {
+        margin-top: 30px;
+        padding-top: 15px;
+        padding-bottom: 0px;
+    }
+}

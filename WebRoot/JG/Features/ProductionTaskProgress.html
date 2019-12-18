@@ -1,0 +1,386 @@
+﻿<html>
+
+<head>
+    <title>生产任务进度-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/ProductionTaskProgress.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body ontouchstart>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="item header_title">
+            <a href="javascript:;">生产任务进度</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Features/SSProductionTask.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+    <div id="MainPage" class="MainPage" v-cloak>
+        <div class="weui-form-preview">
+            <div class="weui-form-preview__hd">
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label" style="color:black">计划日期</label>
+                    <em class="weui-form-preview__value" style="font-size:1.5em">
+                        {{FormData.ProductionDate}}
+                    </em>
+                </div>
+                <div class="weui-form-preview__item">
+                        <label class="weui-form-preview__label" style="color:black">任务单号</label>
+                        <em class="weui-form-preview__value" style="font-size:1.5em">
+                            {{FormData.TaskCode}}
+                        </em>
+                    </div>
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label" style="color:black">订单号</label>
+                    <em class="weui-form-preview__value" style="font-size:1.5em">
+                        {{FormData.OrderCode}}
+                    </em>
+                </div>
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label" style="color:black">产品编码/名称/型号</label>
+                    <em class="weui-form-preview__value" style="font-size:1.5em">
+                        {{FormData.ProductCode}} {{FormData.ProductName}} {{FormData.ProductStd}}
+                    </em>
+                </div>
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label" style="color:black">任务状态</label>
+                    <em class="weui-form-preview__value" style="font-size:1.5em">
+                        {{FormData.StatusName}}
+                    </em>
+                </div>
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label" style="color:black">生产进度</label>
+                    <em class="weui-form-preview__value" style="font-size:1.5em">
+                        {{FormData.FinishNum}} / {{FormData.PlanNum}}
+                    </em>
+                </div>
+            </div>
+            <div class="weui-form-preview__ft weui-flex" style="font-size:1em">
+                <div class="weui-form-preview__item weui-flex__item">
+                    <label class="weui-form-preview__label" style="color:black">订单数量</label>
+                    <span class="weui-form-preview__value">{{FormData.OrderNum}}</span>
+                </div>
+                <div class="weui-form-preview__item weui-flex__item">
+                    <label class="weui-form-preview__label" style="color:black">计划数量</label>
+                    <span class="weui-form-preview__value">{{FormData.PlanNum}}</span>
+                </div>
+                <div class="weui-form-preview__item weui-flex__item">
+                    <label class="weui-form-preview__label" style="color:black">已经完成</label>
+                    <span class="weui-form-preview__value">{{FormData.FinishNum}}</span>
+                </div>
+            </div>
+            <!-- <div class="weui-form-preview__ft">
+                <a class="weui-btn weui-btn_primary" id="Start" style="width:20%;height:46px;display:none"
+                    href="javascript:" v-on:click="StartProduction()">开工生产</a>
+                <a class="weui-btn weui-btn_primary open-popup" data-target="#half" id="Stop"
+                    style="width:20%;height:46px ;display:none" href="javascript:" v-on:click="StopProduction()">暂停</a>
+                <a class="weui-btn weui-btn_primary" id="Proceed" style="width:20%;height:46px;display:none"
+                    href="javascript:" v-on:click="ProceedProduction()">继续生产</a>
+                <a class="weui-btn weui-btn_primary" id="Finish" style="width:20%;height:46px;display:none"
+                    href="javascript:" v-on:click="FinishProduction()">生产完成</a>
+            </div> -->
+        </div>
+        <div class="product_task">
+            <div class="task_title">产品工序生产进度</div>
+            <div class="task_content">
+                <table class="table">
+                    <!-- <caption></caption> -->
+                    <thead>
+                        <tr>
+                            <th>工序顺序</th>
+                            <th>工序编号</th>
+                            <th>工序名称</th>
+                            <!-- <th>质检模式</th> -->
+                            <th>已派工数量</th>
+                            <th>已报工数量</th>
+                            <th>进返修站数量</th>
+<!--                            <th>作业说明</th>-->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item,index) in ProcessList" :key="index">
+                            <td>{{item.SY_ORDERINDEX}}</td>
+                            <td>{{item.GYLXGX_GXNUM}}</td>
+                            <td style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 200px;">{{item.GYLXGX_GXNAME}}</td>
+                            <!-- <td></td> -->
+                            <td>{{item.SCRW_PGSL}}</td>
+<!--                            <td>{{item.Already_Number}}</td>-->
+                            <td>{{item.Already_Number_LCX}}</td>
+                            <td>{{item.Fx_Number}}</td>
+<!--                            <td><button class="btn btn-default look" @click="jumpSop(item,index)">查看</button></td>-->
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script type="text/javascript">
+        $(document).on("open", ".weui-popup__modal", function () {
+            //console.log("open popup");
+        });
+        var vuePage = new Vue({
+            el: "#MainPage",
+            data: {
+                FormData: {
+                    VouchCode: "",
+                    ProductionDate: "",
+                    ProductName: "",
+                    LineCode: "",
+                    LineName: "",
+                    ProductionProcess: "",
+                    Remark: "",
+                    PlanNum: "",
+                    FinishNum: "",
+                    OrderNum: "",
+                    PlanNum: "",
+                    StatusName: "",
+                    ProductCode: "",//产品编号
+                    TaskNo: "",     //任务单号
+                },
+
+                ProcessList: [],//工序集合
+                AbnormalList: [], //暂停异常原因
+                TaskID: $.getUrlParam("taskID"),
+            },
+            mounted: function () {
+                var currSelf = this;
+
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByScrwId.action",
+                    data: { mac: LocalUserInfo.GetUserInfo().Mac, userCode: LocalUserInfo.GetUserInfo().UserCode, scrwId: currSelf.TaskID },
+                    datatype: "json",
+                    success: function (ret) {
+                        var data = JSON.parse(ret);
+                        var retData = ReturnData(data);
+                        if (retData.IsSuccess) {
+                            currSelf.FormData.VouchCode = retData.Data.SCRW_GDHM;
+                            currSelf.FormData.TaskCode = retData.Data.SCRW_RWDH;
+                            currSelf.FormData.ProductCode = retData.Data.SCRW_CPBH;
+                            currSelf.FormData.ProductStd = retData.Data.SCRW_CPGG;
+                            currSelf.FormData.ProductName = retData.Data.SCRW_NAME;
+                            currSelf.FormData.ProductionDate = retData.Data.SCRW_PCRQ;
+                            currSelf.FormData.TaskID = retData.Data.JGMES_PLAN_SCRW_ID;
+                            currSelf.FormData.OrderNum = retData.Data.SCRW_DDSL;
+                            currSelf.FormData.FinishNum = retData.Data.SCRW_WCSL;
+                            currSelf.FormData.LineCode = retData.Data.SCRW_CXBM;
+                            currSelf.FormData.LineName = retData.Data.SCRW_CXMC;
+                            currSelf.FormData.OrderCode = retData.Data.SCRW_DDHM;
+                            currSelf.FormData.PlanNum = retData.Data.SCRW_PCSL;
+                            currSelf.FormData.StatusName = retData.Data.SCRW_RWZT_NAME;
+                        }
+                        currSelf.GetProcessList();
+                    }
+                });
+                // var data = GetDictionary("JGMES_DIC_PCZTYY");
+                // if (data && data.IsSuccess) {
+                //     for (var i in data.Data) {
+                //         var item = data.Data[i];
+                //         currSelf.AbnormalList.push({ Code: item.DICTIONARYITEM_ITEMCODE, Name: item.DICTIONARYITEM_ITEMNAME });
+                //     }
+                // }
+            },
+            methods: {
+                StartProduction: function () {
+                    var currSelf = this;
+                    $.confirm("确定要开始生产任务么?", "操作提示", function () {
+                        $.showLoading();
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/commonAction!doSaveCurrentCxScrw.action",
+                            data: { mac: LocalUserInfo.GetUserInfo().Mac, userCode: LocalUserInfo.GetUserInfo().UserCode, cxCode: currSelf.FormData.LineCode, scrwId: currSelf.TaskID },
+                            datatype: "json",
+                            success: function (ret) {
+                                var data = JSON.parse(ret);
+                                var retData = ReturnData(data);
+                                if (retData.IsSuccess) {
+                                    window.location.href = window.location.href;
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error(status);
+                                $.alert("请求失败!");
+                            }, complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+                    });
+                },
+                StopProduction: function (item) {
+                    //console.log(item);
+                    var currSelf = this;
+                    if (item) {
+                        $.confirm("确定要暂停生产任务么？", "操作提示", function () {
+                            $.showLoading();
+                            $.ajax({
+                                type: "post",
+                                url: LocalConfig.SrvPath + "/jgmes/commonAction!doSaveScrwZt.action",
+                                data: { userCode: LocalUserInfo.GetUserInfo().UserCode, mac: LocalUserInfo.GetUserInfo().Mac, scrwId: currSelf.TaskID, scrwZt: "RWZT04", ztyyZ: item.Name },
+                                datatype: "json",
+                                success: function (ret) {
+                                    var data = JSON.parse(ret);
+                                    var retData = ReturnData(data);
+
+                                    if (retData.IsSuccess) {
+                                        currSelf.ShowDischargeStatus("RWZT04");
+                                        $("#half").hide();
+                                        $("#half").removeClass("weui-popup__container--visible");
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error(status);
+                                    $.alert("请求失败!");
+                                }, complete: function () {
+                                    $.hideLoading();
+                                }
+                            });
+
+                        }, function () {
+                            //$("#half").hide();
+                            //$("#half").removeClass("weui-popup__container--visible");
+                        });
+                    }
+                },
+                ProceedProduction: function () {
+                    var currSelf = this;
+                    $.confirm("确定要继续生产么?", "操作提示", function () {
+                        $.showLoading();
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/commonAction!doSaveCurrentCxScrw.action",
+                            data: { mac: LocalUserInfo.GetUserInfo().Mac, userCode: LocalUserInfo.GetUserInfo().UserCode, cxCode: currSelf.FormData.LineCode, scrwId: currSelf.TaskID },
+                            datatype: "json",
+                            success: function (ret) {
+                                var data = JSON.parse(ret);
+                                var retData = ReturnData(data);
+                                if (retData.IsSuccess) {
+                                    window.location.href = window.location.href;
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error(status);
+                                $.alert("请求失败!");
+                            }, complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+                    });
+                },
+                FinishProduction: function () {
+                    var currSelf = this;
+                    var msg = "确定完成生产任务么?";
+                    if (currSelf.FormData.FinishNum < currSelf.FormData.PlanNum)
+                        msg += "<br/><span style='color:red'>注意:当前完成数量未达到计划数量</span>";
+                    $.confirm(msg, "操作提示", function () {
+                        $.showLoading();
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/commonAction!doSaveScrwZt.action",
+                            data: { userCode: LocalUserInfo.GetUserInfo().UserCode, mac: LocalUserInfo.GetUserInfo().Mac, scrwId: currSelf.TaskID, scrwZt: "RWZT03" },
+                            datatype: "json",
+                            success: function (ret) {
+                                var data = JSON.parse(ret);
+                                var retData = ReturnData(data);
+                                if (retData.IsSuccess) {
+                                    currSelf.ShowDischargeStatus("RWZT03");
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error(status);
+                                $.alert("请求失败!");
+                            }, complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+                    });
+                },
+                ShowDischargeStatus: function (StatusCode) {
+                    switch (StatusCode) {
+                        case "RWZT02": //生产中
+                            $("#Start").hide();
+                            $("#Stop").show();
+                            $("#Proceed").hide();
+                            $("#Finish").show();
+                            break;
+                        case "RWZT04": //暂停生产
+                            $("#Start").hide();
+                            $("#Stop").hide();
+                            $("#Proceed").show();
+                            $("#Finish").show();
+                            break;
+                        case "RWZT03"://完成生产
+                            $("#Start").hide();
+                            $("#Stop").hide();
+                            $("#Proceed").hide();
+                            $("#Finish").hide();
+                            break;
+                        default:
+                            $("#Start").show();
+                            $("#Stop").hide();
+                            $("#Proceed").hide();
+                            $("#Finish").hide();
+                            break;
+                    }
+                },
+
+                //根据产品编号、生产任务单号获取工序
+                GetProcessList: function () {
+                    var currSelf = this;
+                    $.ajax({
+                        type: "post",
+                        async: "ture",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesBaseAction!getGXSum.action",
+                        data: {
+                            cpbm: currSelf.FormData.ProductCode,
+                            scrwNo: currSelf.FormData.TaskCode,
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            if (ret.IsSuccess) {
+                                for (var i in ret.Data) {
+                                    var item = ret.Data[i];
+                                    currSelf.ProcessList.push(item);
+                                }
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            $.alert("工序请求失败!");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    })
+                },
+                //点击查看跳转作业SOP页面
+                jumpSop: function (item, index) {
+                    //跳转sop,传两个参数：生产任务单、工序id
+                    window.location.href = "/JG/Features/Operation.html?TaskID=" + this.FormData.TaskID + "&ProcessId=" + index;
+                },
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>移动巡检-精工云MES系统移动端</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="yes">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <link href="/JG/Content/jquery/jquery-weui/css/icon.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/MobileMovePollingDetails.css?v=1">
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+</head>
+<body>
+    <div id="ContentContainer" class="content_container">
+        <!--header部分-->
+        <header class="header">
+            <div class="empty">
+                <span id="stations"></span>
+            </div>
+            <div class="weui-flex">
+                <div class="weui-flex__item" style="position:absolute;">
+                    <span style="font-size:16px;padding-left: 10px;" class="icon icon-109 f-white" onclick="javascript:location.href='/JG/Quality/MobileMovePolling.html'">
+                        返回
+                    </span>
+                </div>
+                <div class="weui-flex__item" style="text-align: center;">巡检登录详情</div>
+                <div class="weui-flex__item" style="position:absolute;right:10px;">
+                    <span id="Rewrite"><img src="/JG/Content/images/pen.png" alt="" style="width:36px;height: 36px" v-on:click="Rewrite()"></span><span style="display: none" id="RewriteSave"><img src="/JG/Content/images/save.png" alt="" style="width:30px;height: 30px" v-on:click="RewriteSave()"></span>
+                </div>
+            </div>
+        </header>
+
+        <!--解决浮动空内容div-->
+        <div class="empty_div"></div>
+
+
+        <!--主体部分-->
+        <div id="MainPage" v-cloak>
+            <div class="task_code">
+                <div class="task_title" style="margin-top: 10px;border-bottom: 1px solid #F3F3F3;">
+<!--                    <div style="display: inline-block;padding-left: 10px;padding-right: 10px;width:10%;">-->
+<!--                        <img style="margin-top: -80px;" src="/JG/Content/images/1557739033(1).png" alt="">-->
+<!--                    </div>-->
+                    <div class="polling_list" style="display: inline-block;width:88%;">
+                        <div class="weui-media-box__bd">
+                            <h4 class="weui-media-box__title">巡检时间：</h4>
+                            <p class="weui-media-box__desc">{{PollingData.PollingTime}}</p>
+                        </div>
+                        <div class="weui-media-box__bd">
+                            <h4 class="weui-media-box__title">任务单号：</h4>
+                            <p class="weui-media-box__desc" style="display: inline-block; word-break: break-all;">{{PollingData.TaskCode}}</p>
+                        </div>
+                        <div class="weui-media-box__bd">
+                            <h4 class="weui-media-box__title">客户名称：</h4>
+                            <p class="weui-media-box__desc" style="display: inline-block; word-break: break-all;">{{PollingData.ClientName}}</p>
+                        </div>
+                        <div class="weui-media-box__bd">
+                            <h4 class="weui-media-box__title">巡检方案：</h4>
+                            <p class="weui-media-box__desc" style="display: inline-block; word-break: break-all;">{{PollingData.PollingScheme}}</p>
+                        </div>
+                        <div class="weui-media-box__bd">
+                            <h4 class="weui-media-box__title">产品编码：</h4>
+                            <p class="weui-media-box__desc" style="display: inline-block; word-break: break-all;">{{PollingData.MaterialCode}}</p>
+                        </div>
+                        <div class="weui-media-box__bd">
+                            <h4 class="weui-media-box__title">产品名称：</h4>
+                            <p class="weui-media-box__desc" style="display: inline-block; word-break: break-all;">{{PollingData.MaterialName}}</p>
+                        </div>
+                        <div class="weui-media-box__bd">
+                            <h4 class="weui-media-box__title">单据号：</h4>
+                            <p class="weui-media-box__desc" style="display: inline-block; word-break: break-all;">{{PollingData.DJH}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tree_dome"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/Common.js"></script>
+<script src="/JG/Content/PollingDown.js"></script>
+
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el:"#ContentContainer",
+        data:{
+            FormData:{
+                PollingID:$.getUrlParam("PollingID"),    //巡检检验方案ID
+                MajorID:$.getUrlParam("MajorID"),      //巡检主键ID
+                PollingItemID:"",    //巡检分类项ID
+
+            },
+            PollingItemData:[],    //巡检详情集合
+            PollingData:[],      //主表数据集合
+        },
+        mounted:function(){
+            var currSelf = this;
+            currSelf.InitializePolling();    //初始化方法
+        },
+        methods:{
+            //初始化方法
+            InitializePolling:function () {
+                var currSelf = this;
+                currSelf.PollingData = JSON.parse(window.localStorage.getItem("PollingInfo"));//获取MobileMovePolling.html页面传过来的数据集合
+                //根据巡检方案ID请求对应的巡检分类项
+                if(currSelf.FormData.PollingID){
+                    //获取检验分类项接口
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        async:false,
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getInspectionItemRootClassify.action",
+                        data: {
+                            "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                            "mac": LocalUserInfo.GetUserInfo().Mac,
+                            "jybzID":currSelf.FormData.PollingID,   //巡检检验方案ID
+                        },
+                        dataType: "json",
+                        success:function(result){
+                            var res = ReturnData(result);
+                            console.log(111);
+                            console.log(res);
+                            if(res.IsSuccess){
+                                if(res.Data){
+                                    //currSelf.FirstCheckoutData = res.Data;
+                                    currSelf.FormData.PollingItemID = res.Data[0].JGMES_ZLGL_JCXMFL_ID;
+                                    for(var k = 0;k<res.Data.length;k++){
+                                        currSelf.PollingItemData.push(res.Data[k].JGMES_ZLGL_JCXMFL_ID);
+                                    }
+                                }else {
+                                    var showMsg = "没有相关的首检信息!可点击添加";
+                                    $.toptip(showMsg, "warning");
+                                }
+                            }else {
+                                $.toptip(res.message, "error");
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            $.alert("请求失败" + errorThrown);
+                        },
+                        complete: function () {
+                            //当数据加载完成隐藏加载弹窗
+                            $.hideLoading();
+                        }
+                    });
+                }
+
+
+                //根据巡检方案ID和巡检项目分类ID请求对应的巡检项目明细
+                if(currSelf.FormData.PollingItemID){
+                    currSelf = this;
+                    for(var k = 0;k<currSelf.PollingItemData.length;k++){
+                        //获取字表信息接口
+                        $.showLoading(k);
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getEffectiveProductStandardChild.action",
+                            data: {
+                                "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                "mac": LocalUserInfo.GetUserInfo().Mac,
+                                "xjzbId":currSelf.FormData.MajorID,    //巡检主键ID
+                                "rootId":currSelf.PollingItemData[k],    //检验分类项ID
+                            },
+                            dataType: "json",
+                            success:function(result){
+                                var res = ReturnData(result);
+                                console.log(res);
+                                if(res.IsSuccess){
+                                    if(res.Data){
+                                        currSelf.PollingListData = res.Data;
+                                        //添加无级树
+                                        var str = forTree(currSelf.PollingListData);
+                                        $(".tree_dome").html(str);
+                                    }else {
+                                        var showMsg = "没有相关的检验项目信息!";
+                                        $.toptip(showMsg, "warning");
+                                    }
+                                }else {
+                                    $.toptip(res.message, "error");
+                                }
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                $.alert("请求失败" + errorThrown);
+                            },
+                            complete: function () {
+                                //当数据加载完成隐藏加载弹窗
+                                $.hideLoading();
+                            }
+                        });
+                    }
+
+                }
+            },
+            Rewrite:function () {
+                var radios = $("input");
+                for (var k = 0;k<radios.length;k++){
+                    if (radios[k].type=="radio"){
+                        radios[k].disabled=false;
+                        $("input[type=text][name='"+radios[k].name+"']").prop("disabled",false);
+                        $("textarea[name='"+radios[k].name+"']").prop("disabled",false);
+
+                    }
+                }
+                $.toptip("已允许修改", "success");
+                $("#Rewrite").hide();
+                $("#RewriteSave").show();
+            },
+            RewriteSave:function () {
+                var currSelf = this;
+                var radios = $("input[type=radio]:checked");
+                var jsonStrDetail = [];
+                for (var k = 0;k<radios.length;k++){
+                    var value = radios[k].value;
+                    var textVal = $("input[type=text][name='"+radios[k].name+"']").val();
+                    var textareaVal = $("textarea[name='"+radios[k].name+"']").val();
+                    jsonStrDetail.push({
+                        "XJZBZB_XJZBID":currSelf.FormData.MajorID,
+                        "JGMES_ZLGL_XJZBZB_ID":radios[k].name,
+                        "XJZBZB_NO_CODE":value,
+                        "XJZBZB_JYZ":textVal,
+                        "XJZBZB_BZ":textareaVal,
+                    });
+                }
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesXunJianAction!dopatrolSave.action",
+                    data: {
+                        jsonStrDetail:JSON.stringify(jsonStrDetail),
+                    },
+                    dataType: "json",
+                    success:function(result){
+                        var res = ReturnData(result);
+                        console.log(res);
+                        if(res.IsSuccess){
+                            $.toptip("修改成功", "success");
+                        }else {
+                            $.toptip(res.message, "error");
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        $.alert("请求失败" + errorThrown);
+                    },
+                    complete: function () {
+                        //当数据加载完成隐藏加载弹窗
+                        $.hideLoading();
+                    }
+                });
+
+                var allRadios = $("input[type=radio]");
+                for (var k = 0;k<allRadios.length;k++){
+                    console.log(allRadios[k])
+                    if (allRadios[k].type=="radio"){
+                        allRadios[k].disabled=true;
+                        $("input[type=text][name='"+allRadios[k].name+"']").prop("disabled",true);;
+                        $("textarea[name='"+allRadios[k].name+"']").prop("disabled",true);;
+                    }
+                }
+                $("#RewriteSave").hide();
+                $("#Rewrite").show();
+            }
+
+        },
+    });
+</script>
+</html>

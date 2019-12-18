@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>工序报工-精工云MES系统移动端</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/BatchSubmitted.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+<body>
+<!--title部分-->
+<header class="header">
+    <div class="empty">
+        <span id="stations"></span>
+    </div>
+    <div class="header_title">
+        <a href="javascript:;">工序报工</a>
+    </div>
+    <div class="item item2">
+        <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+            <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+        </div>
+    </div>
+</header>
+
+<div id="MainPage">
+    <div class="sec_content">
+        <div class="textbox">
+            <div class="row centerdiv">
+                <ul class="pro_ul list-group">
+                    <li class="list-group-item">
+                        产线&nbsp;&nbsp;&nbsp;&nbsp;<span>{{FormData.ProdLine}}</span>
+                    </li>
+                    <li class="list-group-item">
+                        工位&nbsp;&nbsp;&nbsp;&nbsp;<span>{{FormData.InvStd}}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="task_title">任务单号</span>
+                        <span class="task_list">
+                            <i class="icon-img"></i>
+                            <input v-bind:value="FormData.TaskCode" class="input_value" type="text" placeholder="点击选择相关信息">
+                        </span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="task_title">产品编号</span>
+                        <span class="task_list">
+                            <i class="icon-img"></i>
+                            <input v-bind:value="FormData.InvCode" class="input_value" type="text" placeholder="点击选择相关信息">
+                        </span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="task_title">产品名称</span>
+                        <span class="task_list">
+                            <i class="icon-img"></i>
+                            <input v-bind:value="FormData.InvName" class="input_value" type="text" placeholder="点击选择相关信息">
+                        </span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="task_title">工单号</span>
+                        <span class="task_list">
+                            <i class="icon-img"></i>
+                            <input v-bind:value="FormData.WordCode" class="input_value" type="text" placeholder="点击选择相关信息">
+                        </span>
+                    </li>
+                    <li class="list-group-item prolist">
+                        工序
+                        <span class="proitem" v-for="(item,index) in InvProcess" :key="index" @click="clickAddBgColor(index)">
+                        <button v-bind:class="{'clickBgColor':i==index}" type="button">{{item.InvProcessItem}}</button>
+                    </span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="sum_title">合格数量</span>
+                        <span class="sum_list">
+                            <label class="sum-img" for="Hgs"></label>
+                            <input id="Hgs" v-model="Hgs" readonly="readonly" maxlength="8" class="form-control" type="text" style="cursor: pointer" placeholder="点击输入框填入合格数量">
+                        </span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="sum_title">不良数量</span>
+                        <span class="sum_list">
+                            <label class="sum-img" for="Nhgs"></label>
+                            <input id="Nhgs" v-model="Nhgs" readonly="readonly" maxlength="8" class="form-control" type="text" style="cursor: pointer;" placeholder="点击输入框填入不良数量">
+                        </span>
+                    </li>
+                </ul>
+
+                <!--操作记录部分-->
+                <div class="right panel panel-default">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#OperateRecord" data-toggle="tab">操作记录</a>
+                        </li>
+                        <li>
+                            <a href="#Swiper" data-toggle="tab">操作指导</a>
+                            <!-- <a href="#myCarousel" data-toggle="tab">操作指导</a> -->
+                        </li>
+                    </ul>
+                    <div class="tab-content tabs">
+                        <div class="tab-pane fade in active" id="OperateRecord">
+                            <ul style="height:100%;overflow-y:auto;">
+                                <li style="font-size: 1.2em" v-for="(item,index) in OperateRecord"
+                                    :style="{'color':item.Status?'blue':'red'}">
+                                    {{item.Content}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tab-pane fade" id="Swiper">
+                            <div class="swiper-container">
+                                <div class="swiper-wrapper" id="Top_Swiper">
+                                </div>
+                                <div class="swiper-pagination"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--不良项部分-->
+            <div class="tables">
+                <table class="table">
+                    <thead class="row">
+                    <tr class="row">
+                        <th class="col-lg-12" style="font-size:1.5em;text-align: center;border-bottom:none;">不良项明细</th>
+                    </tr>
+                    </thead>
+                    <tbody class="row">
+                    <tr v-for="(item,index) in DefectiveItemData" class="row">
+                        <td class="col-lg-8">{{item.ItemName}}</td>
+                        <td class="col-lg-4">
+                            <input class="bad_nape" v-model="item.Qty" type="number" placeholder="请输入数量">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!--弹窗选项部分-->
+        <div class="shade">
+            <div class="shade_box">
+                <table class="table task_table" style="border-collapse:separate;border-spacing: 2px;">
+                    <thead style="display:block;">
+                        <tr class="row">
+                            <th class="col-lg-1 col-md-1 col-sm-1 col-xs-1"></th>
+                            <th class="col-lg-3 col-md-3 col-sm-3 col-xs-3">任务单号</th>
+                            <th class="col-lg-3 col-md-3 col-sm-3 col-xs-3">产品编码</th>
+                            <th class="col-lg-2 col-md-2 col-sm-3 col-xs-3">产品名称</th>
+                            <th class="col-lg-3 col-md-3 col-sm-2 col-xs-2">工单号</th>
+                        </tr>
+                    </thead>
+                    <tbody class="task_tbody" style="height:600px;overflow-y: auto;display:block;">
+                        <tr class="row" v-for="(item,index) in TaskCodeGat" v-on:click="TaskClick(index)">
+                            <td class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+                                <input class="radio_input" type="radio" name="inputs">
+                            </td>
+                            <td class="col-lg-3 col-md-3 col-sm-3 col-xs-3">{{item.TaskCode}}</td>
+                            <td class="col-lg-3 col-md-3 col-sm-3 col-xs-3">{{item.InvCode}}</td>
+                            <td class="col-lg-2 col-md-2 col-sm-3 col-xs-3">{{item.InvName}}</td>
+                            <td class="col-lg-3 col-md-3 col-sm-2 col-xs-2">{{item.WordCode}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="task_btn">
+                    <button v-on:click="SubData();" type="button" class="btn btn-success">确定</button>
+                    <button id="close" class="btn btn-warning">关闭</button>
+                </div>
+            </div>
+        </div>
+
+        <!--报工记录部分-->
+        <div class="record panel panel-default col-lg-12 col-md-12 col-sm-12">
+            <table class="table">
+                <caption style="font-weight: bold;font-size: 1.5em;
+                text-align: center;border-bottom:1px solid #DCDCDC;padding-top: 8px;padding-bottom: 8px">报工记录</caption>
+                <thead>
+                    <tr class="row">
+                        <th class="col-lg-1">时间</th>
+                        <th class="col-lg-1">工位</th>
+                        <th class="col-lg-2">任务单号</th>
+                        <th class="col-lg-2">产品名称</th>
+                        <th class="col-lg-2">工单号</th>
+                        <th class="col-lg-2">工序</th>
+                        <th class="col-lg-1">合格数</th>
+                        <th class="col-lg-1">不良数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="row" v-for="(item,index) in PlanGather">
+                        <td class="col-lg-1">{{item.SubTime}}</td>
+                        <td class="col-lg-1">{{item.InvStd}}</td>
+                        <td class="col-lg-2">{{item.TaskCode}}</td>
+                        <td class="col-lg-1">{{item.InvName}}</td>
+                        <td class="col-lg-2">{{item.WordCode}}</td>
+                        <td class="col-lg-2">{{item.InvProcessItem}}</td>
+                        <td class="col-lg-1">{{item.Hgs}}</td>
+                        <td class="col-lg-2">{{item.Nhgs}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!--报工按钮部分-->
+        <div style="text-align: -moz-center;text-align: -webkit-center;text-align: center;margin-top: 20px">
+            <button v-on:click="SaveData()" style="width:190px;font-size: 1.5em" type="button" class="btn btn-success">报工</button>
+        </div>
+    </div>
+</div>
+</body>
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/Utils.js?v=1"></script>
+<script src="/JG/Content/Common.js"></script>
+<script type="text/javascript" src="/JG/Content/AudioUtils.js"></script>
+<script src="/JG/Content/Numkeyboard.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/jquery/fastclick.js"></script>
+
+<script type="text/javascript">
+    //body赋值滚动条
+    window.onload=function(){
+        var BodyWidth=$(window).width();
+        //console.log(BodyWidth);
+        if(BodyWidth >1281){
+            var BodyHeight=$(window).height();
+            //console.log(BodyHeight);
+            var MainPageHeight=BodyHeight-90;
+            //console.log(MainPageHeight);
+            //赋值给div
+            $(".sec_content").height(MainPageHeight);
+
+        }else if(BodyWidth<1281 && BodyWidth>1023){
+            var BodyHeight=$(window).height();
+            var MainPageHeight=BodyHeight-80;
+            //赋值给div
+            $(".sec_content").height(MainPageHeight);
+
+        }else if(BodyWidth<1024 && BodyWidth>767){
+            var BodyHeight=$(window).height();
+            var MainPageHeight=BodyHeight-85;
+            //赋值给div
+            $(".sec_content").height(MainPageHeight);
+        }else {
+            var BodyHeight=$(window).height();
+            var MainPageHeight=BodyHeight-60;
+            //赋值给div
+            $(".sec_content").height(MainPageHeight);
+        }
+    }
+
+    $(function(){
+        //获取当前用户的产线工位
+        var stations = LocalUserInfo.GetUserInfo();
+        //console.log(stations);
+        $("#stations").html(stations.ProductionLineName + " - " + stations.StationName);
+
+        //这是关闭弹窗列表部分
+        $("#close").click(function(){
+            $(".shade").removeClass("shade_show");
+        });
+
+        //数字键盘部分的逻辑绑定
+        $("#Hgs").mynumkb();
+        $("#Nhgs").mynumkb();
+        $(".bad_nape").mynumkb();
+
+    });
+</script>
+
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el:"#MainPage",
+        data:{
+            i:null,   // 保存当前选中的工序下标
+            j:null,  //保存当前选中任务单号下标
+            Hgs:"",  //合格数
+            Nhgs:"",  //不良数
+            curDate:"",   //当前时间的产线
+            SubTime:"",    //保存当前时间
+            FormData:{
+                ProdLine:"",   //产线名称
+                InvStd:"",   //工位名
+                TaskCode:"",  //任务单号
+                InvCode:"",     //产品编码
+                InvName:"",   //产品名称
+                WordCode:"",   //工单号
+                InvProcessItem:"",   //工序名称
+                GxID:"",  //工艺路线工序ID
+                SubType:"1",     //报工类型
+            },
+            TaskCodeGat:[],  //任务单号信息集合
+            InvProcess:[],   //工序与工艺工序路线ID集合
+            DefectiveItemData:[],   //不良集合
+            ItemName:"",   //不良项名称
+            Qty:"",   //不良项数量
+            ScanCodeResult:"",    //保存获取数据失败弹窗变量
+            OperateRecord:[],   //操作记录集合
+            PlanGather :[],   //报工记录集合
+        },
+        mounted:function(){
+            var currSelf = this;
+            currSelf.ProdLineMethod();
+            //给input绑定键盘输入事件
+            //$("#BarCode").bind("keypress", currSelf.SearchBarCode);
+            //绑定input获取聚焦事件
+            //$("#BarCode").focus();
+            //Utils.AutoBarCodeFocus();   //给input自动绑定聚焦方法
+        },
+        methods:{
+            //操作记录方法
+            SetOperateRecord: function (content, status) {
+                var currSelf = this;
+                var content = (new Date().Format("hh:mm:sss")) + ' ' + content;
+                currSelf.OperateRecord.splice(0, 0, { Content: content, Status: status });
+            },
+
+            //   工序部分点击选择显示样式方法
+            clickAddBgColor:function(index){
+                var currSelf = this;
+                currSelf.i=index;
+                var GongXuId = currSelf.InvProcess[currSelf.i].GxID;
+                currSelf.DefectiveItemData=[];  //再点击选中工序前先把之前选中的清空
+
+                $.showLoading();
+               //选择当前工序带出不良项接口
+                $.ajax({
+                    type: "post",
+                    async: true,
+                    cache: true,
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesQmsAction!getBlList.action",
+                    data: {
+                        "gxId":GongXuId,
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        console.log(retData);
+                        if (retData.IsSuccess) {
+                            if (retData.Data) {
+                                for (var i in retData.Data) {
+                                    var element = retData.Data[i];
+                                    currSelf.DefectiveItemData.push({
+                                        ItemName: element.values.BLLX_BLLXMC,   //不良名称
+                                    });
+                                }
+                            } else {
+                                currSelf.ScanCodeResult = "未找到产品相关不良项目";
+                                $.toptip(currSelf.ScanCodeResult, "warning");
+                            }
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        //console.error(status);
+                        $.alert("获取不良项失败！");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    }
+                })
+            },
+
+            //点击弹窗列表选项方法
+            TaskClick:function(index){
+                console.log(index);
+                var currSelf =this;
+                currSelf.j = index;
+             },
+
+
+            //点击弹窗确定按钮方法
+            SubData:function(){
+                var currSelf =this;
+                var submitData=currSelf.TaskCodeGat[currSelf.j];
+                // console.log(submitData);
+                if(submitData == null || submitData == undefined ||submitData == ""){
+                    $.toptip("还未选中数据,不能提交！","warning");
+                    //$.confirm("还未选中数据,不能提交！",function(){});
+                }else{
+                    $(".shade").removeClass("shade_show");
+                    currSelf.FormData.TaskCode = submitData.TaskCode;
+                    currSelf.FormData.InvCode = submitData.InvCode;
+                    currSelf.FormData.InvName = submitData.InvName;
+                    currSelf.FormData.WordCode = submitData.WordCode;
+
+
+                    currSelf.InvProcess =[];
+                    $.showLoading();
+                    //根据产品获取工序列表接口
+                    $.ajax({
+                        type: "post",
+                        async: false,
+                        cache: true,
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getGXList.action",
+                        data: {
+                            "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                            "mac": LocalUserInfo.GetUserInfo().Mac,
+                            "cpCode": currSelf.FormData.InvCode,
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            //console.log(ret);
+                            var retData = ReturnData(ret);
+                            console.log(retData);
+                            if (retData.IsSuccess) {
+                                if (retData.Data) {
+                                    for (var i in retData.Data) {
+                                        var element = retData.Data[i];
+                                        currSelf.InvProcess.push({
+                                            InvProcessItem: element.GYLXGX_GXNAME,
+                                            GxID:element.GYLXGX_ID,
+                                        })
+                                    }
+                                    console.log(currSelf.InvProcess);
+                                }
+                            } else {
+                                currSelf.ScanCodeResult = "未查找到相关条形码的对应产品工序信息";
+                                $.toptip(currSelf.ScanCodeResult, "warning");
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            //console.error(status);
+                            $.alert("获取工序列表失败！");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                }
+            },
+
+            //获取产线全部信息方法
+            ProdLineMethod: function () {
+                var currSelf = this;
+
+                currSelf.FormData.ProdLine=LocalUserInfo.GetUserInfo().ProductionLineName;   //获取当前用户登陆绑定的产线
+                currSelf.FormData.InvStd = LocalUserInfo.GetUserInfo().StationName;   //获取当前用户登陆绑定工位
+                $(".input_value,.icon-img").click(function(){
+                    //清空原有加载数据
+                    currSelf.TaskCodeGat = [];
+                    currSelf.j="";   //清空之前选中当前下标的任务列表数据
+                    $(".shade").addClass("shade_show");
+
+                    $.showLoading();
+                    //任务单号接口
+                    $.ajax({
+                        type:"post",
+                        url:LocalConfig.SrvPath + "/jgmes/commonAction!getScrw.action",
+                        data:{
+                            "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                            "mac": LocalUserInfo.GetUserInfo().Mac,
+                            "cxCode": LocalUserInfo.GetUserInfo().ProductionLineCode,
+                            "curDate":currSelf.curDate,
+                        },
+                        dataType: "json",
+                        success:function(result){
+                            var ret = ReturnData(result);
+                            //console.log(ret);
+                            if(ret.IsSuccess){
+                                if(ret.Data.length>0){
+                                    for(var i in ret.Data){
+                                        var item = ret.Data[i];
+                                        currSelf.TaskCodeGat.push({
+                                            TaskCode:item.SCRW_RWDH ,    //任务单号
+                                            InvCode:item.SCRW_CPBH,     //产品编码
+                                            WordCode:item.SCRW_GDHM,  //工单号
+                                            InvName:item.SCRW_NAME,  //产品名称
+                                        });
+                                    }
+                                }
+                            }
+                        },
+                        error:function(xhr, status, errorThrown){
+                            //console.error(status);
+                            $.alert("任务单号请求失败!");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                });
+            },
+
+
+            //批量保存方法
+            SaveData:function(){
+                var currSelf = this;
+                var gongx=currSelf.InvProcess[currSelf.i];   //保存当前选中的工序
+                console.log(gongx);
+                var msg;
+                if(currSelf.FormData.TaskCode == ""){
+                    msg = '任务单号没选择';
+                    $.toptip(msg, "warning");
+                    currSelf.SetOperateRecord(msg, false);
+                }else if(currSelf.FormData.InvName == "" ){
+                    msg = '产品名称没选择';
+                    $.toptip(msg, "warning");
+                    currSelf.SetOperateRecord(msg, false);
+                }else if(currSelf.FormData.InvStd == ""){
+                    msg = '当前没有产线工位';
+                    $.toptip(msg, "warning");
+                    currSelf.SetOperateRecord(msg, false);
+                }else if(gongx == null){
+                    msg = '工序名称未选';
+                    $.toptip(msg, "warning");
+                    currSelf.SetOperateRecord(msg, false);
+                }else if(currSelf.Hgs == null || currSelf.Hgs == undefined || currSelf.Hgs == ""){
+                    msg = '合格数量不能为空';
+                    $.toptip(msg, "warning");
+                    currSelf.SetOperateRecord(msg, false);
+                }else{
+                    $.confirm("确定要报工吗？","操作提示",function(){
+                        // msg = '报工成功!';
+                        // currSelf.SetOperateRecord(msg, true);
+                        $.toptip("报工成功","success");
+                        //主表数据
+                        var jsonStr = JSON.stringify({
+                            "BGSJ_BGLX":currSelf.FormData.SubType,
+                            "BGSJ_CPMC": currSelf.FormData.InvName,
+                            "BGSJ_GWMC": currSelf.FormData.InvStd,
+                            "BGSJ_GXMC": gongx,
+                            "BGSJ_SL":currSelf.Hgs,
+                            "BGSJ_BLSL":currSelf.Nhgs,
+                        });
+                        //不良项子表数据
+                        var jsonStrDetail=[];
+                        for(var i in currSelf.DefectiveItemData){
+                            var element = currSelf.DefectiveItemData[i];
+                            jsonStrDetail.push({
+                                "BGSJZB_BLMC": element.ItemName,
+                                "BGSJZB_SL": element.Qty
+                            })
+                        }
+
+                        $.showLoading();
+                        //批量保存数据接口
+                        $.ajax({
+                            type:"post",
+                            async:false,
+                            cache: true,
+                            url:LocalConfig.SrvPath + "/jgmes/jgmesBgBatchAction!doJsonSave.action",
+                            data:{
+                                "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                "jsonStr":jsonStr,
+                                "jsonStrDetail":JSON.stringify(jsonStrDetail),
+                            },
+                            dataType:"json",
+                            success:function(result){
+                                var retData = ReturnData(result);
+                                //console.log(retData);
+                            },
+                            error:function(xhr, status, errorThrow){
+                                //console.error(status);
+                                $.alert("批量保存数据失败！");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+
+
+                        //报工完后添加一条报工记录
+                        currSelf.PlanGather.splice(0,0,{    //splice方法是从数组最前面插入一条新信息
+                            SubTime:(new Date()).Format("hh:mm:sss"),
+                            InvStd:currSelf.FormData.InvStd,
+                            TaskCode:currSelf.FormData.TaskCode,
+                            InvName:currSelf.FormData.InvName,
+                            WordCode:currSelf.FormData.WordCode,
+                            InvProcessItem:gongx.InvProcessItem,
+                            Hgs:currSelf.Hgs,
+                            Nhgs:currSelf.Nhgs,
+                        })
+
+                        //清空原有数据
+                        //currSelf.FormData.ProdLine="";
+                        //currSelf.FormData.TaskCode="";
+                        //currSelf.FormData.WordCode="";
+                        //currSelf.InvProcess=[];
+                        currSelf.DefectiveItemData=[];
+                        currSelf.Hgs="";
+                        currSelf.Nhgs="";
+                        currSelf.OperateRecord=[];
+                        //currSelf.FormData.InvCode="";
+                        //currSelf.FormData.InvName="";
+                        //currSelf.FormData.InvStd="";
+                        //currSelf.OperateRecord=[];
+                    });
+                }
+            },
+
+            //currSelf.IsDisable = false;
+        }
+    })
+</script>
+</html>

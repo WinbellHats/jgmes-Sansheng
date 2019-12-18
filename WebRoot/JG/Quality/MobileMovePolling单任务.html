@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>移动巡检-精工云MES系统移动端</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="yes">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <link href="/JG/Content/jquery/jquery-weui/css/icon.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/MobileMovePolling.css?v=1">
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+</head>
+<body>
+    <div id="ContentContainer" class="content_container">
+        <!--header部分-->
+        <header class="header">
+            <div class="empty">
+                <span id="stations"></span>
+            </div>
+            <div class="weui-flex">
+                <div class="weui-flex__item" style="position:absolute;">
+                    <span style="font-size:16px;padding-left: 10px;" class="icon icon-109 f-white" onclick="window.location.href='/JG/Home/MobileIndex.html'">
+                        返回
+                    </span>
+                </div>
+                <div class="weui-flex__item" style="text-align: center;">IPQC巡检</div>
+                <div class="weui-flex__item" style="position:absolute;right:10px;">
+                    <span @click="SkipPollingRecord"><img src="/JG/Content/images/addpitrue.png" alt="" style="width:20px;"></span>
+                </div>
+            </div>
+        </header>
+
+        <!--解决浮动空内容div-->
+        <div class="empty_div"></div>
+
+
+        <!--主体部分-->
+        <div id="MainPage" v-cloak>
+            <div class="search_input">
+                <span @click="PollingSearch"><img src="/JG/Content/images/search.png" alt="" style="width:25px;"></span>
+                <span><input v-model="FormData.KeyWord" type="text" placeholder="任务单号/订单号/产品名称/产品编码/巡检人" style="width:100%;line-height: 30px;border: none;outline-style: none;font-size: 13px"></span>
+            </div>
+            <!--列表部分-->
+            <div>
+                <div class="weui-cells" v-for="(item,index) in PollingTaskData" style="border:1px solid #B9B9B9;">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <span>{{item.PollingTime}}</span>
+                        </div>
+                        <div class="weui-cell__ft" @click="SkipPollingDetails(item)">{{item.TaskCode}} > </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <span>{{item.ClientName}}</span>
+                        </div>
+                        <div class="weui-cell__ft">{{item.PollingScheme}}</div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <span>{{item.MaterialCode}}</span>/<span>{{item.MaterialName}}</span>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <span>{{item.DJH}}</span>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <span>{{item.DDH}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/Common.js"></script>
+
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el:"#ContentContainer",
+        data:{
+            FormData:{
+                KeyWord:"",      //搜索关键字
+                TaskCode:"",    //任务单号
+                PollingTime:"",   //巡检时间
+                ClientName:"",     //客户名称
+                PollingScheme:"",     //巡检方案
+                MaterialCode: "",  //物料编码
+                MaterialName: "",  //物料名称
+                ImgNameData:"",     //图片集合
+                PollingID:"",    //巡检方案ID
+                MajorID:"",     //主键ID
+                DJH:"",     //单据号
+                DDH:"",     //订单号
+            },
+            PollingTaskData:[],     //巡检任务单信信息
+        },
+        mounted:function(){
+            var currSelf = this;
+            currSelf.InitializeFun();    //初始化方法
+        },
+        methods:{
+            //初始化方法
+            InitializeFun:function(){
+                var currSelf = this;
+                //获取IPQC巡检任务信息
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    async:true,
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getRoutingInspection.action",
+                    data: {
+                        "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                        "mac": LocalUserInfo.GetUserInfo().Mac,
+                        //"antistop":currSelf.FormData.KeyWord,    //搜索关键字
+                    },
+                    dataType: "json",
+                    success:function(result){
+                        var res = ReturnData(result);
+                        console.log("初始化");
+                        console.log(res);
+                        if(res.IsSuccess){
+                            if(res.Data){
+                                // currSelf.FirstCheckoutData = res.Data;
+                                for(var i in res.Data){
+                                    var item = res.Data[i];
+                                    currSelf.PollingTaskData.push({
+                                        TaskCode:item.XJZB_RWDH,    //任务单号
+                                        PollingTime:item.XJZB_XJSJ,   //巡检时间
+                                        ClientName:item.XJZB_KHMC,     //客户名称
+                                        PollingScheme:item.XJZB_XJBZMC,     //巡检方案
+                                        MaterialCode: item.XJZB_CPBM,  //物料编码
+                                        MaterialName: item.XJZB_CPMC,  //物料名称
+                                        ImgNameData:item.XJZB_FJ,     //图片集合
+                                        PollingID:item.XJZB_XJBZZJID,    //巡检方案ID
+                                        MajorID:item.JGMES_ZLGL_XJZB_ID ,  //巡检主键ID
+                                        DJH:item.XJZB_DJH,          //单据号
+                                        DDH:item.XJZB_DDH,          //订单号
+                                    });
+                                }
+                            }else {
+                                var showMsg = "还没有相关的巡检信息,可点击添加!";
+                                $.toptip(showMsg, "warning");
+                            }
+                        }else {
+                            $.toptip(res.message, "error");
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        $.alert("请求失败" + errorThrown);
+                    },
+                    complete: function () {
+                        //当数据加载完成隐藏加载弹窗
+                        $.hideLoading();
+                    }
+                });
+            },
+
+
+            //巡检搜索按钮
+            PollingSearch:function(){
+                var currSelf = this;
+                currSelf.PollingTaskData = [];     //清空之前请求的数据
+                //获取IPQC巡检任务信息
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    async:true,
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getRoutingInspection.action",
+                    data: {
+                        "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                        "mac": LocalUserInfo.GetUserInfo().Mac,
+                        "antistop":currSelf.FormData.KeyWord,    //搜索关键字
+                    },
+                    dataType: "json",
+                    success:function(result){
+                        var res = ReturnData(result);
+                        // console.log(res);
+                        if(res.IsSuccess){
+                            if(res.Data){
+                                // currSelf.FirstCheckoutData = res.Data;
+                                for(var i in res.Data){
+                                    var item = res.Data[i];
+                                    currSelf.PollingTaskData.push({
+                                        TaskCode:item.XJZB_RWDH,    //任务单号
+                                        PollingTime:item.XJZB_XJSJ,   //巡检时间
+                                        ClientName:item.XJZB_KHMC,     //客户名称
+                                        PollingScheme:item.XJZB_XJBZMC,     //巡检方案
+                                        MaterialCode: item.XJZB_CPBM,  //物料编码
+                                        MaterialName: item.XJZB_CPMC,  //物料名称
+                                        ImgNameData:item.XJZB_FJ,     //图片集合
+                                        PollingID:item.XJZB_XJBZZJID,    //巡检方案ID
+                                        MajorID:item.JGMES_ZLGL_XJZB_ID,   //巡检主键ID
+                                        DJH:item.XJZB_DJH,          //单据号
+                                        DDH:item.XJZB_DDH,          //订单号
+                                    });
+                                }
+                            }else {
+                                var showMsg = "没有相关搜索的对应信息!";
+                                $.toptip(showMsg, "warning");
+                            }
+                        }else {
+                            $.toptip(res.message, "error");
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        $.alert("请求失败" + errorThrown);
+                    },
+                    complete: function () {
+                        //当数据加载完成隐藏加载弹窗
+                        $.hideLoading();
+                    }
+                });
+            },
+
+            //跳转巡检详情页面
+            SkipPollingDetails:function(val){
+                console.log(val);
+                var currSelf = this;
+                window.localStorage.setItem("PollingInfo",JSON.stringify(val));
+                //window.localStorage.removeItem("userInfo")
+                window.location.href = "/JG/Quality/MobileMovePollingDetails.html?PollingID=" + val.PollingID + "&MajorID=" + val.MajorID;
+            },
+
+            //跳转巡检登录页面
+            SkipPollingRecord:function(){
+                window.location.href = "/JG/Quality/MobilePollingRecord.html";
+            },
+        },
+    });
+</script>
+</html>

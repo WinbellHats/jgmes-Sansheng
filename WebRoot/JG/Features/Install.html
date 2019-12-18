@@ -1,0 +1,220 @@
+﻿<html>
+
+<head>
+    <title>安灯系统详情-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/Install.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+
+<body ontouchstart>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="item header_title">
+            <a href="javascript:;">安灯系统详情</a>
+        </div>
+        <div class="item item2">
+            <!-- <div class="set">
+                <span class="glyphicon glyphicon-cog" style="font-size: 50px;color:#FFFFFF"></span>
+            </div> -->
+            <div class="user_img" onclick="javascript:location.href='/JG/Features/InstallList.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+            <div class="clean"></div>
+        </div>
+    </header>
+
+    <div id="MainPage" class="form-horizontal">
+        <div class="input-group has-success">
+            <span class="input-group-addon">异常类型</span>
+            <input type="text" class="form-control" v-model="FormData.ExTypeName" readonly="readonly" />
+        </div>
+        <div class="input-group has-success">
+            <span class="input-group-addon">提报人</span>
+            <input type="text" class="form-control" v-model="FormData.Reporter" readonly="readonly" />
+        </div>
+        <div class="input-group has-success">
+            <span class="input-group-addon">提报时间</span>
+            <input type="text" class="form-control" maxlength="25" v-model="FormData.ReportTime" readonly="readonly" />
+        </div>
+        <div class="input-group has-success">
+            <button class="btn btn3">异常原因</button>
+            <!-- <span class="input-group-addon">异常原因</span> -->
+            <!-- <input type="text" class="form-control" maxlength="25" v-model="FormData.ProcessReason" readonly="readonly" /> -->
+            <button v-for="(item,index) in AbnormalData" :class="item.Code==FormData.ProcessReasonCode?'btn btn4 btn-success':'btn btn-default'"
+                v-on:click="ReasonItemClick(item)" :id="item.Code" style="margin-left:25px">{{item.Name}}</button>
+        </div>
+        <div class="input-group has-success">
+            <!-- <span class="input-group-addon btn3">处理结果</span> -->
+            <button class="btn btn3">处理结果</button>
+            <button class="btn btn-default" id="YCZT01" style="margin-left:25px">待处理</button>
+            <!-- <button class="btn btn-default" id="YCZT02" style="margin-left:25px">处理中</button> -->
+            <button class="btn btn-default" id="YCZT03" style="margin-left:25px">已处理</button>
+        </div>
+        <div class="input-group has-success">
+            <span class="input-group-addon">描述</span>
+            <input type="text" class="form-control" v-model="FormData.Remark" />
+        </div>
+        <div class="input-group has-success">
+            <span class="input-group-addon">处理人</span>
+            <input type="text" class="form-control" maxlength="25" v-model="FormData.ProcessPerson" readonly="readonly" />
+        </div>
+        <div class="input-group has-success">
+            <span class="input-group-addon">处理时间</span>
+            <input type="text" class="form-control" maxlength="25" v-model="FormData.ProcessTime" readonly="readonly" />
+        </div>
+        <div class="affirm input-group col-lg-12 col-md-12 col-sm-12" style="margin-top:30px;text-align: center;">
+            <button type="button" id="Submit" class="btn btn-default btn2" v-on:click="SubmitRearson()">确认处理</button>
+        </div>
+    </div>
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js">
+    </script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/swiper.min.js"></script>
+    <script src="/JG/Content/jquery/fastclick.js"></script>
+    <script>
+        $(function () {
+            FastClick.attach(document.body);
+        });
+    </script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script type="text/javascript">
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                ycclId: $.getUrlParam("ycclId"),
+                AbnormalData: [],
+                FormData: {
+                    ID: "",
+                    ExTypeCode: "",
+                    ExTypeName: "",
+                    Reporter: "",
+                    ReportTime: "",
+                    ProcessReasonCode: "",
+                    ProcessReasonName: "",
+                    ProcessPerson: "",
+                    ProcessTime: "",
+                    Remark: "",
+                }
+            },
+            mounted: function () {
+                var currSelf = this;
+                $.showLoading();
+
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getYcClById.action",
+                    data: { mac: LocalUserInfo.GetUserInfo().Mac, userCode: LocalUserInfo.GetUserInfo().UserCode, ycclId: currSelf.ycclId },
+                    datatype: "json",
+                    success: function (ret) {
+                        var data = JSON.parse(ret);
+                        var retData = ReturnData(data);
+                        if (retData.IsSuccess) {
+                            if (retData.Data) {
+                                currSelf.FormData.ID = retData.Data.JGMES_PB_ADYCCL_ID;
+                                currSelf.FormData.ExTypeCode = retData.Data.ADYCCL_ADLX_CODE;
+                                currSelf.FormData.ExTypeName = retData.Data.ADYCCL_ADLX_NAME;
+                                currSelf.FormData.Reporter = retData.Data.SY_CREATEUSERNAME;
+                                currSelf.FormData.ReportTime = retData.Data.ADYCCL_TBSJ;
+                                currSelf.FormData.ProcessReasonName = retData.Data.ADYCCL_ADLXMX_NAME;
+                                currSelf.FormData.ProcessReasonCode = retData.Data.ADYCCL_ADLXMX_CODE;
+                                currSelf.FormData.ProcessPerson = retData.Data.ADYCCL_CLR;
+                                currSelf.FormData.ProcessTime = retData.Data.ADYCCL_CLSJ;
+                                currSelf.FormData.Remark = retData.Data.ADYCCL_CLJG;
+
+                                var installData = GetDictionaryByID(retData.Data.ADYCCL_ADLX_ID);
+                                if (installData.IsSuccess && installData.Data) {
+                                    for (var i in installData.Data) {
+                                        var element = installData.Data[i];
+                                        currSelf.AbnormalData.push({ Code: element.DICTIONARYITEM_ITEMCODE, Name: element.DICTIONARYITEM_ITEMNAME });
+                                    }
+                                    // installData.Data.forEach(element => {
+                                    //     currSelf.AbnormalData.push({ Code: element.DICTIONARYITEM_ITEMCODE, Name: element.DICTIONARYITEM_ITEMNAME });
+                                    // });
+                                } else
+                                    $.toptip("未查找安灯类型的异常原因", "warning");
+
+                                $("#" + retData.Data.ADYCCL_YCZT_CODE).addClass("btn-success");
+                                $("#" + retData.Data.ADYCCL_YCZT_CODE).removeClass("btn-default");
+                                if (retData.Data.ADYCCL_YCZT_CODE == "YCZT03")
+                                    $("#Submit").hide();
+                            } else
+                                $.toptip("未查到相关明细数据", "warning");
+                        }
+                    }, error: function (xhr, status, err) {
+                        $.alert("请求发生异常");
+                         console.error(status);
+                    }, complete: function () {
+                        $.hideLoading();
+                    }
+                });
+            },
+            methods: {
+                ReasonItemClick: function (item) {
+                    var currSelf = this;
+                    if (currSelf.FormData.ProcessReasonCode == item.Code) {
+                        $("#" + item.Code).removeClass("btn-success");
+                        $("#" + item.Code).addClass("btn-default");
+                        currSelf.FormData.ProcessReasonCode = "";
+                        currSelf.FormData.ProcessReasonName = "";
+                    }
+                    else if (currSelf.FormData.ProcessReasonCode) {
+                        $("#" + currSelf.FormData.ProcessReasonCode).removeClass("btn-success");
+                        $("#" + currSelf.FormData.ProcessReasonName).addClass("btn-default");
+
+                        $("#" + item.Code).removeClass("btn-default");
+                        $("#" + item.Code).addClass("btn-success");
+                        currSelf.FormData.ProcessReasonCode = item.Code;
+                        currSelf.FormData.ProcessReasonName = item.Name;
+                    } else {
+                        $("#" + item.Code).removeClass("btn-default");
+                        $("#" + item.Code).addClass("btn-success");
+                        currSelf.FormData.ProcessReasonCode = item.Code;
+                        currSelf.FormData.ProcessReasonName = item.Name;
+                    }
+                },
+                SubmitRearson: function () {
+                    var currSelf = this;
+                    if (!currSelf.FormData.ProcessReasonCode) {
+                        $.toptip("请选择异常原因", "warning");
+                        return;
+                    } else {
+                        $.showLoading();
+                        //异常状态:待处理(YCZT01)
+                        var jsonStr = JSON.stringify({ JGMES_PB_ADYCCL_ID: currSelf.FormData.ID, ADYCCL_ADLX_CODE: currSelf.FormData.ExTypeCode, ADYCCL_ADLX_NAME: currSelf.FormData.ExTypeName, ADYCCL_ADLXMX_CODE: currSelf.FormData.ProcessReasonCode, ADYCCL_ADLXMX_NAME: currSelf.FormData.ProcessReasonName, ADYCCL_YCZT_CODE: "YCZT03", ADYCCL_TBSJ: currSelf.FormData.ReportTime, ADYCCL_CLR: LocalUserInfo.GetUserInfo().UserName, ADYCCL_CLJG: currSelf.FormData.Remark });
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/commonAction!doJsonSaveYcCl.action",
+                            data: { "userCode": LocalUserInfo.GetUserInfo().UserCode, "mac": LocalUserInfo.GetUserInfo().Mac, jsonStr: jsonStr },
+                            dataType: "json",
+                            success: function (ret) {
+                                var data = ReturnData(ret);
+                                if (data.IsSuccess) {
+                                    $.toptip("处理成功", "success");
+                                    window.location.reload();
+                                }
+                                else $.toptip("处理失败,失败原因:" + data.message, "error");
+                            }, error: function (xhr, status, err) {
+                                console.error("处理失败,%s",status);
+                                alert("请求失败");
+                            }, complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

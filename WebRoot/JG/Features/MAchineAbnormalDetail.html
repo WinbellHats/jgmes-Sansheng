@@ -1,0 +1,363 @@
+﻿﻿﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <title>生产任务-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/bootstrap/bootstrap-datetimepicker.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/css/bootstrap-select.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/css/TabletsGlobal.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/JG/Content/css/ProductionTask.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+
+<body>
+<!--title部分-->
+<header class="header">
+    <div class="empty"></div>
+    <div class="header_title">
+        <a href="javascript:;">异常列表</a>
+    </div>
+    <div class="item item2">
+        <div class="user_img" onclick="javascript:location.href='/JG/Features/MachineAbnormalList.html'">
+            <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+        </div>
+    </div>
+</header>
+
+<div id="MainPage" class="MainPage">
+    <div class="navbar-form navbar-left">
+        <p style="vertical-align:middle;font-size: 30px;font-weight:bold">机台名称：{{DetailJTMC}}</p>
+    </div>
+    <div class="navbar-form navbar-right">
+        <p style="vertical-align:middle;font-size: 30px;font-weight:bold">运行状态：{{Not}}</p>
+    </div>
+    <!--列表部分-->
+    <div>
+        <table class="table">
+            <tbody>
+            <tr>
+                <td>异常类型</td>
+<!--                <td>任务单号</td>-->
+                <td>处理状态</td>
+                <td>操作</td>
+            </tr>
+            <tr v-for="(item,index) in TableListData" v-if="FormData.AllCount > 0">
+                <td>{{item.JTYCJL_JTYCLX_NAME}}</td>
+<!--                <td>{{item.JTYCJL_RWDH}}</td>-->
+                <td>{{item.JTYCJL_JTYCCLZT_NAME}}</td>
+                <td>
+<!--                    <label v-if="item.JTYCJL_JTYCCLZT_CODE=='CLZT01'">-->
+<!--                        <button style="width:100px;" class="btn btn-success" v-on:click="confirm(item)">确认</button>-->
+<!--                    </label>-->
+                    <label v-if="item.JTYCJL_JTYCCLZT_CODE=='CLZT01'">
+                        <button style="width:100px;" class="btn btn-success" v-on:click="startDispose(item)">开始处理</button>
+                    </label>
+                    <span v-if="item.JTYCJL_JTYCCLZT_CODE=='CLZT07'"><button style="width:100px;" class="btn btn-success" v-on:click="solve(item)">已处理</button>&nbsp;&nbsp;
+                        <button style="width:100px;" class="btn btn-danger" v-on:click="ignore(item)">不予处理</button><span style="margin-left: 20px;">首检时长：<input type="number" placeholder="请输入首检时长" :id="item.JGMES_ADMK_JTYCJL_ID" style="width: 200px;height:44px;border: 1px solid #ccc;
+    border-radius: 4px;">
+                        </span>
+                    </span>
+
+
+                    <!--                            <label v-if="item.JTYCJL_JTYCCLZT_CODE=='CLZT04'"></label>-->
+                    <!--                            <button class="btns" v-on:click="StartProduction(item)">查看明细</button><br />-->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!--页码部分 -->
+    <div class="page_num">
+        <button type="button" class="btn btn-success prev" :disabled="FormData.CurrPage==1" @click="PrevFunction">上一页
+        </button>
+        <span>第{{FormData.CurrPage}}页/总{{Math.ceil(FormData.AllCount/FormData.PageSize)}}页 每页{{FormData.PageSize}}条 总{{FormData.AllCount}}条</span>
+        <button type="button" class="btn btn-success next"
+                :disabled="FormData.CurrPage==(Math.ceil(FormData.AllCount/FormData.PageSize))" @click="NextFunction">
+            下一页
+        </button>
+    </div>
+</div>
+
+
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/Utils.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/bootstrap-select.min.js"></script>
+<script src="/JG/Content/bootstrap/bootstrap-datetimepicker.min.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el: "#MainPage",
+        data: {
+            FormData: {
+                //ProdLine: "",   //产线名称
+                AllCount: 0,    //请求到前端的全部条数
+                PageSize: 10,    //每页条数
+                TotalCountPages: "",    //总页数
+                CurrPage: 1,     //当前页
+                JTYCJL_JTH: $.getUrlParam("jth"),
+                id: "",//主键
+
+            },
+            Not: "正常",
+            TableListData: [],   //列表集合
+            DetailJTH: $.getUrlParam("jth"),
+            DetailJTMC: decodeURI(decodeURI($.getUrlParam("jtName"))),
+        },
+        mounted: function () {
+            var currSelf = this;
+            // currSelf.ProLineStation();
+            currSelf.initData();
+        },
+        methods: {
+            //初始化
+            initData: function () {
+                var currSelf = this;
+                currSelf.GetProductTask();
+            },
+
+            //点击搜索按钮方法
+            SearchData: function () {
+                var currSelf = this;
+                currSelf.FormData.CurrPage = 1;
+                currSelf.GetProductTask();
+            },
+
+
+
+
+
+
+
+            GetProductTask: function () {
+                var currSelf = this;
+
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getA.action",
+                    data: {
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        jth: currSelf.FormData.JTYCJL_JTH,
+                        "PageSize": currSelf.FormData.PageSize,   //每页条数
+                        "CurrPage": currSelf.FormData.CurrPage     //当前页
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        if (retData.IsSuccess) {
+                            //console.log(retData)
+                            if (retData.Data) {
+                                $(".page_num").addClass("page_num_show");   //当带点击搜索按钮是请求数据成功便显示分页部分
+                                currSelf.TableListData = retData.Data;
+                                console.log(currSelf.TableListData);
+                                for (var i = 0; i < currSelf.TableListData.length; i++) {
+                                    if (currSelf.TableListData[i].JTYCJL_JTYCCLZT_CODE == "CLZT01" || currSelf.TableListData[i].JTYCJL_JTYCCLZT_CODE == "CLZT02") {
+                                        currSelf.Not = "异常";
+                                        break;
+                                    } else {
+                                        currSelf.Not = "正常";
+
+                                    }
+                                }
+                            } else {
+                                currSelf.FormData.CurrPage = 0;
+                                $(".page_num").removeClass("page_num_show");
+                                $.toptip("暂无能处理的异常", "error");
+                            }
+                            currSelf.FormData.AllCount = retData.TotalCount;
+                        }
+                    },
+                    error: function (xhr, status, errorThrown) {
+                        console.error(status);
+                        $.alert("请求失败");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    }
+                });
+
+            },
+            confirm: function (item) {
+                var currSelf = this;
+                var state = "CLZT02";//已确认
+                currSelf.ChangeAbnormalState(state,item);
+            },
+            startDispose:function(item){
+                var currSelf = this;
+                var state = "CLZT07";//开始处理
+                currSelf.ChangeAbnormalState(state,item);
+            },
+            solve: function (item) {
+                var currSelf = this;
+                var state = "CLZT03";//已处理
+                currSelf.ChangeAbnormalState(state,item);
+
+            },
+            ignore: function (item) {
+                var currSelf = this;
+                var state = "CLZT04";//不予解决
+                currSelf.ChangeAbnormalState(state,item);
+            },
+            ChangeAbnormalState: function (state,item) {
+                var currSelf = this;
+                var id = item.JGMES_ADMK_JTYCJL_ID;
+                var jth = item.JTYCJL_JTH;
+                var yclx = item.JTYCJL_JTYCLX_CODE;
+                if (state=="CLZT03") {
+                    var sc = $("#"+item.JGMES_ADMK_JTYCJL_ID).val();
+                    if (sc=="undefined"||sc==null||sc==""){
+                        sc = "";
+                    }
+                }
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/commonAction!changeAbnormalState.action",
+                    data: {
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        state: state,
+                        id: id,
+                        jth: jth,
+                        "PageSize": currSelf.FormData.PageSize,   //每页条数
+                        "CurrPage": currSelf.FormData.CurrPage,     //当前页
+                        yclx: yclx,
+                        sc:sc,//首检时长
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        if (retData.IsSuccess) {
+                            //console.log(retData)
+                            if (retData.Data) {
+                                console.log(state + "---" + yclx + "---" + jth);
+                                if (state == "CLZT03" || state == "CLZT04") {
+                                    currSelf.ReleaseAlarm(state, yclx, jth);
+                                }
+                                $(".page_num").addClass("page_num_show");   //当带点击搜索按钮是请求数据成功便显示分页部分
+                                currSelf.TableListData = retData.Data;
+                                console.log(currSelf.TableListData);
+                                var count = 0;
+                                for (var i = 0; i < currSelf.TableListData.length; i++) {
+                                    if (currSelf.TableListData[i].JTYCJL_JTYCCLZT_CODE == "CLZT01" || currSelf.TableListData[i].JTYCJL_JTYCCLZT_CODE == "CLZT02"||currSelf.TableListData[i].JTYCJL_JTYCCLZT_CODE == "CLZT07") {
+                                        count++;
+                                        // currSelf.Not = "异常";
+                                    }
+                                }
+                                if (count==0){
+                                    currSelf.Not = "正常";
+                                } else{
+                                    currSelf.Not = "异常";
+                                }
+                                // currSelf.setReader(item);
+                                $.toptip("操作成功", "success");
+                            } else {
+                                currSelf.FormData.CurrPage = 0;
+                                $(".page_num").removeClass("page_num_show");    //当带点击搜索按钮是请求数据成功便隐藏分页部分
+                                $.toptip("未搜索到相关数据", "success");
+                            }
+                            currSelf.FormData.AllCount = retData.TotalCount;    //获取当前选择产线的总条数
+                        }
+                    },
+                    error: function (xhr, status, errorThrown) {
+                        console.error(status);
+                        $.alert("请求失败");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                        // $("#"+item.JGMES_ADMK_JTYCJL_ID).val("");
+                    }
+                });
+            },
+            ReleaseAlarm: function (state, yclx, jth) {
+                var currSelf = this;
+                var Mold = 0;//模具异常
+                var Device = 0;//设备异常
+                var Quality = 0;//品质异常
+                var Materiel = 0;//物料异常
+                var CallMonitor = 0;//呼叫班长
+                switch (yclx) {
+                    case "JTYCLX01":
+                        Mold = 1;
+                        break;
+                    case "JTYCLX02":
+                        Device = 1;
+                        break;
+                    case "JTYCLX03":
+                        Quality = 1;
+                        break;
+                    case "JTYCLX04":
+                        Materiel = 1;
+                        break;
+                    case "JTYCLX05":
+                        CallMonitor = 1;
+                        break;
+                }
+                console.log(Mold + "---" + Device + "---" + Quality + "---" + Materiel + "---" + CallMonitor);
+                $.ajax({
+                    type: "post",
+                    async: false,
+                    url: "https://socket.gzxinyuankeji.com/LhDviceService/ReleaseAlarm",
+                    data: {
+                        DeviceID: jth,
+                        Mold: Mold,
+                        Device: Device,
+                        Quality: Quality,
+                        Materiel: Materiel,
+                        CallMonitor: CallMonitor,
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        console.log(ret);
+                        if (ret.resultCode == 0) {
+                            $.toptip("解除报警成功", "success");
+                            console.log("解除报警成功");
+                        } else{
+                            $.toptip(ret.message, "error")
+                            console.log("解除报警失败" + ret.message);
+                        }
+
+                    },
+                    error: function (xhr, status, errorThrown) {
+                        console.error(errorThrown);
+                        $.alert("解除报警发生异常");
+                    }
+                });
+            },
+            setReader:function(item){
+                console.log(item);
+                var userC=LocalUserInfo.GetUserInfo().UserCode;
+
+
+            },
+            //点击上一页按钮方法
+            PrevFunction: function () {
+                var currSelf = this;
+                currSelf.FormData.CurrPage--;    //当当前页大于1的时候就减减
+                currSelf.GetProductTask();
+            },
+
+            //点击下一页按钮方法
+            NextFunction: function () {
+                var currSelf = this;
+                currSelf.FormData.CurrPage++;    //当当前页小于总页数的时候就加加
+                currSelf.GetProductTask();
+            },
+        }
+    });
+</script>
+</body>
+
+</html>

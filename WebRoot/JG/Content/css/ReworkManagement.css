@@ -1,0 +1,218 @@
+body{
+    background-color:#E7F0EF;
+    min-width: 557px;
+}
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 90px;
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index: 50;
+}
+
+.item, .header_title,.empty{
+    width: 33.33%;
+    line-height:50px;
+}
+.header_title {
+    padding-left: 15px;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title>a {
+    font-size: 3em;
+    color: #FFFFFF;
+}
+.user_img{
+    float: right;
+    padding-right: 15px;
+}
+.input-group-addon{
+    background-color: #DEEFD8;
+    color:#49874D;
+}
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+    z-index: 2;
+    color: #4C8652;
+    background-color: #DDEED8;
+    border-color: #DDEED8;
+}
+.textarea{
+    position: absolute;
+    left: 2%;
+    top: 32%;
+    font-size: 16px;
+    color: red;
+}
+
+.btn{
+    outline: none !important;
+}
+.list-group-item>a{
+    color:#FFFFFF !important;
+}
+.input-group-addon {
+    padding: 10px 12px;
+    font-size: 1.5em;
+}
+.form-control {
+    height: 50px;
+    font-size: 1.5em;
+}
+.list-group-item {
+    font-size: 1.5em;
+}
+
+.back{
+    width:85px;
+    height:30px;
+    display: inline-block;
+}
+.back>img{
+    width:60%;
+}
+
+.weui-toptips{
+    z-index: 1051;
+    font-size: 2.8em !important;
+    height: 70px !important;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 50px;
+    border-radius: 0.1em;
+    width: 75%;
+    margin: auto 12.5%;
+}
+/**********************平板端的媒体查询*********************************/
+@media screen and (min-width:1280px) and (max-width:1920px){
+    #MainPage{
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.8em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+    .list-group-item textarea{
+        width: 80%;
+    }
+    .btn{
+        font-size: 16px;
+    }
+}
+@media all and (min-height:1024px) and (max-height:1080px){}
+
+
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (min-width:1024px) and (max-width:1280px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.2em;
+    }
+    .back {
+        width: 70px;
+        height: 30px;
+    }
+    .input-group-addon {
+        font-size: 1.3em;
+    }
+    .form-control {
+        font-size: 1.3em;
+    }
+    .list-group-item {
+        font-size: 1.3em;
+    }
+}
+@media all and (min-height:891px) and (max-height:1024px){}
+
+
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (min-width:768px) and (max-width:1024px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+    .form-control {
+        font-size: 1.3em;
+    }
+    .input-group-addon {
+        font-size: 1.3em;
+    }
+    .list-group-item {
+        font-size: 1.3em;
+    }
+    .list-group-item textarea{
+        width: 75%;
+    }
+}
+@media screen and (min-width:557px) and (max-width:767px){
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 1.5em;
+    }
+    .back {
+        width: 60px;
+        height: 30px;
+    }
+    .item, .header_title {
+        line-height: 40px;
+    }
+    #MainPage {
+        margin-top: 70px;
+    }
+    .form-control {
+        font-size: 1em;
+    }
+    .input-group-addon {
+        font-size: 1em;
+    }
+    .list-group-item {
+        font-size: 1em;
+    }
+    .textarea{
+        font-size: 12px;
+    }
+    .list-group-item textarea{
+        width: 80%;
+    }
+}
+@media all and (min-height:768px) and (max-height:891px){}

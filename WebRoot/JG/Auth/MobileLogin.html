@@ -1,0 +1,570 @@
+﻿<html>
+
+<head>
+    <title>登录精工云MES系统</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG//Content//bootstrap.min.css" rel="stylesheet" />
+    <link src="/JG/Content/bootstrap/toastr.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <script src="/JG/Content/Common.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-y: hidden;
+            overflow-x: hidden;
+            background: url("../Content/images/bg.jpg") 100% 100%;
+            background-size: cover;
+            /*min-width: 557px;*/
+        }
+
+        .table {
+            width: 60%;
+            height: 100%;
+            margin: 0 auto;
+            display: table;
+        }
+
+        .table2 {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        #MainPage {
+            width: 100%;
+            height: 600px;
+            padding-top: 60px;
+            padding-left: 20px;
+            padding-right: 30px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+        }
+
+        .logo_img>img {
+            width: 600px;
+        }
+
+        .register>span {
+            font-size: 1em;
+            color: #FFFFFF;
+            cursor: pointer;
+        }
+
+        .weui-cells {
+            margin-top: 3.17647059em;
+            background: rgba(0, 0, 0, 0);
+            line-height: 60px;
+            font-size: 1.3em;
+            overflow: hidden;
+            position: static;
+        }
+
+        .weui-input,
+        .weui-label {
+            color: #FFFFFF;
+        }
+
+        .weui-cells:after {
+            border-bottom: none;
+        }
+
+        .weui-cells:before {
+            border-top: none;
+        }
+
+        .logo_img {
+            float: left;
+            width: 50%;
+        }
+
+        .weui-btn {
+            font-size: 1.5em;
+        }
+
+        .stationbtn {
+            display: inline-block;
+            float: right;
+            width: 50%;
+            text-align: right;
+            text-align: -moz-right;
+            text-align: -webkit-right;
+        }
+
+        .stationbtn>button {
+            line-height: 60px;
+            background-color: rgba(0, 0, 0, 0);
+            font-size: 1em;
+            color: #FFFFFF;
+            padding: 0px 5px;
+            border-radius: 7px;
+            outline: none;
+        }
+
+        .clear {
+            content: "";
+            clear: both;
+        }
+
+        /**********************平板端的媒体查询*********************************/
+        @media screen and (min-width:992px) and (max-width:1199px) {
+            .logo_img>img {
+                width: 460px;
+            }
+        }
+
+
+
+        /*******************大屏手机端媒体查询********************************/
+        @media screen and (min-width:768px) and (max-width:991px) {
+            .logo_img>img {
+                width: 380px;
+            }
+
+            #MainPage {
+                height: 560px;
+            }
+
+            [data-target="#myModal"]>button {
+                line-height: 50px;
+                padding: 0px 25px;
+            }
+
+            .weui_btn_area>a {
+                width: 45% !important;
+            }
+        }
+
+        /**********************小屏幕手机端媒体查询**************************************/
+        @media screen and (min-width:557px) and (max-width:767px) {
+            #MainPage {
+                height: 560px ;
+            }
+
+            [data-target="#myModal"]>button {
+                line-height: 50px;
+                font-size: 1.3em;
+                padding: 0px 15px;
+            }
+
+            .weui-cells {
+                font-size: 1.1em;
+            }
+
+            .weui-btn {
+                font-size: 1.3em;
+            }
+
+            .logo_img>img {
+                width: 430px;
+            }
+
+            .weui_btn_area>a {
+                width: 50% !important;
+            }
+        }
+        @media screen and (max-width:556px){
+            #MainPage {
+                height: 560px !important;
+            }
+            .logo_img>img {
+                width: 300px;
+            }
+            [data-target="#myModal"]>button {
+                line-height: 50px;
+                font-size: 1em;
+                padding: 0px 5px;
+            }
+
+        }
+        .weui-toptips {
+            z-index: 1051;
+            font-size: 3.0em;
+            height: 70px;
+            padding-top: 10;
+            padding-bottom: 10;
+        }
+    </style>
+</head>
+
+<body id="preloader">
+<!--<video width="100%" autoplay="autoplay" loop="loop" muted>-->
+<!--<sourcea type="video/mp4" src="/JG/Content/images/jinggong4.mp4">-->
+<!--</video>-->
+
+
+<div class="table">
+    <div class="table2">
+        <div id="MainPage">
+            <div class="logo_title">
+                <div class="logo_img">
+                    <img src="/JG/Content/images/logo2.png" />
+                </div>
+                <div class="stationbtn">
+                    <button type="button" id="submitData" v-on:click="GetProductionLine()" data-toggle="modal"
+                            data-target="#myModal">工位绑定</button>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label" for="LoginCode">
+                            登录账号
+                        </label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input @keydown.13="LoginSystem()" class="weui-input" id="LoginCode" maxlength="20"
+                               v-model="LoginCode" type="text" placeholder="请输入登录账号">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label" for="LoginPassword">
+                            登录密码
+                        </label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input @keydown.13="LoginSystem()" id="LoginPassword" class="weui-input" maxlength="20"
+                               v-model="LoginPassword" type="password" placeholder="请输入登录密码">
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="weui_btn_area">
+                <a href="javascript:;" style="width:50%;margin-top: 55px" id="submitData" v-on:click="LoginSystem()"
+                   class="weui-btn weui-btn_primary">登
+                    录</a>
+            </div>
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                工位绑定
+                            </h4>
+                        </div>
+                        <div class="modal-body" style="text-align:left">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    本机MAC&nbsp;&nbsp;{{CurrMac}}
+                                </li>
+                                <li class="list-group-item">
+                                    产线 <button type="button" class="btn btn-default"
+                                               v-for="(item,index) in ProductionLineData"
+                                               style="margin-left:10px;margin-top: 5px"
+                                               v-on:click="ProductionLineClick(item)" :id="'PL'+item.CXSJ_CXBM">
+                                    {{item.CXSJ_CXMC}}
+                                </button>
+                                </li>
+                                <li class="list-group-item">
+                                    工位 <button type="button" class="btn btn-default"
+                                               v-for="(item1,index) in StationData"
+                                               style="margin-left:10px;margin-top: 5px"
+                                               v-on:click="StationItemClick(item1)" :id="'S'+item1.GW_GWBH">
+                                    {{item1.GW_GWMC}}
+                                </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                            </button>
+                            <button type="button" class="btn btn-primary" v-on:click="SaveBindStation()">
+                                提交绑定
+                            </button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/bootstrap/toastr.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script type="text/javascript">
+    //赋值滚动条
+    window.onload = function () {
+        var BodyWidth = $(window).width();
+        if (BodyWidth > 1281) {
+            var BodyHeight = $(window).height();
+            var MainPageHeight = BodyHeight - 90;
+            //赋值给div
+            $("#MainPage").height(MainPageHeight);
+
+        } else if (BodyWidth < 1281 && BodyWidth > 1023) {
+            var BodyHeight = $(window).height();
+            var MainPageHeight = BodyHeight - 90;
+            //赋值给div
+            $("#MainPage").height(MainPageHeight);
+
+        } else if (BodyWidth < 1024 && BodyWidth > 767) {
+            var BodyHeight = $(window).height();
+            var MainPageHeight = BodyHeight - 90;
+            //赋值给div
+            $("#MainPage").height(MainPageHeight);
+        } else {
+
+            var BodyHeight = $(window).height();
+            var MainPageHeight = BodyHeight - 70;
+            var MainPageWidth = BodyWidth -60;
+            console.log(MainPageWidth);
+            //赋值给div
+            $("#MainPage").height(MainPageHeight);
+            $("#MainPage").width(MainPageWidth);
+        }
+    }
+
+</script>
+<script type="text/javascript">
+
+    var login = new Vue({
+        el: "#MainPage",
+        data: {
+            LoginCode: "",
+            LoginPassword: "",
+            CurrMac: LocalConfig.ClientOSMac(),
+            CurrUser: "",
+            ProductionLineData: [],
+            StationData: [],
+            ProductionLineCode: "",
+            ProductionLineName: "",
+            StationCode: "",
+            StationName: "",
+        },
+        mounted: function () {
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": false,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+            var currSelf = this;
+            var paraMac = currSelf.GetUrlParam("mac");
+            var userCode = Utils.GetCookie("userCode");
+
+            currSelf.LoginCode = userCode;
+            if (userCode)
+                $("#LoginPassword").focus();
+            else
+                $("#LoginCode").focus();
+
+            if (paraMac)
+                currSelf.CurrMac = paraMac;
+        },
+        methods: {
+            LoginSystem: function () {
+                var currSelf = this;
+                if (!currSelf.LoginCode) {
+                    $.toast("登录账号不能为空", "forbidden");
+                    //toastr["success"]("你有新消息了!");
+                    $("#LoginCode").focus();
+                    return;
+                } else if (!currSelf.LoginPassword) {
+                    $.toast("登录密码不能为空", "forbidden");
+                    $("#LoginPassword").focus();
+                    return;
+                }
+                $.showLoading();
+                $.ajax({
+                    url: LocalConfig.SrvPath + "/j_spring_security_check", async: false,
+                    data: {
+                        j_username: currSelf.LoginCode,
+                        j_password: currSelf.LoginPassword,
+                        j_dept: 'default',
+                        phone: '1'
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        var login = data;
+                        Utils.SetCookie("userCode", currSelf.LoginCode, 0);
+                        if (login.success) {
+                            $.ajax({
+                                url: LocalConfig.SrvPath + "/jgmes/jgmesLoginAction!doSaveLogin.action",
+                                data: { mac: currSelf.CurrMac, userCode: currSelf.LoginCode },
+                                dataType: "json",
+                                async: false,
+                                success: function (ret) {
+                                    var retData = ret;
+                                    if (retData.IsSuccess) {
+                                        if (retData.Data) {
+                                            LocalUserInfo.Init(retData.Data.userCode, retData.Data.userName, retData.Data.deptCode, retData.Data.deptName, retData.Data.cxCode, retData.Data.cxName, retData.Data.gwCode, retData.Data.gwName, currSelf.CurrMac, retData.Data.photo);
+                                            var retUrl = currSelf.GetUrlParam("returnUrl");
+                                            if (!retUrl)
+                                                window.location.href = "/JG/Home/MobileIndex.html";
+                                            else window.location.href = retUrl;
+                                        } else $.toptip("用户与设备未关联认证,请与管理员联系", "error");
+                                    } else {
+                                        $.toptip(ret.message, "error");
+                                    }
+                                }, error: function (xhr, status, errorThrown) {
+                                    console.error(status);
+                                    $.toptip("发生异常错误", "error");
+                                }
+                            });
+                        }
+                        else {
+                            $.toptip('登陆失败，请检查用户名密码！', 'warning');
+                        }
+                    }, error: function (xhr, status, err) {
+                        console.error(status);
+                        $.toptip(xhr, 'error');
+                    }
+                    , complete: function () {
+                        $.hideLoading();
+                    }
+                });
+            },
+            GetUrlParam: function (name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null) return unescape(r[2]); return null;
+            },
+            GetProductionLine: function () { //获取产线数据
+                var currSelf = this;
+                //$.showLoading();
+                $.ajax({
+                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getCxGwList.action",
+                    data: {
+                        phone: '1'
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ret;
+                        if (retData.IsSuccess) {
+                            currSelf.ProductionLineData = retData.Data;
+                        } else {
+                            $.toptip(ret.message, "error");
+                        }
+                    }, error: function (xhr, status, err) {
+                        console.error(status);
+                        $.toptip("请求发生异常错误", "error");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    }
+                });
+            },
+            ProductionLineClick: function (item) {
+                var currSelf = this;
+                currSelf.StationData = [];
+                if (currSelf.StationCode) {
+                    $("#S" + currSelf.StationCode).removeClass("btn-success");
+                    $("#S" + currSelf.StationCode).addClass("btn-default");
+                }
+                currSelf.StationCode = "";
+                currSelf.StationName = "";
+                if (currSelf.ProductionLineCode == item.CXSJ_CXBM) {
+                    $("#PL" + item.CXSJ_CXBM).removeClass("btn-success");
+                    $("#PL" + item.CXSJ_CXBM).addClass("btn-default");
+                    currSelf.ProductionLineCode = "";
+                    currSelf.ProductionLineName = "";
+
+                } else if (currSelf.ProductionLineCode) {
+                    $("#PL" + item.CXSJ_CXBM).removeClass("btn-default");
+                    $("#PL" + item.CXSJ_CXBM).addClass("btn-success");
+                    $("#PL" + currSelf.ProductionLineCode).removeClass("btn-success");
+                    $("#PL" + currSelf.ProductionLineCode).addClass("btn-default");
+                    currSelf.StationData = item.detail;
+                    currSelf.ProductionLineCode = item.CXSJ_CXBM;
+                    currSelf.ProductionLineName = item.CXSJ_CXMC;
+                } else {
+                    $("#PL" + item.CXSJ_CXBM).removeClass("btn-default");
+                    $("#PL" + item.CXSJ_CXBM).addClass("btn-success");
+                    currSelf.StationData = item.detail;
+                    currSelf.ProductionLineCode = item.CXSJ_CXBM;
+                    currSelf.ProductionLineName = item.CXSJ_CXMC;
+                }
+            },
+            StationItemClick: function (item) {
+                var currSelf = this;
+                if (currSelf.StationCode == item.GW_GWBH) {
+                    $("#S" + item.CXSJ_CXBM).removeClass("btn-success");
+                    $("#S" + item.CXSJ_CXBM).addClass("btn-default");
+                    currSelf.StationCode = "";
+                    currSelf.StationName = "";
+                }
+                else if (currSelf.StationCode) {
+                    $("#S" + currSelf.StationCode).removeClass("btn-success");
+                    $("#S" + currSelf.StationCode).addClass("btn-default");
+
+                    $("#S" + item.GW_GWBH).removeClass("btn-default");
+                    $("#S" + item.GW_GWBH).addClass("btn-success");
+                    currSelf.StationCode = item.GW_GWBH;
+                    currSelf.StationName = item.GW_GWMC;
+                } else {
+                    $("#S" + item.GW_GWBH).removeClass("btn-default");
+                    $("#S" + item.GW_GWBH).addClass("btn-success");
+                    currSelf.StationCode = item.GW_GWBH;
+                    currSelf.StationName = item.GW_GWMC;
+                }
+            },
+            SaveBindStation: function () {
+                var currSelf = this;
+                if (!currSelf.CurrMac) {
+                    $.toptip("未能获取当前系统的MAC地址", "warning");
+                    return;
+                } else if (!currSelf.ProductionLineCode) {
+                    $.toptip("请选择需要绑定的产线", "warning");
+                    return;
+                } else if (!currSelf.StationCode) {
+                    $.toptip("请选择需要绑定的工位", "warning");
+                    return;
+                } else {
+                    $.showLoading();
+                    $.ajax({
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!doSaveFirst.action",
+                        data: { mac: currSelf.CurrMac, 'cxCode': currSelf.ProductionLineCode, 'gwCode': currSelf.StationCode },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ret;
+                            if (retData.IsSuccess) {
+                                $("#myModal").modal("hide");
+                            } else {
+                                //$.alert(ret.message);
+                                //$.toast(ret.message,5000);
+                                $.toptip(ret.message, "error");
+                            }
+                        }, error: function (xhr, status, err) {
+                            console.error(status);
+                            $.toptip("请求发生异常错误", "error");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                }
+            }
+        }
+    });
+</script>
+</body>
+
+</html>

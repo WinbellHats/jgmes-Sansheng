@@ -1,0 +1,724 @@
+﻿<html>
+
+<head>
+    <title>精工云MES系统平板端</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="yes">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <link src="/JG/Content/bootstrap/toastr.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/index.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js?v=2"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .weui-toptips {
+            z-index: 1051;
+            font-size: 2.8em !important;
+            height: 90px !important;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            line-height: 50px;
+            border-radius: 0.1em;
+            width: 75%;
+            margin: auto 12.5%
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="item item1">
+            <div class="header_img">
+                <img src="/JG/Content/images/logo2.png" />
+            </div>
+        </div>
+
+        <div class="item_title">
+            <div class="title_text">
+                <div class="title_img">
+                    <!--<img src="/JG/Content/images/1546912681(1).png" alt="">-->
+                    <span class="span_icon site1"></span>
+                </div>
+                <span class="span_title">通知</span>
+            </div>
+            <div class="title_text">
+                <div class="title_img">
+                    <span class="span_icon site2"></span>
+                </div>
+                <span>邮件</span>
+            </div>
+            <div class="title_text">
+                <div class="title_img">
+                    <span class="span_icon site3"></span>
+                </div>
+                <span>待办任务</span>
+            </div>
+            <div class="title_text">
+                <div class="title_img">
+                    <span class="span_icon site4"></span>
+                </div>
+                <span>预警</span>
+            </div>
+            <div class="title_text">
+                <div class="title_img">
+                    <span class="span_icon site5"></span>
+                </div>
+                <span>审批</span>
+            </div>
+            <!--<div class="clean"></div>-->
+        </div>
+
+        <div class="item item2">
+            <div class="item2_text">
+                <button id="btnClear" class="exit">退出</button>
+                <span id="UserName" style="color:#FFFFFF;margin-right: 5px;font-size: 1.5em"></span>
+            </div>
+            <div class="user_img">
+                <span class="module1"><img id="Avatar" src="/JG/Content/images/user.png" alt=""></span>
+            </div>
+            <div class="clean"></div>
+        </div>
+    </header>
+
+    <div id="MainPage" class="MainPage" v-cloak>
+        <div class="empty_div"></div>
+        <div class="weui-grids receptacle">
+            <a v-for="(item,index) in MenuList" v-bind:id="item.menuCode" :href="item.menuAddress | FilterMyStation"
+                class="weui-grid js_grid" :style="'backgroundColor:'+item.backgroundColor"
+                @click="InstructorMenu(item)">
+                <div class="weui-grid__icon">
+                    <span class="user_icon">
+                        <img :src="item.picture | ImageUrlConvert" />
+                    </span>
+                </div>
+                <p class="weui-grid__label"
+                    v-bind:style="{fontSize:item.fontSize,color:item.fontCol,fontFamily:item.fontSty}">
+                    {{item.menuName}}
+                </p>
+            </a>
+        </div>
+        <!--底部-->
+        <div class="base">
+            <ul class="row">
+                <li class="col-lg-3 col-md-3 col-sm-2">
+                    <span>连接状态:</span>
+                    <span class="state_button_offline" id="srvStatus"></span>
+                </li>
+                <li class="col-lg-3 col-md-3 col-sm-2">
+                    <span>IP地址:</span>
+                    <span id="CurrLocalIP"></span>
+                </li>
+                <li class="col-lg-3 col-md-3 col-sm-4">
+                    <span>当前产线:</span>
+                    <span id="CurrLine"></span>
+                </li>
+                <li class="col-lg-3 col-md-3 col-sm-4">
+                    <span>当前时间:</span>
+                    <span id="CurrTime">2019-01-07 15:30:00</span>
+                </li>
+                <div class="clean"></div>
+            </ul>
+        </div>
+        <div style="content: '';height:46px;"></div>
+    </div>
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/bootstrap.min.js"></script>
+    <script src="/JG/Content/bootstrap/toastr.min.js"></script>
+    <script src="/JG/Content/Common.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+
+    <script type="text/javascript">
+        //赋值滚动条
+        // window.onload = function () {
+        //     var BodyWidth = $(window).width();
+        //     //console.log(BodyWidth);
+        //     if(BodyWidth > 1920){
+        //         var BodyHeight = $(window).height();
+        //         // console.log(BodyHeight);
+        //         var MainPageHeight = BodyHeight-46;
+        //         //console.log(MainPageHeight);
+        //         //赋值给div
+        //         $(".receptacle").height(MainPageHeight);
+        //     }else if (BodyWidth > 1280) {
+        //         var BodyHeight = $(window).height();
+        //         //console.log(BodyHeight);
+        //         var MainPageHeight = BodyHeight- 46;
+        //         //console.log(MainPageHeight);
+        //         //赋值给div
+        //         $(".receptacle").height(MainPageHeight);
+        //
+        //     } else if (BodyWidth > 1024) {
+        //         var BodyHeight = $(window).height();
+        //         var MainPageHeight = BodyHeight- 46;
+        //         //赋值给div
+        //         $(".receptacle").height(MainPageHeight);
+        //
+        //     } else if (BodyWidth > 767) {
+        //         var BodyHeight = $(window).height();
+        //         var MainPageHeight = BodyHeight- 46;
+        //         //赋值给div
+        //         $(".receptacle").height(MainPageHeight);
+        //     }
+        // }
+
+        $(document).ready(function () {
+            var user = LocalUserInfo.GetUserInfo();
+            $("#UserName").text(user.UserName);
+            $("#CurrLine").html(user.ProductionLineName + " - " + user.StationName);
+            $("#CurrLocalIP").html(LocalConfig.GetClientOSIP());
+            //$("#Avatar")[0].src = LocalUserInfo.GetUserInfo().Avatar;
+            $("#btnClear").on("click", function () {
+                LocalUserInfo.ClearUser();
+                window.location.href = window.location.href;
+            });
+
+            $(".js_grid").each(function (index) {
+                $(this).on("click", function () {
+                    $(".js_grid").eq(index).addClass("weui_show").siblings().removeClass("weui_show")
+                })
+            })
+            setInterval("getTime();", 1000); //每隔一秒运行一次
+        });
+
+        function getTime() {
+            // var myDate = new Date();
+            // var date = myDate.toLocaleDateString();
+            // var hours = myDate.getHours();
+            // var minutes = myDate.getMinutes();
+            // var seconds = myDate.getSeconds();
+            // $("#CurrTime").html(date + " " + hours + ":" + minutes + ":" + seconds); //将值赋给div
+            if (!LocalConfig.SysDateTime)
+                LocalConfig.SysDateTime = LocalConfig.GetServerSysTime();
+            else
+                LocalConfig.SysDateTime.setSeconds(LocalConfig.SysDateTime.getSeconds() + 1);
+            $("#CurrTime").html(LocalConfig.SysDateTime.Format("yyyy-MM-dd hh:mm:ss"));
+
+            if (LocalConfig.GetServerClientConnectStatus()) {
+                $("#srvStatus").addClass("state_button_online");
+                $("#srvStatus").removeClass("state_button_offline");
+            }
+            else {
+                $("#srvStatus").addClass("state_button_offline");
+                $("#srvStatus").removeClass("state_button_online");
+            }
+        }
+
+
+    </script>
+
+    <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+    <script type="text/javascript">
+        console.log(returnCitySN["cip"] + ',' + returnCitySN["cname"])  
+    </script>
+    <script type="text/javascript">
+
+        var obj = $.ajax({
+            url: "/jgmes/jgmesBaseAction!getUserIps.action",
+            data: { "ip": returnCitySN["cip"] },
+            dataType: 'json',
+            type: 'post'
+        });
+        if (obj.success || obj.error != null) {
+        } else {
+        } 
+    </script>
+
+    <script>
+        var vuePage = new Vue({
+            el: "#MainPage",
+            data: {
+                MenuList: [],
+                MyStation: "",
+                scrwList: [],
+                GXlist: [],
+                productList: [],
+            },
+            mounted: function () {
+                var currSelf = this;
+                currSelf.LoadMenu();
+                // $.showLoading();
+                // $.ajax({
+                //     type: "post",
+                //     url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByCxCp.action",
+                //     data: { userCode: LocalUserInfo.GetUserInfo().UserCode, mac: LocalUserInfo.GetUserInfo().Mac, cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode },
+                //     dataType: "json",
+                //     success: function (ret) {
+                //         var retData = ReturnData(ret);
+                //         if (retData.IsSuccess && retData.Data) {
+                //             //获取当前用户当前产品的工序
+                //             var data = GetCurrentProcess(retData.Data.SCRW_CPBH);
+                //             if (data.IsSuccess && data.Data) {
+                //                 var data1 = GetDictionary("GYGL_GXLX");
+                //                 if (data1.IsSuccess && data1.Data) {
+                //                     currSelf.MyStation = "";
+                //                     for (var index in data1.Data) {
+                //                         var item = data1.Data[index];
+                //                         if (data.Data.GXGL_GXLX_NAME == item.DICTIONARYITEM_ITEMCODE) {
+                //                             //MS000015 我的工站菜单
+                //                             currSelf.MyStation = LocalConfig.SrvPath + item.DICTIONARYITEM_CLASSIFY;
+                //                             $("#MS000015").attr("href", currSelf.MyStation);
+                //                             if (window.document.referrer.indexOf("Login.html") >= 0)
+                //                                 window.location.href = currSelf.MyStation;
+                //                             break;
+                //                         }
+                //                     }
+                //                     if (!currSelf.MyStation)
+                //                         $("#MS000015").hide();
+                //                 }
+                //             }
+                //         }
+                //         else
+                //             $.toptip("当前产线无生产任务", "success");
+                //     },
+                //     error: function (xhr, status, thr) {
+                //         //console.error(status);
+                //         $.alert("请求数据失败!");
+                //     },
+                //     complete: function () {
+                //         $.hideLoading();
+                //     }
+                // });
+
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesLoginAction!getXtcsByCode.action",
+                    data: { userCode: LocalUserInfo.GetUserInfo().UserCode, mac: LocalUserInfo.GetUserInfo().Mac, cxflCode: "BusinessModel" },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        if (retData.IsSuccess && retData.Data) {
+
+                            //读取系统参数企业模式 判定1离散型还是0流程型
+                            if (retData.Data.XTCS_CSZ === "0") {
+                                currSelf.FlowProcessProduction()
+
+
+                            } else if (retData.Data.XTCS_CSZ === "1") {
+                                currSelf.DiscreteType()
+
+                            }
+
+                        }else{
+                        	currSelf.FlowProcessProduction()
+                        }
+
+                    },
+                    error: function (xhr, status, thr) {
+                        //console.error(status);
+                        $.alert("请求数据失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    }
+                });
+
+                //初始化任务单
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrwByGX.action",
+                    data: {
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode,
+                        // curDate:year+'-'+month+'-'+data,
+                        curDate: '',
+                        zt: "RWZT02,RWZT01,RWZT04",
+                        noLike: "",
+                        cpLike: "",
+                        PageSize: "",   //每页条数
+                        CurrPage: ""    //当前页
+
+
+                    },
+                    datatype: "json",
+                    success: function (ret) {
+
+                        var data = JSON.parse(ret);
+                        var retData = ReturnData(data);
+                        if (retData.IsSuccess) {
+
+                            currSelf.scrwList = retData.Data;
+                        } else {
+                            $.toptip("当前产线无任务单信息", "success");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(status);
+                        $.alert("请求失败!");
+                    }, complete: function () {
+                    }
+                });
+            },
+            methods: {
+                //流程型
+                FlowProcessProduction: function () {
+                    var currSelf = this;
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByCxCp.action",
+                        data: { userCode: LocalUserInfo.GetUserInfo().UserCode, mac: LocalUserInfo.GetUserInfo().Mac, cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess && retData.Data) {
+                                //获取当前用户当前产品的工序
+                                var data = GetCurrentProcess(retData.Data.SCRW_CPBH);
+                                if (data.IsSuccess && data.Data) {
+                                    var data1 = GetDictionary("GYGL_GXLX");
+                                    if (data1.IsSuccess && data1.Data) {
+                                        currSelf.MyStation = "";
+                                        for (var index in data1.Data) {
+                                            var item = data1.Data[index];
+                                            if (data.Data.GXGL_GXLX_NAME == item.DICTIONARYITEM_ITEMCODE) {
+                                                //MS000015 我的工站菜单
+                                                currSelf.MyStation = LocalConfig.SrvPath + item.DICTIONARYITEM_CLASSIFY;
+                                                $("#MS000015").attr("href", currSelf.MyStation);
+                                                if (window.document.referrer.indexOf("Login.html") >= 0)
+                                                    window.location.href = currSelf.MyStation;
+                                                break;
+                                            }
+                                        }
+                                        if (!currSelf.MyStation)
+                                            $("#MS000015").hide();
+                                    }
+                                }
+                            }
+                            else
+                                $.toptip("当前产线没有生产任务", "success");
+                        },
+                        error: function (xhr, status, thr) {
+                            //console.error(status);
+                            $.alert("请求数据失败!");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+                //离散型
+                DiscreteType: function () {
+                    var currSelf = this;
+                    $.showLoading();
+
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesLoginAction!getXtcsByCode.action",
+                        data: { userCode: LocalUserInfo.GetUserInfo().UserCode, mac: LocalUserInfo.GetUserInfo().Mac, cxflCode: "SopModel" },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess && retData.Data) {
+
+                                //读取系统参数SOP显示模式，1显示 0不显示
+                                if (retData.Data.XTCS_CSZ === "1") {
+                                    $.ajax({
+                                        type: "post",
+                                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByCxCp.action",
+                                        data: { userCode: LocalUserInfo.GetUserInfo().UserCode, mac: LocalUserInfo.GetUserInfo().Mac, cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode },
+                                        dataType: "json",
+                                        success: function (ret) {
+                                            var retData = ReturnData(ret);
+                                            if (retData.IsSuccess) {
+                                                var obj = retData.Data;
+
+
+                                                for (var key in obj) {
+
+                                                    //获取当前用户当前产品的工序
+                                                    var data = GetCurrentProcess(retData.Data.SCRW_CPBH);
+                                                    if (data.IsSuccess && data.Data) {
+
+                                                        var GXlist = data.Data;
+                                                        for (var element in GXlist) {
+                                                            //SOP界面
+
+                                                            if (window.document.referrer.indexOf("Login.html") >= 0)
+                                                                window.location.href = LocalConfig.SrvPath + "/JG/Features/StandardOperationProcedure.html";
+                                                            return false;//返回false，不为空对象
+                                                        }
+
+                                                        //主界面
+                                                        if (window.document.referrer.indexOf("Login.html") >= 0)
+                                                            window.location.href = LocalConfig.SrvPath + "/JG/Home/Index.html";
+                                                            $.toptip("当前工位无绑工序信息", "success");
+                                                        return true;//返回true，为空对象
+
+
+                                                    } else {
+                                                        //主界面
+                                                        if (window.document.referrer.indexOf("Login.html") >= 0)
+                                                            window.location.href = LocalConfig.SrvPath + "/JG/Home/Index.html";
+                                                    }
+                                                    return false;//返回false，不为空对象
+                                                }
+
+
+
+
+                                                if (window.document.referrer.indexOf("Login.html") >= 0)
+                                                    window.location.href = LocalConfig.SrvPath + "/JG/Home/Index.html";
+                                                $.toptip("当前产线无生产任务", "success");
+                                                return true;//返回true，为空对象
+
+
+
+                                            }
+                                        },
+                                        error: function (xhr, status, thr) {
+
+                                            $.alert("请求数据失败!");
+                                        },
+                                        complete: function () {
+                                            $.hideLoading();
+                                        }
+                                    });
+
+
+
+                                } else if (retData.Data.XTCS_CSZ === "0") {
+                                    //主界面
+                                    if (window.document.referrer.indexOf("Login.html") >= 0)
+                                        window.location.href = LocalConfig.SrvPath + "/JG/Home/Index.html";
+                                }
+
+                            }
+
+                        },
+                        error: function (xhr, status, thr) {
+
+                            $.alert("请求数据失败!");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+                InstructorMenu: function (item) {
+                    var currSelf = this;
+                    if (item.menuCode === 'MS000070') {
+                        $.showLoading();
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/jgmesLoginAction!getXtcsByCode.action",
+                            data: { userCode: LocalUserInfo.GetUserInfo().UserCode, mac: LocalUserInfo.GetUserInfo().Mac, cxflCode: "BusinessModel" },
+                            dataType: "json",
+                            success: function (ret) {
+                                var retData = ReturnData(ret);
+                                if (retData.IsSuccess && retData.Data) {
+
+                                    //读取系统参数企业模式 判定1离散型还是0流程型
+                                    if (retData.Data.XTCS_CSZ === "0") {
+                                        $.toptip("不是SOP显示模式", "warning");
+                                    } else if (retData.Data.XTCS_CSZ === "1") {
+                                        var currSelf = this;
+                                        $.showLoading();
+
+                                        $.ajax({
+                                            type: "post",
+                                            url: LocalConfig.SrvPath + "/jgmes/jgmesLoginAction!getXtcsByCode.action",
+                                            data: { userCode: LocalUserInfo.GetUserInfo().UserCode, mac: LocalUserInfo.GetUserInfo().Mac, cxflCode: "SopModel" },
+                                            dataType: "json",
+                                            success: function (ret) {
+                                                var retData = ReturnData(ret);
+                                                if (retData.IsSuccess && retData.Data) {
+
+                                                    //读取系统参数SOP显示模式，1显示 0不显示
+                                                    if (retData.Data.XTCS_CSZ === "1") {
+                                                        $.ajax({
+                                                            type: "post",
+                                                            url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByCxCp.action",
+                                                            data: { userCode: LocalUserInfo.GetUserInfo().UserCode, mac: LocalUserInfo.GetUserInfo().Mac, cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode },
+                                                            dataType: "json",
+                                                            success: function (ret) {
+                                                                var retData = ReturnData(ret);
+                                                                if (retData.IsSuccess) {
+                                                                    var obj = retData.Data;
+
+
+                                                                    for (var key in obj) {
+
+                                                                        window.location.href = LocalConfig.SrvPath + "/JG/Features/StandardOperationProcedure.html";
+                                                                        return false;//返回false，不为空对象
+                                                                    }
+
+
+                                                                    $.ajax({
+                                                                        type: "post",
+                                                                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrwByGX.action",
+                                                                        data: {
+                                                                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                                                            mac: LocalUserInfo.GetUserInfo().Mac,
+                                                                            cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode,
+                                                                            // curDate:year+'-'+month+'-'+data,
+                                                                            curDate: '',
+                                                                            zt: "RWZT02,RWZT01,RWZT04",
+                                                                            noLike: "",
+                                                                            cpLike: "",
+                                                                            PageSize: "",   //每页条数
+                                                                            CurrPage: ""    //当前页
+
+
+                                                                        },
+                                                                        datatype: "json",
+                                                                        success: function (ret) {
+                                                                            //console.log(ret)
+                                                                            var data = JSON.parse(ret);
+                                                                            var retData = ReturnData(data);
+                                                                            if (retData.IsSuccess) {
+
+
+                                                                                if (retData.Data) {
+                                                                                    //console.log("无生产中的，有任务单")
+                                                                                    window.location.href = LocalConfig.SrvPath + "/JG/Features/StandardOperationProcedure.html";
+                                                                                } else {
+                                                                                    $.toptip("当前产线无任务单信息", "success");
+                                                                                }
+
+                                                                            } else {
+                                                                                $.toptip("当前产线无任务单信息", "success");
+                                                                            }
+
+
+                                                                        },
+                                                                        error: function (xhr, status, error) {
+                                                                            console.error(status);
+                                                                            $.alert("请求失败!");
+                                                                        }, complete: function () {
+                                                                            //$.hideLoading();
+                                                                        }
+                                                                    });
+                                                                    return true;//返回true，为空对象
+
+
+
+                                                                }
+                                                            },
+                                                            error: function (xhr, status, thr) {
+                                                                //console.error(status);
+                                                                $.alert("请求数据失败!");
+                                                            },
+                                                            complete: function () {
+                                                                $.hideLoading();
+                                                            }
+                                                        });
+
+
+
+                                                    } else if (retData.Data.XTCS_CSZ === "0") {
+                                                        $.toptip("不是SOP显示模式", "warning");
+                                                    }
+
+                                                }
+
+                                            },
+                                            error: function (xhr, status, thr) {
+                                                //console.error(status);
+                                                $.alert("请求数据失败!");
+                                            },
+                                            complete: function () {
+                                                $.hideLoading();
+                                            }
+                                        });
+
+                                    }
+
+                                }
+
+                            },
+                            error: function (xhr, status, thr) {
+                                //console.error(status);
+                                $.alert("请求数据失败!");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+
+                        // if (currSelf.scrwList.length > 0) {
+                        //     //console.log("任务单不为空")
+                        //     window.location.href = LocalConfig.SrvPath + "/JG/Features/StandardOperationProcedure.html";
+                        // } else {
+                        //     $.toptip("当前产线无任务信息", "success");
+                        //     //console.log("任务单为空")
+                        //     //window.location.href = LocalConfig.SrvPath + "/JG/Home/Index.html";
+                        // }
+                    }
+
+
+                },
+
+                LoadMenu: function () { //动态加载菜单
+                    var currSelf = this;
+                    $.showLoading();
+                    $.ajax({
+                        async: false,
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesPerssionAction!getPbMenuListByUserCode.action",
+                        data: { userCode: LocalUserInfo.GetUserInfo().UserCode, mac: LocalUserInfo.GetUserInfo().Mac },
+                        dataType: "json",
+                        success: function (ret) {
+
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess && retData.Data) {
+                                $.each(retData.Data, function (i, item) {
+
+                                    currSelf.MenuList.push({
+                                        "menuCode": item.MENUSET_CDBH,
+                                        "menuAddress": item.MENUSET_CDLJ,
+                                        "backgroundColor": item.MENUSET_BJYS,
+                                        "menuName": item.MENUSET_CDMC,
+                                        "picture": item.MENUSET_TBDZ,
+                                        "fontSize": item.MENUSET_ZTDX,
+                                        "fontCol": item.MENUSET_ZTCOLOR,
+                                        "fontSty": item.MENUSET_ZTYS
+                                    });
+                                });
+                            } else {
+                                $.alert("当前用户无权限访问");
+                                LocalUserInfo.ClearUser();
+                                window.location.href = window.location.href;
+                            }
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                }
+            },
+            filters: {
+                ImageUrlConvert: function (value) {
+                    if (value) {
+                        return value.split('*')[1];
+                    }
+                    return value;
+                },
+                FilterMyStation: function (value) {
+                    var currSelf = this;
+                    if (!value)
+                        return currSelf.MyStation;
+                    return value;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>巡检记录-精工云MES系统移动端</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="yes">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/css/Global.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <link href="/JG/Content/jquery/jquery-weui/css/icon.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/JG/Content/css/MobilePollingRecord.css?v=1">
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+</head>
+<body>
+<div id="ContentContainer" class="content_container">
+    <!--header部分-->
+    <header class="header">
+        <div class="empty">
+            <span id="stations"></span>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-flex__item" style="position:absolute;">
+                        <span style="font-size:16px;padding-left: 10px;" class="icon icon-109 f-white"
+                              onclick="javascript:location.href='/JG/Quality/MobileMovePolling.html'">
+                            返回
+                        </span>
+            </div>
+            <div class="weui-flex__item" style="text-align: center;">巡检记录</div>
+            <div class="weui-flex__item" style="position:absolute;right:10px;">
+                <span><img src="/JG/Content/images/save.png" alt="" style="width:30px;height: 30px"
+                           v-on:click="SavePollingData"></span>
+            </div>
+        </div>
+    </header>
+
+    <!--解决浮动空内容div-->
+    <div class="empty_div"></div>
+    <!--主体部分-->
+    <div id="MainPage" v-cloak>
+        <div class="polling">
+            <div class="polling_top">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div>
+                            产线名称：
+                            <select class="form-control" v-model="FormData.NowProductionLineCode"
+                                    v-on:change="ChooseProductionLine">
+                                <option v-for="(item,index) in ProLineData" v-bind:value="item.CXSJ_CXBM">
+                                    {{item.CXSJ_CXMC}}
+                                </option>
+                            </select>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        任务单号：
+                        <!--                            <div>-->
+                        <!--                                <select class="form-control" v-model="FormData.TaskOrder" v-on:change="ChooseTaskCode">-->
+                        <!--                                    <option v-for="(item,index) in TaskOrderData" v-bind:value="item.SCRW_RWDH">{{item.SCRW_RWDH}} </option>-->
+                        <!--                                </select>-->
+                        <!--                            </div>-->
+                        <input v-model="FormData.TaskOrder" class="popup_input" type="text" readonly="readonly"
+                               style="border: none;outline: none;">
+                        <button type="button" class="choice"
+                                style="width:42px;line-height: 25px;font-size: 14px;color: #FFFFFF;background-color: #4BA250;border:none;border-radius: 2px">
+                            选择
+                        </button>
+                    </li>
+                    <li class="list-group-item">
+                        标准方案：
+                        <div>
+                            <select id="XjFa" class="form-control" v-model="FormData.PollingSchemeID"
+                                    v-on:change="CheckoutClassify">
+                                <option v-for="(item,index) in PollingSchemeData" value="item.JGMES_ZLGL_CPJYBZ_ID"
+                                        v-bind:value="item.JGMES_ZLGL_CPJYBZ_ID">{{item.CPJYBZ_BZMC}}
+                                </option>
+                            </select>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <!-- <div class="pull-right">-->
+                        <!-- <div>-->
+                        <!--     <span>巡检时间：{{FormData.PollingTime}}</span>-->
+                        <!-- </div>-->
+                        <div>
+                            <span>客户名称：{{FormData.ClientName}}</span>
+                        </div>
+                        <!-- <div class="client_name">-->
+                        <div>
+                            <span>产品编码：{{FormData.InvCode}}</span>
+                        </div>
+                        <div>
+                            <span>产品名称：{{FormData.InvName}}</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!--树形结构部分-->
+            <div id="localTree">
+                <div id="tree_structure" class="tree_structure"></div>
+            </div>
+
+        </div>
+        <!--任务列表弹窗选项部分-->
+        <div tabindex="-1" class="modal fade in" id="myModal" role="dialog" aria-hidden="true"
+             aria-labelledby="myModalLabel">
+            <div id="scrwSumit" style="position:fixed;bottom:10px;right: 10px;z-index: 999">
+                <input class="radio_input" type="button" value="提交" style="width: 90px;height: 45px" @click="SubBothData()"/></div>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!--头部-->
+                    <div class="modal-header">
+                        <div>
+                            <button class="close" aria-hidden="true" type="button" data-dismiss="modal">×</button>
+                            <h4 class="modal-title" id="myModalLabel">生产任务列表</h4>
+                        </div>
+                        <!--搜索框部分-->
+                        <div class="task_btn row">
+                            <div class="search_list col-lg-12 col-md-12 col-sm-12" style="text-align: left">
+                                <div class="search_item">
+                                    <span>单据信息</span>
+                                    <input v-model="FormData.ProTaskCode" id="ProTaskCode" type="text"
+                                           placeholder="工单号/任务单号">
+                                </div>
+                                <div class="search_item">
+                                    <span>产品信息</span>
+                                    <input v-model="FormData.KeyWord" id="KeyWord" type="text"
+                                           placeholder="产品编号/产品名称/型号">
+                                </div>
+                                <div class="shut_btn">
+                                    <button class="btn btn-success" v-on:click="SearchLine()">搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--内容部分-->
+                    <div class="modal-body" id="tanchu" style="overflow-x: auto;overflow-y: auto;">
+                        <div class="info">
+                            <div class="weui-cells weui-cells_checkbox">
+                                <div class="list-group div_group" v-for="(item,index) in TaskCodeGat">
+                                    <div class="list-group-item">
+                                        <label class="list-group-item-heading">订单号码</label>
+                                        <span class="list-group-item-text"> {{item.OrderCode}}</span>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <label class="list-group-item-heading">任务单号</label>
+                                        <span class="list-group-item-text"> {{item.TaskOrder }}</span>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <label class="list-group-item-heading">产品编码</label>
+                                        <span class="list-group-item-text"> {{item.InvCode }}</span>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <label class="list-group-item-heading">产品名称</label>
+                                        <span class="list-group-item-text"> {{item.InvName }}</span>
+                                    </div>
+                                    <!--<div class="list-group-item">-->
+                                    <!--<label class="list-group-item-heading">检验方案</label>-->
+                                    <!--<span class="list-group-item-text">{{item.SCRW_CPGG }}</span>-->
+                                    <!--</div>-->
+                                    <div class="list-group-item sub_btn">
+                                        <label class="weui-cell weui-check__label" :for="item.TaskId">
+                                            <div class="weui-cell__hd">
+                                                <input type="checkbox" class="weui-check" name="scrwCheckBox"
+                                                       :id="item.TaskId">
+                                                <i class="weui-icon-checked"></i>
+                                            </div>
+                                            <div class="weui-cell__bd" style="margin-top: 15px;">
+                                                <p>点击选择</p>
+                                            </div>
+                                        </label>
+                                        <!-- <input class="radio_input" type="button" name="inputs" value="选择" @click="SubData(item)" />-->
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/Common.js"></script>
+<script src="/JG/Content/PollingDown2.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el: "#ContentContainer",
+        data: {
+            FormData: {
+                NowProductionLineCode: "",    //默认产线编码
+                TaskOrder: "",     //任务单号
+                ProdLine: "",    //产线名称
+                InvCode: "",      //产品编号
+                PollingSchemeName: "",    //巡检方案名称
+                PollingSchemeID: "",     //巡检方案ID
+                PollingClassifyID: "",     //巡检分类项ID
+                // MajorID:"",         //巡检主键ID
+                ClientName: "",    //客户名称
+                PollingTime: "",     //巡检时间
+                MaterialCode: "",  //物料编码
+                MaterialName: "",  //物料名称
+                ClientCode: "",      //客户编码
+                TaskOrderState: "",  //生产任务状态
+                OrderCode: "",       //订单号,
+                InvName: "",        //产品名称
+                WordCode: "",
+            },
+            ProLineData: [],      //产线集合
+            TaskOrderData: [],    //任务单信息
+            PollingSchemeData: [],    //巡检方案集合
+            PollingListData: [],     //巡检项目明细集合
+            TaskCodeGat: [],
+            saveDataList:[],
+        },
+        mounted: function () {
+            var currSelf = this;
+            currSelf.initData();    //初始化方法
+            currSelf.ProdLineMethod();  //初始化
+        },
+        methods: {
+            //初始化方法
+            initData: function () {
+                var currSelf = this;
+                //获取产线接口
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesBaseAction!getCxList.action",
+                    data: {},
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            if (retData.Data.length > 0) {
+                                currSelf.ProLineData = retData.Data;
+                                // currSelf.FormData.NowProductionLineCode = LocalUserInfo.GetUserInfo().ProductionLineCode;   //把用户登陆时绑定的产线编码赋值
+                                // //初始化任务单信息
+                                // if (currSelf.FormData.NowProductionLineCode.length > 0) {
+                                //     //任务单号接口
+                                //     $.ajax({
+                                //         type: "post",
+                                //         url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrw.action",
+                                //         data: {
+                                //             "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                //             "mac": LocalUserInfo.GetUserInfo().Mac,
+                                //             "cxCode": currSelf.FormData.NowProductionLineCode,      //当的产线
+                                //             "curDate": currSelf.curDate,
+                                //             "zt": "RWZT01," + "RWZT02," + "RWZT03," + "RWZT04," + "RWZT05"
+                                //         },
+                                //         dataType: "json",
+                                //         success: function (result) {
+                                //             var ret = ReturnData(result);
+                                //             if (ret.IsSuccess) {
+                                //                 if (ret.Data.length > 0) {
+                                //                     currSelf.saveDataList=[];
+                                //                     currSelf.TaskOrderData = ret.Data;
+                                //                     currSelf.FormData.TaskOrder = ret.Data[0].SCRW_RWDH;    //默认任务单号
+                                //                     currSelf.FormData.InvCode = ret.Data[0].SCRW_CPBH;    //默认第一个产品编号
+                                //                     currSelf.FormData.ClientName = ret.Data[0].SCRW_KHMC;    //客户名称
+                                //                     currSelf.FormData.PollingTime = ret.Data[0].SCRW_SJKGSJ;    //巡检时间
+                                //                     currSelf.FormData.MaterialCode = ret.Data[0].SCRW_CPBH;    //物料编号
+                                //                     currSelf.FormData.MaterialName = ret.Data[0].SCRW_NAME;    //物料名称
+                                //                     currSelf.FormData.NowProductionLineCode = ret.Data[0].SCRW_CXBM;//产线编码
+                                //                     currSelf.FormData.ProdLine = ret.Data[0].SCRW_CXMC;//产线名称
+                                //                     currSelf.FormData.ClientCode = ret.Data[0].SCRW_KHBM;//客户编码
+                                //                     currSelf.FormData.OrderCode = ret.Data[0].SCRW_DDHM;       //订单号,
+                                //                     currSelf.FormData.InvName = ret.Data[0].SCRW_NAME;        //产品名称
+                                //                     currSelf.FormData.WordCode = ret.Data[0].SCRW_GDHM;     //工单号
+                                //                     currSelf.saveDataList.push(currSelf.FormData);
+                                //                     //初始化巡检方案信息
+                                //                 } else {
+                                //                     var showMsg = "该生产产线没有任务单号相关信息!";
+                                //                     $.toptip(showMsg, "warning");
+                                //                 }
+                                //             } else if (!ret.Data) {
+                                //                 var showMsg = "获取生产任务失败！";
+                                //                 $.toptip(showMsg, "warning");
+                                //             }
+                                //         },
+                                //         error: function (xhr, status, errorThrown) {
+                                //             console.error(errorThrown);
+                                //         }
+                                //     });
+                                // }
+                            }
+                        } else if (!retData.Data) {
+                            var showMsg = "未能找到产线信息";
+                            $.toptip(showMsg, "warning");
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(errorThrow);
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                });
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getEffectiveProductStandard.action",
+                    data: {
+                        "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                        "mac": LocalUserInfo.GetUserInfo().Mac,
+                        // "cpbm": currSelf.FormData.InvCode,      //产品编码
+                        "jylx": "XJ",     //检验类型(固定值)
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        if (retData.IsSuccess && retData.Data) {
+                            currSelf.PollingSchemeData = retData.Data;
+                            currSelf.FormData.PollingSchemeName = retData.Data[0].CPJYBZ_BZMC;    //默认第一个巡检方案名称
+                            currSelf.FormData.PollingSchemeID = retData.Data[0].JGMES_ZLGL_CPJYBZ_ID;    //获取默认第一个巡检方案ID
+                            currSelf.CheckoutClassify();
+                        } else if (!retData.Data) {
+                            var showMsg = "没有找到巡检方案!";
+                            $.toptip(showMsg, "warning");
+                        }
+                    },
+                    error: function (xhr, status, errorThrown) {
+                        console.error(errorThrown);
+                    }
+                });
+            },
+
+            //选择不同产线获取对应任务单方法
+            ChooseProductionLine: function () {
+                var currSelf = this;
+                currSelf.TaskOrderData = [];    //清空之前任务单数据
+                currSelf.PollingSchemeData = [];     //清除之前检验方案
+                currSelf.PollingListData = [];
+                currSelf.FormData.PollingTime = "";
+                currSelf.FormData.ClientName = "";
+                currSelf.FormData.MaterialCode = "";
+                currSelf.FormData.MaterialName = "";
+                currSelf.FormData.TaskOrder = "";
+                currSelf.FormData.OrderCode = "",       //订单号,
+                    currSelf.FormData.InvName = "",        //产品名称
+                    currSelf.FormData.WordCode = "",     //工单号
+                    $(".tree_structure").empty();
+                $.each(currSelf.ProLineData, function (index, item) {
+                    if (currSelf.FormData.NowProductionLineCode == item.CXSJ_CXBM) {
+                        currSelf.FormData.NowProductionLineCode = item.CXSJ_CXBM;      //当前产线编码
+                        currSelf.FormData.ProdLine = item.CXSJ_CXMC;
+                    }
+                });
+                //初始化任务单信息
+                if (currSelf.FormData.NowProductionLineCode) {
+                    //任务单号接口
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrw.action",
+                        data: {
+                            "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                            "mac": LocalUserInfo.GetUserInfo().Mac,
+                            "cxCode": currSelf.FormData.NowProductionLineCode,      //当的产线
+                            "curDate": currSelf.curDate,
+                            "zt": "RWZT01," + "RWZT02," + "RWZT03," + "RWZT04," + "RWZT05"
+                        },
+                        dataType: "json",
+                        success: function (result) {
+                            var ret = ReturnData(result);
+                            if (ret.IsSuccess) {
+                                if (ret.Data.length > 0) {
+                                    currSelf.TaskOrderData = ret.Data;
+                                    currSelf.FormData.TaskOrder = ret.Data[0].SCRW_RWDH;    //默认任务单号
+                                    currSelf.FormData.InvCode = ret.Data[0].SCRW_CPBH;    //默认第一个产品编号
+                                    currSelf.FormData.ClientName = ret.Data[0].SCRW_KHMC;    //客户名称
+                                    currSelf.FormData.PollingTime = ret.Data[0].SCRW_SJKGSJ;    //巡检时间
+                                    currSelf.FormData.MaterialCode = ret.Data[0].SCRW_CPBH;    //物料编号
+                                    currSelf.FormData.MaterialName = ret.Data[0].SCRW_NAME;    //物料名称
+                                    currSelf.FormData.NowProductionLineCode = ret.Data[0].SCRW_CXBM;//产线编码
+                                    currSelf.FormData.ProdLine = ret.Data[0].SCRW_CXMC;//产线名称
+                                    currSelf.FormData.ClientCode = ret.Data[0].SCRW_KHBM;//客户编码
+                                    currSelf.FormData.OrderCode = ret.Data[0].SCRW_DDHM,       //订单号,
+                                        currSelf.FormData.InvName = ret.Data[0].SCRW_NAME,        //产品名称
+                                        currSelf.FormData.WordCode = ret.Data[0].SCRW_GDHM,     //工单号
+                                        $(".tree_structure").empty();
+
+                                    //初始化巡检方案信息
+                                    if (currSelf.FormData.InvCode) {
+                                        //根据产品获取巡检方案列表接口
+                                        $.ajax({
+                                            type: "post",
+                                            url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getEffectiveProductStandard.action",
+                                            data: {
+                                                "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                                "mac": LocalUserInfo.GetUserInfo().Mac,
+                                                // "cpbm": currSelf.FormData.InvCode,      //产品编码
+                                                "jylx": "XJ",     //检验类型(固定值)
+                                            },
+                                            dataType: "json",
+                                            success: function (ret) {
+                                                var retData = ReturnData(ret);
+                                                if (retData.IsSuccess && retData.Data) {
+                                                    currSelf.PollingSchemeData = retData.Data;
+                                                    currSelf.FormData.PollingSchemeName = retData.Data[0].CPJYBZ_BZMC;    //默认第一个巡检方案名称
+                                                    currSelf.FormData.PollingSchemeID = retData.Data[0].JGMES_ZLGL_CPJYBZ_ID;    //获取默认第一个巡检方案ID
+                                                    currSelf.CheckoutClassify();
+                                                } else if (!retData.Data) {
+                                                    var showMsg = "此任务单没有绑定相关的巡检方案!";
+                                                    $.toptip(showMsg, "warning");
+                                                }
+                                            },
+                                            error: function (xhr, status, errorThrown) {
+                                                console.error(errorThrown);
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    var showMsg = "该生产产线没有任务单号相关信息!";
+                                    $.toptip(showMsg, "warning");
+                                }
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            console.error(errorThrown);
+                        }
+                    });
+                }
+            },
+
+            //选择不同任务单获取对应的巡检方案
+            ChooseTaskCode: function () {
+                var currSelf = this;
+                currSelf.PollingSchemeData = [];     //清除之前检验方案
+                currSelf.PollingListData = [];
+                currSelf.FormData.PollingTime = "";
+                currSelf.FormData.ClientName = "";
+                currSelf.FormData.MaterialCode = "";
+                currSelf.FormData.MaterialName = "";
+
+                tree.str = "";
+                $.each(currSelf.TaskOrderData, function (i, val) {
+                    if (currSelf.FormData.TaskOrder == val.SCRW_RWDH) {
+                        currSelf.FormData.TaskOrder = val.SCRW_RWDH;      //当前任务单号
+                        currSelf.FormData.InvCode = val.SCRW_CPBH;    //当前产品编码
+                        currSelf.FormData.ClientName = val.SCRW_KHMC;    //客户名称
+                        currSelf.FormData.PollingTime = val.SCRW_SJKGSJ;    //巡检时间
+                        currSelf.FormData.MaterialCode = val.SCRW_CPBH;    //物料编号
+                        currSelf.FormData.MaterialName = val.SCRW_NAME;    //物料名称
+                        currSelf.FormData.NowProductionLineCode = val.SCRW_CXBM;//产线编码
+                        currSelf.FormData.ProdLine = val.SCRW_CXMC;//产线名称
+                        currSelf.FormData.ClientCode = val.SCRW_KHBM;//客户编码
+                        currSelf.FormData.OrderCode = val.SCRW_DDHM;      //订单号,
+                        currSelf.FormData.InvName = val.SCRW_NAME;        //产品名称
+                        currSelf.FormData.WordCode = val.SCRW_GDHM;    //工单号
+                    }
+                });
+                //初始化巡检方案信息
+                if (currSelf.FormData.InvCode) {
+                    //根据产品获取巡检方案列表接口
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getEffectiveProductStandard.action",
+                        data: {
+                            "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                            "mac": LocalUserInfo.GetUserInfo().Mac,
+                            // "cpbm": currSelf.FormData.InvCode,      //产品编码
+                            "jylx": "XJ",     //检验类型(固定值)
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess && retData.Data) {
+                                currSelf.PollingSchemeData = retData.Data;
+                                currSelf.FormData.PollingSchemeName = retData.Data[0].CPJYBZ_BZMC;    //默认第一个巡检方案名称
+                                currSelf.FormData.PollingSchemeID = retData.Data[0].JGMES_ZLGL_CPJYBZ_ID;    //获取默认第一个巡检方案ID
+                                currSelf.CheckoutClassify();
+                            } else if (!retData.Data) {
+                                var showMsg = "此任务单没有绑定相关的巡检方案!";
+                                $.toptip(showMsg, "warning");
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            console.error(errorThrown);
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        },
+                    });
+                }
+            },
+            //保存
+            SavePollingData: function () {
+                var currSelf = this;
+                console.log(currSelf.saveDataList);
+                if (currSelf.FormData.NowProductionLineCode == "undefined" || currSelf.FormData.NowProductionLineCode == null || currSelf.FormData.NowProductionLineCode == "") {
+                    $.toptip("产线信息不能为空", "warning");
+                    return false;
+                }
+                if (currSelf.FormData.TaskOrder == "undefined" || currSelf.FormData.TaskOrder == null || currSelf.FormData.TaskOrder == "") {
+                    $.toptip("任务单号不能为空", "warning");
+                    return false;
+                }
+                if (currSelf.FormData.PollingSchemeID == "undefined" || currSelf.FormData.PollingSchemeID == null || currSelf.FormData.PollingSchemeID == "") {
+                    $.toptip("巡检方案信息不能为空", "warning");
+                    return false;
+                }
+                if (currSelf.saveDataList.length<=0){
+                    $.toptip("没有保存数据", "warning");
+                    return false;
+                }
+                // if ($("input[type=radio]:checked").length==0){
+                //     $.toptip("没有相关巡检项目，不能保存！请在后台对应的巡检方案中添加", "warning");
+                //     return false;
+                // }
+                var radios = $("input[type=radio]:checked");//获取选中的项
+                if (radios.length == 0) {
+                    $.toptip("请至少选中一项检验结果", "warning");
+                    return false;
+                }
+                //子表数据
+                var jsonStrDetail = [];
+                // var radios = $("input[type=radio]:checked");
+                // console.log(radios);
+                for (var k = 0; k < radios.length; k++) {
+                    var item = $.parseJSON(radios[k].id);
+                    var value = radios[k].value;
+                    var textVal = $("input[type=text][name='" + radios[k].name + "']").val();
+                    var textareaVal = $("textarea[name='" + radios[k].name + "']").val();
+                    jsonStrDetail.push({
+                        "XJZBZB_JYXMBM": item.CPJYBZZB_JYXMBM,
+                        "XJZBZB_JYXMMC": item.JYXMDA_XMMC,
+                        "XJZBZB_NO_CODE": value,
+                        "XJZBZB_JYYQ": item.CPJYBZZB_JYYQ,
+                        "XJZBZB_JYZ": textVal,
+                        "XJZBZB_BZ": textareaVal,
+                        "XJZBZB_BZ_NAME": item.CPJYBZZB_BZ_NAME,
+                        "XJZBZB_BZ_CODE": item.CPJYBZZB_BZ_CODE,
+                        "XJZBZB_JY_NAME": item.CPJYBZZB_NO_NAME,
+                        "XJZBZB_JY_CODE": item.CPJYBZZB_NO_CODE,
+                    })
+                }
+                //主表数据
+                var jsonStr = {
+                    "XJZB_XJSJ": currSelf.FormData.PollingTime,
+                    "XJZB_XJBZMC": currSelf.FormData.PollingSchemeName,
+                    "XJZB_CXBM": currSelf.FormData.NowProductionLineCode,
+                    "XJZB_XJR": LocalUserInfo.GetUserInfo().UserCode,
+                    "XJZB_CXMC": currSelf.FormData.ProdLine,
+                    "XJZB_XJBZZJID": currSelf.FormData.PollingSchemeID,
+                };
+                //任务单关联表数据
+
+                var jsonStrRwGl=[];
+                for (var i=0;i<currSelf.saveDataList.length;i++){
+                    jsonStrRwGl.push({
+                        "RWDXXGLB_RWDH": currSelf.saveDataList[i].TaskOrder,
+                        "RWDXXGLB_CPBM": currSelf.saveDataList[i].InvCode,
+                        "RWDXXGLB_CPMC": currSelf.saveDataList[i].InvName,
+                        "RWDXXGLB_KHBM": currSelf.saveDataList[i].ClientCode,
+                        "RWDXXGLB_KHMC": currSelf.saveDataList[i].ClientName,
+                        "RWDXXGLB_DDH":currSelf.saveDataList[i].OrderCode,
+                    }) ;
+                }
+
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesXunJianAction!dopatrolSave.action",
+                    data: {
+                        "jsonStr": JSON.stringify(jsonStr),
+                        "jsonStrDetail": JSON.stringify(jsonStrDetail),
+                        "jsonStrRwGl": JSON.stringify(jsonStrRwGl),
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        var res = ReturnData(result);
+                        $.toptip("保存成功", "success");
+                        window.location.href = "/JG/Quality/MobileMovePolling.html";
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        $.alert("请求失败" + errorThrown);
+                    },
+                    complete: function () {
+                        //当数据加载完成隐藏加载弹窗
+                        $.hideLoading();
+                    }
+                });
+
+
+
+
+
+                // var jsonStrDetail = [];
+                // // var radios = $("input[type=radio]:checked");
+                // // console.log(radios);
+                // for (var k = 0; k < radios.length; k++) {
+                //     var item = $.parseJSON(radios[k].id);
+                //     var value = radios[k].value;
+                //     var textVal = $("input[type=text][name='" + radios[k].name + "']").val();
+                //     var textareaVal = $("textarea[name='" + radios[k].name + "']").val();
+                //     jsonStrDetail.push({
+                //         "XJZBZB_JYXMBM": item.CPJYBZZB_JYXMBM,
+                //         "XJZBZB_JYXMMC": item.JYXMDA_XMMC,
+                //         "XJZBZB_NO_CODE": value,
+                //         "XJZBZB_JYYQ": item.CPJYBZZB_JYYQ,
+                //         "XJZBZB_JYZ": textVal,
+                //         "XJZBZB_BZ": textareaVal,
+                //         "XJZBZB_BZ_NAME": item.CPJYBZZB_BZ_NAME,
+                //         "XJZBZB_BZ_CODE": item.CPJYBZZB_BZ_CODE,
+                //         "XJZBZB_JY_NAME": item.CPJYBZZB_NO_NAME,
+                //         "XJZBZB_JY_CODE": item.CPJYBZZB_NO_CODE,
+                //     })
+                // }
+                // $.ajax({
+                //     type: "post",
+                //     url: LocalConfig.SrvPath + "/jgmes/jgmesXunJianAction!dopatrolSave.action",
+                //     data: {
+                //         "jsonStr": JSON.stringify(jsonStr),
+                //         "jsonStrDetail": JSON.stringify(jsonStrDetail),
+                //     },
+                //     dataType: "json",
+                //     success: function (result) {
+                //         var res = ReturnData(result);
+                //         $.toptip("保存成功", "success");
+                //         window.location.href = "/JG/Quality/MobileMovePolling.html";
+                //     },
+                //     error: function (XMLHttpRequest, textStatus, errorThrown) {
+                //         $.alert("请求失败" + errorThrown);
+                //     },
+                //     complete: function () {
+                //         //当数据加载完成隐藏加载弹窗
+                //         $.hideLoading();
+                //     }
+                // });
+            },
+
+            //选择不同巡检方案获取相应的检验项明细
+            CheckoutClassify: function () {
+                var currSelf = this;
+                $.each(currSelf.PollingSchemeData, function (index, item) {
+                    if (currSelf.FormData.PollingSchemeID == item.JGMES_ZLGL_CPJYBZ_ID) {
+                        currSelf.FormData.PollingSchemeName = item.CPJYBZ_BZMC;
+                    }
+                });
+                //根据巡检方案ID请求对应的巡检分类项
+                if (currSelf.FormData.PollingSchemeName) {
+                    //获取检验分类项接口
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        async: false,
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getInspectionItemRootClassify.action",
+                        data: {
+                            "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                            "mac": LocalUserInfo.GetUserInfo().Mac,
+                            "jybzID": currSelf.FormData.PollingSchemeID,   //巡检检验方案ID
+                        },
+                        dataType: "json",
+                        success: function (result) {
+                            var res = ReturnData(result);
+                            // currSelf.FormData.PollingSchemeName
+                            if (res.IsSuccess) {
+                                if (res.Data) {
+                                    //currSelf.FirstCheckoutData = res.Data;
+                                    // currSelf.FormData.PollingClassifyID = res.Data[0].JGMES_ZLGL_JCXMFL_ID;
+                                    $("#localTree").append("");
+                                    $("#localTree").html("<div id='tree_structure' class='tree_structure'></div>")
+                                    tree.str = "";
+                                    for (var k = 0; k < res.Data.length; k++) {
+                                        currSelf.FormData.PollingClassifyID = res.Data[k].JGMES_ZLGL_JCXMFL_ID;
+                                        //根据巡检方案ID和巡检项目分类ID请求对应的巡检项目明细
+                                        if (currSelf.FormData.PollingClassifyID) {
+                                            //获取字表信息接口
+                                            $.showLoading();
+                                            $.ajax({
+                                                type: "post",
+                                                async: false,
+                                                url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getEffectiveProductStandardChild.action",
+                                                data: {
+                                                    "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                                    "mac": LocalUserInfo.GetUserInfo().Mac,
+                                                    "jybzID": currSelf.FormData.PollingSchemeID,    //巡检主键ID
+                                                    "rootId": currSelf.FormData.PollingClassifyID,    //检验分类项ID
+                                                },
+                                                dataType: "json",
+                                                success: function (result) {
+                                                    var res = ReturnData(result);
+                                                    if (res.IsSuccess) {
+                                                        if (res.Data) {
+                                                            //currSelf.PollingListData = res.Data;
+                                                            //添加无级树
+                                                            var str = tree.forTree(res.Data);
+                                                            $(".tree_structure").html(str);
+
+                                                        } else {
+                                                            var showMsg = "没有相关的检验项目信息!";
+                                                            $(".tree_structure").empty();
+                                                            $.toptip(showMsg, "warning");
+                                                        }
+                                                    } else {
+                                                        $.toptip(res.message, "error");
+                                                    }
+                                                },
+                                                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                                    $.alert("请求失败" + errorThrown);
+                                                },
+                                                complete: function () {
+                                                    //当数据加载完成隐藏加载弹窗
+                                                    $.hideLoading();
+                                                }
+                                            });
+                                        }
+                                    }
+
+                                } else {
+                                    var showMsg = "没有相关的检验信息!请在后台对应的巡检方案中添加!";
+                                    $(".tree_structure").empty();
+                                    $.toptip(showMsg, "warning");
+                                }
+                            } else {
+                                $.toptip(res.message, "error");
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            $.alert("请求失败" + errorThrown);
+                        },
+                        complete: function () {
+                            //当数据加载完成隐藏加载弹窗
+                            $.hideLoading();
+                        }
+                    });
+                }
+
+            },
+
+            //点击任务列表弹窗搜索按钮方法
+            SearchLine: function () {
+                var currSelf = this;
+
+                if (!currSelf.FormData.NowProductionLineCode) {
+                    // bootbox.alert("请先输入需要搜索的内容!");
+                    $("#ProTaskCode").focus();  //点击搜索按钮时，搜索框获取聚焦
+                    $("#KeyWord").focus();  //点击搜索按钮时，搜索框获取聚焦
+                } else {
+                    currSelf.TaskCodeGat = [];
+                    $.showLoading();
+                    //任务单号接口
+                    $.ajax({
+                        type: "post",
+                        async: true,
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrw.action",
+                        data: {
+                            "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                            "mac": LocalUserInfo.GetUserInfo().Mac,
+                            "cxCode": currSelf.FormData.NowProductionLineCode,   //产线编码
+                            "curDate": currSelf.curDate,    //当前产线的时间
+                            "noLike": currSelf.FormData.ProTaskCode,    //获取当前用户输入任务单号
+                            "cpLike": currSelf.FormData.KeyWord,     //获取当前用户输入产品关键字
+                        },
+                        dataType: "json",
+                        success: function (result) {
+                            var ret = ReturnData(result);
+                            //console.log(ret);
+                            if (ret.IsSuccess) {
+                                if (ret.Data.length > 0) {
+                                    for (var i in ret.Data) {
+                                        var item = ret.Data[i];
+                                        currSelf.TaskCodeGat.push({
+                                            TaskOrder: item.SCRW_RWDH,    //任务单号
+                                            InvCode: item.SCRW_CPBH,     //产品编号
+                                            OrderCode: item.SCRW_DDHM,  //订单号
+                                            InvName: item.SCRW_NAME,  //产品名称
+                                            WordCode: item.SCRW_GDHM,  //工单号
+                                            //BgsjCxbm: item.SCRW_CXBM,  //产线编码
+                                            TaskId: item.JGMES_PLAN_SCRW_ID,//生产任务主键id
+                                            ClientName:item.SCRW_KHMC,//客户名称
+                                            ClientCode:item.SCRW_KHBM,//客户编码
+                                        });
+                                    }
+                                }
+                            } else if (!ret.Data) {
+                                var showMsg = "搜索的该生产产线没有任务信息!";
+                                $.toptip(showMsg, "warning");
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            console.error(errorThrown);
+                            $.toptip("请求相关生产任务信息失败!", "error");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                }
+            },
+            //获取当前产线任务单全部信息方法
+            ProdLineMethod: function () {
+                var currSelf = this;
+                $(".popup_input,.choice").click(function () {
+                    if (currSelf.FormData.NowProductionLineCode) {
+                        //清空原有加载数据
+                        currSelf.TaskCodeGat = [];
+                        //currSelf.j = "";   //清空之前选中当前下标的任务列表数据
+                        $("#myModal").modal("show");
+
+                        $.showLoading();
+                        //任务单号接口
+                        $.ajax({
+                            type: "post",
+                            async: true,
+                            url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrw.action",
+                            data: {
+                                "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                "mac": LocalUserInfo.GetUserInfo().Mac,
+                                "cxCode": currSelf.FormData.NowProductionLineCode,      //当前用户选择的产线
+                                "curDate": currSelf.curDate,
+                                // "zt": "RWZT01,RWZT02,RWZT04"
+                            },
+                            dataType: "json",
+                            success: function (result) {
+                                var ret = ReturnData(result);
+                                //console.log(ret);
+                                if (ret.IsSuccess) {
+                                    if (ret.Data.length > 0) {
+                                        for (var i in ret.Data) {
+                                            var item = ret.Data[i];
+                                            currSelf.TaskCodeGat.push({
+                                                TaskOrder: item.SCRW_RWDH,    //任务单号
+                                                InvCode: item.SCRW_CPBH,     //产品编号
+                                                OrderCode: item.SCRW_DDHM,  //订单号
+                                                InvName: item.SCRW_NAME,  //产品名称
+                                                WordCode: item.SCRW_GDHM,  //工单号
+                                                TaskId: item.JGMES_PLAN_SCRW_ID,//生产任务主键id
+                                                ClientName:item.SCRW_KHMC,//客户名称
+                                                ClientCode:item.SCRW_KHBM,//客户编码
+                                                //BgsjCxbm: item.SCRW_CXBM,  //产线编码
+                                            });
+                                        }
+                                    }
+                                } else if (!ret.Data) {
+                                    var showMsg = "该生产产线没有任务信息!";
+                                    // currSelf.SetOperateRecord(showMsg, false);
+                                    $.toptip(showMsg, "warning");
+                                }
+                            },
+                            error: function (xhr, status, errorThrown) {
+                                // $.alert("任务单号请求失败!");
+                                $.toptip(status, "error");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+                    }else{
+                        $.toptip("请先选择产线", "warning");
+                    }
+
+                });
+            },
+            //点击弹窗选择按钮方法
+            SubData: function (val) {
+                var currSelf = this;
+                currSelf.CheckoutProject = [];    //清空之前选择的检验方案
+                currSelf.FormData.MasterID = "";    //清空绑定第一个检验方案的ID
+
+                $("#myModal").modal("hide");
+                currSelf.FormData.TaskOrder = val.TaskOrder;
+                currSelf.FormData.OrderCode = val.OrderCode;
+                currSelf.FormData.InvCode = val.InvCode;
+                currSelf.FormData.InvName = val.InvName;
+                $.showLoading();
+                currSelf.ChooseTaskCode();
+            },
+
+            //点击弹窗多选按钮方法
+            SubBothData: function () {
+                var currSelf = this;
+                currSelf.CheckoutProject = [];    //清空之前选择的检验方案
+                currSelf.FormData.MasterID = "";    //清空绑定第一个检验方案的ID
+                currSelf.saveDataList=[]; //清空
+                var checkBoxCheck = $("input[name='scrwCheckBox']:checked");
+                console.log(checkBoxCheck);
+                var List = currSelf.TaskCodeGat;
+                var TaskOrder = "";
+                var OrderCode = "";
+                var InvCode = "";
+                var InvName = "";
+                var ClientName = "";
+                var ClientCode="";
+                for (var i=0;i<checkBoxCheck.length;i++){
+                    console.log(checkBoxCheck[i].id);
+                    for (var j=0;j<List.length;j++){
+                        if (checkBoxCheck[i].id==List[j].TaskId){
+                            TaskOrder += List[j].TaskOrder+"，";
+                            OrderCode += List[j].OrderCode+"，";
+                            InvCode += List[j].InvCode+"，";
+                            InvName += List[j].InvName+"，";
+                            ClientName+=List[j].ClientName+"，";
+                            // ClientCode+=List[j].ClientCode+",";
+                            currSelf.saveDataList.push(List[j]);
+                        }
+                    }
+                }
+                currSelf.FormData.TaskOrder = TaskOrder.substring(0,TaskOrder.length-1);
+                currSelf.FormData.OrderCode = OrderCode.substring(0,OrderCode.length-1);
+                currSelf.FormData.InvCode = InvCode.substring(0,InvCode.length-1);
+                currSelf.FormData.InvName = InvName.substring(0,InvName.length-1);
+                currSelf.FormData.ClientName = ClientName.substring(0,ClientName.length-1);
+
+                $("#myModal").modal("hide");
+                // currSelf.FormData.TaskOrder = val.TaskOrder;
+                // currSelf.FormData.OrderCode = val.OrderCode;
+                // currSelf.FormData.InvCode = val.InvCode;
+                // currSelf.FormData.InvName = val.InvName;
+                // $.showLoading();
+                // currSelf.ChooseTaskCode();
+            },
+
+        },
+    });
+</script>
+</html>

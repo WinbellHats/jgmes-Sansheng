@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>货柜管理-精工云MES系统移动端</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/MobileContainerManagement.css">
+    <link href="/JG/Content/jquery/jquery-weui/css/icon.css" rel="stylesheet" />
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <link rel="stylesheet" href="/JG/Content/bootstrap-datetimepicker.css">
+    <link rel="stylesheet" href="/JG/Content/bootstrap-datetimepicker.min.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="empty">
+            <span id="stations"></span>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-flex__item" style="position:absolute;">
+                <span style="font-size:16px" class="icon icon-109 f-white"
+                    onclick="javascript:location.href='/JG/Home/MobileIndex.html'">返回</span>
+            </div>
+            <div class="weui-flex__item" style="text-align: center;">货柜管理</div>
+        </div>
+    </header>
+    <div id="MainPage" v-cloak>
+        <div class="page">
+            <div class="weui-flex tabbar">
+                <div class="weui-flex__item " @click="GetTaskListData">
+                    <a class="weui-navbar__item   active" href="javascript:;">
+                        任务列表
+                    </a>
+                </div>
+                <div class="weui-flex__item " @click="GetProcessingListData">
+                    <a class="weui-navbar__item " href="javascript:;">
+                        待处理列表
+                    </a>
+                </div>
+                <div class="weui-flex__item" @click="GetBindingListData">
+                    <a class="weui-navbar__item" href="javascript:;">
+                        绑定
+                    </a>
+                </div>
+                <div class="weui-flex__item" @click="GetHistoryListData">
+                    <a class="weui-navbar__item" href="javascript:;">
+                        历史列表
+                    </a>
+                </div>
+            </div>
+            <div class="content">
+                <div class="tab0">
+                    <div class="weui-flex ser">
+                        <div class="search">
+                            <input type="text" placeholder="日期yyyy-mm-dd" class="wordcode input1 "
+                                v-model="TaskSearchDate">
+                            <input type="text" placeholder="向地" class="zhancode" autofocus id="TaskCode"
+                                v-model="TaskSearchPlace">
+                            <button class="searchbtn" id="processsearch" @click="TaskSearch">查询</button>
+                        </div>
+                    </div>
+                    <div class="tabletitle">
+                        <div class="tabtitle">
+                            <ul style="font-weight: bold;">
+                                <li>
+                                    序号
+                                </li>
+                                <li>
+                                    货柜编码
+                                </li>
+                                <li>
+                                    货柜类型
+                                </li>
+                                <li>
+                                    栈板数
+                                </li>
+                                <li>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tablebody" style="overflow: auto;">
+                            <ul v-for="(item,index ) in TaskListData" :key="index" style="height: 38px;">
+                                <li>{{++index}}</li>
+                                <li style="height: -webkit-fill-available;;">{{item.HGAPZB_HGBH}}</li>
+                                <li style="height: -webkit-fill-available;">{{item.HGAPZB_HGLXMC}}</li>
+                                <li>{{item.HGAPZB_ZZSL}}</li>
+                                <li style="font-weight: bold; color: #5cb85c;" @click.stop="TaskSwitch(item)">>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tablefoot">
+                            <ul class="czbtn">
+                                <li></li>
+                                <li style="text-align: center;">
+                                    <span class="prebtn processpre" :class="{'disabled': TaskCurrPage == 1}"
+                                        @click="Taskpre">&lt;&nbsp;&nbsp;</span>
+                                    <span>{{TaskCurrPage}}</span>
+                                    <!-- <input type="tel" value="1" v-model="TaskCurrPage" class="pageNum2"
+                                                maxlength="5"
+                                                onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" /> -->
+                                    <span>/</span>
+                                    <span>{{Math.ceil(TaskTotalCount/TaskPageSize)}}</span>
+                                    <span class="nextbtn processnext"
+                                        :class="{'disabled': TaskCurrPage == TasktotalPage}"
+                                        @click="Tasknext">&nbsp;&nbsp;&gt;</span>
+                                </li>
+                                <li>
+                                    <!-- <button @click="TaskListDelect">删除</button> -->
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab1">
+                    <div class="weui-flex ser">
+                        <div class="search">
+                            <input type="text" placeholder="日期yyyy-mm-dd" class="wordcode input1"
+                                v-model="ProcessingSearchDate" autofocus id="WordCode">
+                            <input type="text" placeholder="货柜编号" v-model="ProcessPalletNumber" class="zhancode">
+                            <button class="searchbtn" id="processsearch" @click="ProcessingSearch">查询</button>
+                        </div>
+                    </div>
+                    <div class="tabletitle">
+                        <div class="tabtitle">
+                            <ul style="font-weight: bold;">
+                                <li>
+                                    序号
+                                </li>
+                                <li>
+                                    日期
+                                </li>
+                                <li>
+                                    货柜编号
+                                </li>
+                                <li>
+                                    栈板数
+                                </li>
+                                <li>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tablebody" style="overflow: auto;">
+                            <ul v-for="(item,index ) in ProcessingListData" :key="index"
+                                @click="ProcessingListCheck(item)" :class="{'checkdelect':item.isShow}"
+                                style="height: 38px;">
+                                <li>{{++index}}</li>
+                                <li style="height: -webkit-fill-available;;">{{item.HGBD_SJ}}</li>
+                                <li style="height: -webkit-fill-available;">{{item.HGBD_HGTMH}}</li>
+                                <li>{{item.HGBD_YZSL}}</li>
+                                <li style="font-weight: bold; color: #5cb85c;" @click.stop="ProcessingSwitch(item)">>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tablefoot">
+                            <ul class="czbtn">
+                                <li></li>
+                                <li style="text-align: center;">
+                                    <span class="prebtn processpre" :class="{'disabled': ProcessingCurrPage == 1}"
+                                        @click="Processingpre">&lt;&nbsp;&nbsp;</span>
+                                    <span>{{ProcessingCurrPage}}</span>
+                                    <!-- <input type="tel" value="1" v-model="ProcessingCurrPage" class="pageNum2"
+                                        maxlength="5"
+                                        onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                        onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" /> -->
+                                    <span>/</span>
+                                    <span>{{Math.ceil(ProcessingTotalCount/ProcessingPageSize)}}</span>
+                                    <span class="nextbtn processnext"
+                                        :class="{'disabled': ProcessingCurrPage == ProcessingtotalPage}"
+                                        @click="Processingnext">&nbsp;&nbsp;&gt;</span>
+                                </li>
+                                <li><button @click="ProcessingListDelect">删除</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab2 ">
+                    <div class="nav">
+                        <div class="weui-flex ser bortom" style="padding: .3rem;">
+                            <div class="navitem">
+                                <span style="width: 80px;display: inline-block;">扫码：<span
+                                        style="color:red">*</span></span>
+                                <input type="text" id="ScanCode" placeholder="扫码或录入" class="input2"
+                                    style="outline-style: none;" v-model="BindingList.FaceScanPayment" autofocus>
+                            </div>
+                        </div>
+                        <div class="weui-flex ser bortom" style="padding: .3rem;">
+                            <div class="navitem">
+                                <span style="width: 80px;display: inline-block;">货柜编号：</span>
+                                <input type="text" style="outline-style: none;" :value="BindingList.PalletCode" readonly
+                                    autofocus>
+                            </div>
+                        </div>
+                        <div class="weui-flex ser" style="padding: .3rem;">
+                            <div class="navitem naitem">
+                                <span style="width: 80px;display: inline-block;">栈板列表</span>
+                                <span>应装数量：{{ZBNum}}板</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tabletitle2">
+                        <div class="tabtitle2 tab">
+                            <ul style="font-weight: bold;">
+                                <li>
+                                    序号
+                                </li>
+                                <li>
+                                    栈板编号
+
+                                </li>
+                                <li>
+                                    已扫数量：<span>{{CartonBarcode.length}}</span> 板&nbsp;
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tablebody2  tab" style="overflow: auto;">
+                            <ul class="" v-for="(item,index) in CartonBarcode" :key="index">
+                                <li>{{BindingNum+index}}</li>
+                                <li>{{item.HGBDZB_ZBTMH}}</li>
+                                <li><img src="/JG/Content/images/bad_img.png" alt=""
+                                        @click="BindingDelectOne(index,item)">
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tablefoot2">
+                            <ul class="lsbtn">
+                                <li style="text-align: left;"><button class="save" @click="SaveData">保存</button></li>
+                                <li class="check">
+                                    <label for="auto">
+                                        <input id="auto" type="checkbox" @click="IsChecked($event)">
+                                        <span style="vertical-align: middle;">自动保存</span>
+                                    </label>
+                                </li>
+                                <li><button class="delete" @click="BindingDelectAll">删除</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab3">
+                    <div class="weui-flex ser">
+                        <div class="search">
+                            <input type="text" id="hisorder" placeholder="日期yyyy-mm-dd" class="wordcode input3"
+                                v-model="HistorySearchDate" autofocus>
+                            <input type="text" placeholder="货柜编号" v-model="HistoryPalletNumber" class="zhancode">
+                            <button class="searchbtn" @click="HistorySearch">查询</button>
+                        </div>
+                    </div>
+                    <div class="tabletitle">
+                        <div class="tabtitle">
+                            <ul style="font-weight: bold;">
+                                <li>
+                                    序号
+                                </li>
+                                <li>
+                                    日期
+                                </li>
+                                <li>
+                                    货柜编号
+                                </li>
+                                <li>
+                                    栈板数
+                                </li>
+                                <li>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tablebody3" style="overflow: auto;">
+                            <ul class="" v-for="(item,index ) in HistoryListData" :key="index"
+                                @click="HistoryListCheck(item)" :class="{'checkdelect':item.isShow}">
+                                <li>{{++index}}</li>
+                                <li>{{item.HGBD_SJ}}</li>
+                                <li>{{item.HGBD_HGTMH}}</li>
+                                <li>{{item.HGBD_YZSL}}</li>
+                                <li style="font-weight: bold; color: #5cb85c;" @click.stop="HistorySwitch(item)">></li>
+                            </ul>
+                        </div>
+                        <div class="tablefoot">
+                            <ul class="lsbtn">
+                                <li></li>
+                                <li style="text-align: center;">
+                                    <span class="prebtn historypre" :class="{'disabled': HistoryCurrPage == 1}"
+                                        @click="Historypre">&lt;&nbsp;&nbsp;</span>
+                                    <span>{{HistoryCurrPage}}</span>
+                                    <!-- <input type="tel" value="1" class="pageNum" maxlength="5"
+                                        onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'1')}else{this.value=this.value.replace(/\D/g,'1')}"
+                                        onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'1')}else{this.value=this.value.replace(/\D/g,'1')}" /> -->
+                                    <span>/</span>
+                                    <span>{{Math.ceil(HistoryTotalCount/HistoryPageSize)}}</span>
+                                    <span class="nextbtn historynext"
+                                        :class="{'disabled': HistoryCurrPage == HistorytotalPage}"
+                                        @click="Historynext">&nbsp;&nbsp;&gt;</span>
+                                </li>
+                                <li><button class="delete" @click="HistoryListDelect">删除</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</body>
+<script src="/JG/Content/jquery.min.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/Utils.js?v=1"></script>
+<script src="/JG/Content/Common.js"></script>
+<script src="/JG/Content/bootstrap-datetimepicker.min.js"></script>
+<script src="/JG/Content/bootstrap-datetimepicker.js"></script>
+<script src="/JG/Content/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="/JG/Content/AudioUtils.js"></script>
+
+<script type='text/javascript'>
+    // $(document).ready(function () {// ready 事件
+    //     $(".tabbar>div>a").each(function (index) {//便利对象
+    //         $(this).click(function () {//点击触发事件
+    //             $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+    //             $(".tabbar>div>a").eq(index).addClass("active");//添加当前元素的样式
+    //             $('.content>div').hide();
+    //             $('.content>div').eq(index).show();
+    //         });
+    //     });
+    // });
+    window.onload = function () {
+        var BodyWidth = $(window).width();
+        var BodyHeight = $(window).height();
+        var TableBodyHeight = (BodyHeight / 2) - 23;
+        var TableBodyHeight2 = (BodyHeight / 3) - 8;
+        $(".tablebody,.tablebody3").height(TableBodyHeight)
+        $(".tablebody2").height(TableBodyHeight2)
+    }
+</script>
+<script type="text/javascript">
+    //日期插件
+    $("#form_datetime").datetimepicker({
+        language: 'zh-CN',
+        format: 'yyyy-mm-dd',//显示格式
+        todayHighlight: 1,//今天高亮
+        minView: "month",//设置只显示到月份
+        startView: 2,
+        forceParse: 0,
+        showMeridian: 1,
+        autoclose: 1//选择后自动关闭
+
+    });
+</script>
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el: "#MainPage",
+        data: {
+            TaskListData: [],//任务列表数据集合
+            TaskPageSize: 10,//任务列表每页显示条数
+            TaskTotalCount: 0,//任务列表初始条数
+            TaskCurrPage: 1,//任务列表当前页数
+            TaskPalletNumber: "",//任务列表货柜编码
+            TaskPalletType: "",//任务列表货柜类型
+            TaskSearchDate: "",//任务列表日期查询
+            TaskSearchPlace: "",//任务列表向地查询
+            selectedTaskList: [],//任务列表选择储存
+
+            ProcessingListData: [],//待处理列表数据集合         
+            selectedProcessingList: [],//待处理列表选中储存            
+            ProcessOrderNumber: "", //待处理列表订单号码
+            ProcessPalletNumber: "",//待处理列表货柜编码
+            ProcessingPageSize: 10,//待处理列表每页显示条数
+            ProcessingTotalCount: 1,//待处理列表初始条数
+            ProcessingCurrPage: 1,//待处理列表当前页数
+            ProcessingSearchDate: "",//待处理列表日期查询
+            BindingList: {           //绑定数据
+                FaceScanPayment: "",//扫码
+                PalletCode: "",//货柜码
+                WordCode: ""//订单号码
+            },
+            BindingListData: [],//绑定列表数据集合                                
+            BindingNum: 1, //绑定序号初始值
+            CartonBarcode: [],//栈板条码集合
+            SaveReturnStatus: false,//绑定列表保存返回状态
+            BindingID: "",//绑定的ID
+            HistoryListData: [],//历史列表数据集合
+            selectedHistoryList: [],//历史列表选中储存
+            HistoryOrderNumber: "", //历史列表订单号码
+            HistoryPalletNumber: "",//历史列表货柜编码        
+            HistoryPageSize: 10,//历史列表每页显示条数
+            HistoryCurrPage: 1,//历史列表初始页码
+            HistoryTotalCount: 1,//历史列表初始条数
+            HistorySearchDate: "",//待处理列表日期查询
+            timeout: null,
+            tmyygzDynaBean: [], //条码应用规则
+            ZBBarCodeApplicationRules: "",//栈板条码类型
+            ZBNum: "",//栈板应装数量
+            HGBarCodeApplicationRules: "",//货柜编码类型
+
+            BindingDataIsChang: false,//绑定页面数据改变状态
+            SelectStatus: false,//自动保存按钮判断
+        },
+        computed: {
+            ProcessingtotalPage: function () {
+                var currSelf = this;
+                return Math.ceil(currSelf.ProcessingTotalCount / currSelf.ProcessingPageSize);
+            },
+            HistorytotalPage: function () {
+                var currSelf = this;
+                return Math.ceil(currSelf.HistoryTotalCount / currSelf.HistoryPageSize);
+            },
+            TasktotalPage: function () {
+                var currSelf = this;
+                return Math.ceil(currSelf.TaskTotalCount / currSelf.TaskPageSize);
+            },
+
+        },
+        mounted: function () {
+            var currSelf = this;
+            $("#ScanCode").bind("keypress", currSelf.Entenr)
+            $("#ScanCode").focus();
+            //初始化任务列表
+            $.showLoading();
+            $.ajax({
+                type: "post",
+                url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!getPendingHg.action",
+                data: {
+                    mac: LocalUserInfo.GetUserInfo().Mac,
+                    userCode: LocalUserInfo.GetUserInfo().UserCode,
+                    rq: currSelf.TaskSearchDate,
+                    fxd: currSelf.TaskSearchPlace,
+                    hgbh: "",
+                    PageSize: currSelf.TaskPageSize,
+                    CurrPage: currSelf.TaskCurrPage,
+                },
+                dataType: "json",
+                success: function (result) {
+                    var retData = ReturnData(result);
+                    if (retData.IsSuccess) {
+                        currSelf.TaskListData = retData.Data;
+                        for (var index in currSelf.TaskListData) {
+                            currSelf.TaskListData[index].isShow = false
+                        }
+                        for (var key in currSelf.TaskListData) {
+                            currSelf.TaskTotalCount = retData.TotalCount;
+                            return false;//返回false，不为空对象
+                        }
+                        currSelf.TaskTotalCount = 1;
+                        $.toptip("未找到相关信息", "error");
+                        return true;//返回true，为空对象
+                    }
+                },
+                error: function (xhr, status, errorThrow) {
+                    console.error(status);
+                    $.alert("获取信息失败!");
+                },
+                complete: function () {
+                    $.hideLoading();
+                },
+            })
+        },
+        methods: {
+            //任务列表数据查询
+            GetTaskListData: function () {
+                var currSelf = this;
+                $("#TaskCode").focus();
+                currSelf.TaskCurrPage = 1;
+                currSelf.CartonBarcode = [];
+                currSelf.TaskSearchDate = "";//任务列表日期查询
+                currSelf.TaskSearchPlace = "";//任务列表向地查询
+
+                if (currSelf.BindingDataIsChang) {
+                    $.modal({
+                        title: "操作提示",
+                        text: "离开绑定数据会丢失，请先保存！",
+                        buttons: [
+                            {
+                                text: "否", onClick: function () {
+                                    $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+                                    $(".tabbar>div>a").eq(0).addClass("active");//添加当前元素的样式
+                                    $('.content>div').hide();
+                                    $('.content>div').eq(0).show();
+                                    currSelf.CartonBarcode = [];
+                                    currSelf.BindingList.WordCode = "";
+                                    currSelf.BindingDataIsChang = false;
+                                    currSelf.tmyygzDynaBean = [];
+                                }
+                            },
+                            {
+                                text: "是", onClick: function () {
+                                    $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+                                    $(".tabbar>div>a").eq(2).addClass("active");//添加当前元素的样式
+                                    $('.content>div').hide();
+                                    $('.content>div').eq(2).show();
+                                }
+                            },
+                        ]
+                    });
+                } else {
+                    $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+                    $(".tabbar>div>a").eq(0).addClass("active");//添加当前元素的样式
+                    $('.content>div').hide();
+                    $('.content>div').eq(0).show();
+
+                    currSelf.CartonBarcode = [];
+                    currSelf.BindingList.WordCode = "";
+                    currSelf.tmyygzDynaBean = [];
+                }
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!getPendingHg.action",
+                    data: {
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        rq: currSelf.TaskSearchDate,
+                        fxd: currSelf.TaskSearchPlace,
+                        hgbh: "",
+                        PageSize: currSelf.TaskPageSize,
+                        CurrPage: currSelf.TaskCurrPage,
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            currSelf.TaskListData = retData.Data;
+                            for (var key in currSelf.TaskListData) {
+                                currSelf.TaskTotalCount = retData.TotalCount;
+                                return false;//返回false，不为空对象
+                            }
+                            currSelf.TaskTotalCount = 1;
+                            $.toptip("未找到相关信息", "error");
+                            return true;//返回true，为空对象
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取信息失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                })
+
+            },
+
+            //任务列表编辑信息切换到绑定列表
+            TaskSwitch: function (item) {
+                var currSelf = this;
+                $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+                $(".tabbar>div>a").eq(2).addClass("active");//添加当前元素的样式
+                $('.content>div').hide();
+                $('.content>div').eq(2).show();
+
+                currSelf.BindingList.PalletCode = item.HGAPZB_HGBH;
+                currSelf.BindingID = item.JGMES_PB_HGBD_ID;
+                currSelf.ZBNum = item.HGAPZB_ZZSL;
+                currSelf.BindingList.WordCode = item.HGBD_DDHM;
+                if (item.detail && item.detail.length > 0) {
+                    currSelf.CartonBarcode = item.detail;
+                }
+            },
+
+            //任务列表查询按钮
+            TaskListSearch: function () {
+                var currSelf = this;
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!getPendingHg.action",
+                    data: {
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        rq: currSelf.TaskSearchDate,
+                        fxd: currSelf.TaskSearchPlace,
+                        hgbh: "",
+                        PageSize: currSelf.TaskPageSize,
+                        CurrPage: currSelf.TaskCurrPage,
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            currSelf.TaskListData = retData.Data;
+                            for (var key in currSelf.TaskListData) {
+                                currSelf.TaskTotalCount = retData.TotalCount;
+                                currSelf.TaskSearchDate = "";
+                                currSelf.TaskSearchPlace = "";
+                                return false;//返回false，不为空对象
+                            }
+                            currSelf.TaskTotalCount = 1;
+                            currSelf.TaskSearchDate = "";
+                            currSelf.TaskSearchPlace = "";
+                            $.toptip("未找到相关信息", "error");
+                            return true;//返回true，为空对象
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取信息失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                })
+            },
+            //任务查询
+            TaskSearch: function () {
+                var currSelf = this;
+                currSelf.TaskCurrPage = 1;
+                currSelf.TaskListSearch();
+
+            },
+            //任务列表上一页切换
+            Taskpre: function () {
+                var currSelf = this;
+                if (currSelf.TaskCurrPage > 1) {
+                    currSelf.TaskCurrPage--;
+                    currSelf.TaskListSearch();
+                }
+            },
+            //任务列表下一页切换
+            Tasknext: function () {
+                var currSelf = this;
+                if (currSelf.TaskCurrPage < Math.ceil(currSelf.TaskTotalCount / currSelf.TaskPageSize)) {
+                    currSelf.TaskCurrPage++;
+                    currSelf.TaskListSearch();
+                }
+            },
+            //待处理列表数据获取
+            GetProcessingListData: function () {
+                var currSelf = this;
+                currSelf.ProcessingCurrPage = 1;
+                currSelf.ProcessOrderNumber = "";
+                currSelf.ProcessPalletNumber = "";
+                $("#WordCode").focus();
+                if (currSelf.BindingDataIsChang) {
+                    $.modal({
+                        title: "操作提示",
+                        text: "离开绑定数据会丢失，请先保存！",
+                        buttons: [
+                            {
+                                text: "否", onClick: function () {
+                                    $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+                                    $(".tabbar>div>a").eq(1).addClass("active");//添加当前元素的样式
+                                    $('.content>div').hide();
+                                    $('.content>div').eq(1).show();
+                                    currSelf.CartonBarcode = [];
+                                    currSelf.BindingList.WordCode = "";
+                                    currSelf.BindingDataIsChang = false;
+                                    currSelf.tmyygzDynaBean = [];
+                                }
+                            },
+                            {
+                                text: "是", onClick: function () {
+                                    $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+                                    $(".tabbar>div>a").eq(2).addClass("active");//添加当前元素的样式
+                                    $('.content>div').hide();
+                                    $('.content>div').eq(2).show();
+                                }
+                            },
+                        ]
+                    });
+                } else {
+                    $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+                    $(".tabbar>div>a").eq(1).addClass("active");//添加当前元素的样式
+                    $('.content>div').hide();
+                    $('.content>div').eq(1).show();
+
+                    currSelf.CartonBarcode = [];
+                    currSelf.BindingList.WordCode = "";
+                    currSelf.tmyygzDynaBean = [];
+                }
+
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!getHGTMSj.action",
+                    data: {
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        isComplete: '0',
+                        ddhm: "",
+                        barCode: currSelf.ProcessPalletNumber,
+                        PageSize: currSelf.ProcessingPageSize,
+                        CurrPage: currSelf.ProcessingCurrPage,
+                        rq: currSelf.ProcessingSearchDate,
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            currSelf.ProcessingListData = retData.Data;
+                            for (var key in currSelf.ProcessingListData) {
+                                currSelf.ProcessingTotalCount = retData.TotalCount;
+                                return false;//返回false，不为空对象
+                            }
+                            currSelf.ProcessingTotalCount = 1;
+                            $.toptip("未找到相关信息", "error");
+                            return true;//返回true，为空对象
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取信息失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                })
+                // }
+            },
+            //待处理列表的选中/取消选中
+            ProcessingListCheck: function (item) {
+                var currSelf = this;
+                if (!item.isShow) {
+                    item.isShow = true;
+                    currSelf.selectedProcessingList.push(item.JGMES_PB_HGBD_ID)
+                } else {
+                    item.isShow = false;
+                    var index = currSelf.selectedProcessingList.indexOf(item.JGMES_PB_HGBD_ID);
+                    if (index > -1) {
+                        currSelf.selectedProcessingList.splice(index, 1);
+                    }
+                }
+                currSelf.$forceUpdate();//强制刷新渲染
+            },
+            //待处理列表的批量删除
+            ProcessingListDelect: function () {
+                var currSelf = this;
+                if (currSelf.selectedProcessingList.length > 0) {
+                    $.confirm(" 确定要删除选中数据？", "操作提示",
+                        function () {
+                            //点击确认后的回调函数
+                            for (var i = 0; i < currSelf.ProcessingListData.length; i++) {
+                                if (currSelf.ProcessingListData[i].isShow) {
+                                    currSelf.ProcessingListData.splice(i, 1)
+                                    i--
+                                }
+                            }
+                            var ids = currSelf.selectedProcessingList.join(',');
+                            $.showLoading();
+                            $.ajax({
+                                type: "post",
+                                url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!doDeleteHGBD.action",
+                                data: {
+                                    mac: LocalUserInfo.GetUserInfo().Mac,
+                                    userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                    zbId: ids,
+                                    zbzbId: ""
+                                },
+                                dataType: "json",
+                                success: function (result) {
+                                    var retData = ReturnData(result);
+                                    if (retData.IsSuccess) {
+                                    }
+                                    currSelf.selectedProcessingList = [];
+                                },
+                                error: function (xhr, status, errorThrow) {
+                                    console.error(status);
+                                    $.alert("获取信息失败!");
+                                },
+                                complete: function () {
+                                    $.hideLoading();
+                                },
+
+                            })
+
+                        }
+
+                    );
+                } else {
+                    $.toptip("请选择您要删除的数据", "warning");
+                    AudioUtils.Play(AudioUtils.SelectDeleted);
+                }
+            },
+            //待处理列表编辑信息切换到绑定列表
+            ProcessingSwitch: function (item) {
+                var currSelf = this;
+                $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+                $(".tabbar>div>a").eq(2).addClass("active");//添加当前元素的样式
+                $('.content>div').hide();
+                $('.content>div').eq(2).show();
+
+                currSelf.BindingList.PalletCode = item.HGBD_HGTMH;
+                currSelf.BindingID = item.JGMES_PB_HGBD_ID;
+                currSelf.ZBNum = item.HGBD_NZSL;
+                currSelf.BindingList.WordCode = item.HGBD_DDHM;
+                currSelf.BindingList.FaceScanPayment = "";
+                if (item.detail && item.detail.length > 0) {
+                    currSelf.CartonBarcode = item.detail;
+                }
+            },
+            //待处理列表查询按钮
+            ProcessingListSearch: function () {
+                var currSelf = this;
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!getHGTMSj.action",
+                    data: {
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        isComplete: '0',
+                        ddhm: "",
+                        barCode: currSelf.ProcessPalletNumber,
+                        PageSize: currSelf.ProcessingPageSize,
+                        CurrPage: currSelf.ProcessingCurrPage,
+                        rq: currSelf.ProcessingSearchDate,
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            currSelf.ProcessingListData = retData.Data;
+                            for (var key in currSelf.ProcessingListData) {
+                                currSelf.ProcessingTotalCount = retData.TotalCount;
+                                currSelf.ProcessingSearchDate = "";
+                                currSelf.ProcessPalletNumber = "";
+                                return false;//返回false，不为空对象
+                            }
+                            currSelf.ProcessingTotalCount = 1;
+                            currSelf.ProcessingSearchDate = "";
+                            currSelf.ProcessPalletNumber = "";
+                            $.toptip("未找到相关信息", "error");
+                            return true;//返回true，为空对象
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取信息失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                })
+            },
+            //待处理查询
+            ProcessingSearch: function () {
+                var currSelf = this;
+                currSelf.ProcessingCurrPage = 1;
+                currSelf.ProcessingListSearch();
+            },
+            //待处理列表上一页切换
+            Processingpre: function () {
+                var currSelf = this;
+                if (currSelf.ProcessingCurrPage > 1) {
+                    currSelf.ProcessingCurrPage--;
+                    currSelf.ProcessingListSearch()
+                }
+            },
+            //待处理列表下一页切换
+            Processingnext: function () {
+                var currSelf = this;
+                if (currSelf.ProcessingCurrPage < Math.ceil(currSelf.ProcessingTotalCount / currSelf.ProcessingPageSize)) {
+                    currSelf.ProcessingCurrPage++;
+                    currSelf.ProcessingListSearch()
+                }
+            },
+
+            //绑定列表的单个删除
+            BindingDelectOne: function (index, item) {
+                var currSelf = this;
+                var zbzjID = item.JGMES_PB_HGBDZB_ID;
+                currSelf.CartonBarcode.splice(index, 1)
+                if (zbzjID) {
+
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!doDeleteHGBD.action",
+                        data: {
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            zbId: "",
+                            zbzbId: zbzjID,
+                        },
+                        dataType: "json",
+                        success: function (result) {
+                            var retData = ReturnData(result);
+                            if (retData.IsSuccess) {
+                            }
+                            currSelf.selectedHistoryList = [];
+                        },
+                        error: function (xhr, status, errorThrow) {
+                            console.error(status);
+                            $.alert("获取信息失败!");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        },
+                    })
+                }
+            },
+            //绑定列表的全部删除
+            BindingDelectAll: function () {
+                var currSelf = this;
+                if (currSelf.CartonBarcode.length > 0) {
+                    $.confirm(" 确定要删除全部数据？", "操作提示",
+                        function () {
+                            //点击确认后的回调函数
+                            var ids = [];
+                            $.each(currSelf.CartonBarcode, function (index, item) {
+                                ids.push(item.JGMES_PB_HGBDZB_ID);
+                            });
+                            ids = ids.join(',');
+                            $.showLoading();
+                            $.ajax({
+                                type: "post",
+                                url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!doDeleteHGBD.action",
+                                data: {
+                                    mac: LocalUserInfo.GetUserInfo().Mac,
+                                    userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                    zbId: "",
+                                    zbzbId: ids,
+                                },
+                                dataType: "json",
+                                success: function (result) {
+                                    var retData = ReturnData(result);
+                                    if (retData.IsSuccess) {
+                                    }
+                                    currSelf.CartonBarcode.splice(0);
+                                },
+                                error: function (xhr, status, errorThrow) {
+                                    console.error(status);
+                                    $.alert("获取信息失败!");
+                                },
+                                complete: function () {
+                                    $.hideLoading();
+                                },
+                            })
+                        }
+                    );
+                }
+            },
+            //绑定列表的扫码查询
+            SearchScanCode: function () {
+                var currSelf = this;
+                // if (event.which == 13) {
+                if (currSelf.BindingList.FaceScanPayment) {
+                    var BindingListBarCode = currSelf.BindingList.FaceScanPayment.trim();
+                    currSelf.BindingList.FaceScanPayment = "";
+                    if (currSelf.tmyygzDynaBean.length > 0) {
+                        if (Utils.IsTest(currSelf.ZBBarCodeApplicationRules, BindingListBarCode)) { //栈板类型  
+                            currSelf.ZBverification(BindingListBarCode);
+                        } else if (Utils.IsTest(currSelf.HGBarCodeApplicationRules, BindingListBarCode)) {//货柜编码类型                             
+
+                            currSelf.HGverification(BindingListBarCode);
+
+                        } else {
+                            $.toptip("未知的条码号，请检查！", "error");
+                            AudioUtils.Play(AudioUtils.UnknowBarcode);
+                            currSelf.BindingDataIsChang = false;
+                            return;
+                        }
+                    } else {
+                        $.showLoading();
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!getInfoByBarCode.action",
+                            data: {
+                                userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                barCode: BindingListBarCode,
+                            },
+                            dataType: "json",
+                            success: function (result) {
+                                var retData = ReturnData(result);
+                                if (retData.IsSuccess) {
+                                    if (retData.Data.tmyygzDynaBean != null) {
+                                        currSelf.tmyygzDynaBean = retData.Data.tmyygzDynaBean;
+                                        for (var j = 0; j < currSelf.tmyygzDynaBean.length; j++) {
+                                            if (currSelf.tmyygzDynaBean[j].CPTMYYGG_TMLX_CODE == "TMLX05" && retData.Data.TmLx == "TMZB") { //栈板条码类型
+                                                currSelf.ZBBarCodeApplicationRules = currSelf.tmyygzDynaBean[j].CPTMYYGG_TMYZGZ;//"/^\d{3}CP\d{3}$/"
+
+                                                if (!currSelf.BindingList.WordCode) {
+                                                    currSelf.BindingList.WordCode = retData.Data.tmScDynaBean.GDCPTM_DDHM;
+                                                }
+                                                for (var y = 0; y < currSelf.tmyygzDynaBean.length; y++) {
+                                                    if (currSelf.tmyygzDynaBean[y].CPTMYYGG_TMLX_CODE == "TMLX09") {
+                                                        currSelf.ZBNum = currSelf.tmyygzDynaBean[y].CPTMYYGG_MTMSL;
+                                                        currSelf.HGBarCodeApplicationRules = currSelf.tmyygzDynaBean[y].CPTMYYGG_TMYZGZ;
+                                                    }
+                                                }
+
+                                                currSelf.ZBverification(BindingListBarCode);
+
+                                            } else if (currSelf.tmyygzDynaBean[j].CPTMYYGG_TMLX_CODE == "TMLX09" && retData.Data.TmLx == "TMHGB") {//货柜编码类型
+
+                                                currSelf.HGBarCodeApplicationRules = currSelf.tmyygzDynaBean[j].CPTMYYGG_TMYZGZ;//^ii\d{3}ww\d{2}$
+                                                currSelf.ZBNum = currSelf.tmyygzDynaBean[j].CPTMYYGG_MTMSL;
+
+
+
+                                                if (!currSelf.BindingList.WordCode) {
+                                                    currSelf.BindingList.WordCode = retData.Data.tmScDynaBean.GDCPTM_DDHM;
+                                                }
+                                                for (var x = 0; x < currSelf.tmyygzDynaBean.length; x++) {
+                                                    if (currSelf.tmyygzDynaBean[x].CPTMYYGG_TMLX_CODE == "TMLX05") {
+                                                        currSelf.ZBBarCodeApplicationRules = currSelf.tmyygzDynaBean[x].CPTMYYGG_TMYZGZ;
+                                                    }
+                                                }
+
+                                                currSelf.HGverification(BindingListBarCode);
+
+                                            } else if (currSelf.tmyygzDynaBean[j].CPTMYYGG_TMLX_CODE == "TMLX04" && (retData.Data.TmLx == "TMWX" || retData.Data.TmLx == "TMCP")) {
+                                                if (!currSelf.BindingList.WordCode) {
+                                                    currSelf.BindingList.WordCode = retData.Data.tmScDynaBean.GDCPTM_DDHM;
+                                                }
+                                                for (var a = 0; a < currSelf.tmyygzDynaBean.length; a++) {
+                                                    if (currSelf.tmyygzDynaBean[a].CPTMYYGG_TMLX_CODE == "TMLX09") {
+                                                        currSelf.ZBNum = currSelf.tmyygzDynaBean[b].CPTMYYGG_MTMSL;
+                                                        currSelf.HGBarCodeApplicationRules = currSelf.tmyygzDynaBean[a].CPTMYYGG_TMYZGZ;
+                                                    }
+                                                }
+                                                for (var b = 0; b < currSelf.tmyygzDynaBean.length; b++) {
+                                                    if (currSelf.tmyygzDynaBean[b].CPTMYYGG_TMLX_CODE == "TMLX05") {
+
+                                                        currSelf.ZBBarCodeApplicationRules = currSelf.tmyygzDynaBean[b].CPTMYYGG_TMYZGZ;
+                                                    }
+                                                }
+                                                $.toptip("未知的条码号，请检查！", "error");
+                                                AudioUtils.Play(AudioUtils.UnknowBarcode);
+                                                currSelf.BindingDataIsChang = false;
+                                                return;
+
+                                            }
+                                        }
+                                    } else {
+                                        if(retData.Data.TmLx == "TMZB"){
+                                            $.toptip("栈板无验证规则，请检查！", "warning");
+                                        }
+                                        
+                                    }
+                                }
+
+                            },
+                            error: function (xhr, status, errorThrow) {
+                                console.error(status);
+                                $.alert("获取信息失败!");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            },
+                        })
+                    }
+                } else {
+
+                    $.toptip("请扫码或录入", "warning");
+                    AudioUtils.Play(AudioUtils.SweepCodeEntry);
+                }
+
+            },
+            //货柜编码验证方法封装
+            HGverification: function (BindingListBarCode) {
+                var currSelf = this;
+                currSelf.BindingList.PalletCode = BindingListBarCode;
+                currSelf.BindingDataIsChang = true;
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!getHGTMSj.action",
+                    data: {
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        isComplete: "",
+                        ddhm: currSelf.BindingList.WordCode,
+                        barCode: currSelf.BindingList.PalletCode,
+                        PageSize: "",
+                        CurrPage: "",
+                        rq: "",
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            if (retData.Data != null) {
+                                currSelf.BindingID = retData.Data[0].JGMES_PB_HGBD_ID;
+                            }
+                            for (var key in retData.Data) {
+                                if (retData.Data[key].detail && retData.Data[key].detail.length > 0) {
+                                    currSelf.CartonBarcode = retData.Data[key].detail;
+                                }
+                                return false;//返回false，不为空对象
+                            }
+                            return true;//返回true，为空对象
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取信息失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                })
+                return;
+
+            },
+            //栈板条码验证方法封装
+            ZBverification: function (BindingListBarCode) {
+                var currSelf = this;
+                if (currSelf.ZBNum) {
+                    if (currSelf.CartonBarcode.length >= currSelf.ZBNum) {//栈板码最大ZBNum板
+                        $.toptip("栈板条码已达到" + currSelf.ZBNum + "板", "warning");
+                        AudioUtils.Play(AudioUtils.Cartons);
+                    } else {//小于ZBNum板
+                        if (currSelf.CartonBarcode.length > 0) {//校验栈板码唯一性
+                            for (var i = 0; i < currSelf.CartonBarcode.length; i++) {
+                                var isBarCode = currSelf.CartonBarcode[i].HGBDZB_ZBTMH.indexOf(BindingListBarCode);
+                                if (isBarCode > -1) {
+                                    $.toptip("此栈板条码已存在", "warning");
+                                    AudioUtils.Play(AudioUtils.BarcodeExists);
+                                    return;
+                                }
+                            }
+                            currSelf.CartonBarcode.push({
+                                HGBDZB_ZBTMH: BindingListBarCode,
+                            })
+                            currSelf.BindingDataIsChang = true;
+                        } else {//栈板码长度为0时，不做校验
+                            currSelf.CartonBarcode.push({
+                                HGBDZB_ZBTMH: BindingListBarCode,
+                            })
+                            currSelf.BindingDataIsChang = true;
+                        }
+                    }
+
+                } else {
+                    $.toptip("未知的条码号，请检查！", "error");
+                    AudioUtils.Play(AudioUtils.UnknowBarcode);
+                    currSelf.BindingDataIsChang = false;
+                }
+                return;
+            },
+            //回车
+            Entenr: function () {
+                var currSelf = this;
+                if (event.which == 13) {
+                    currSelf.SearchScanCode();
+                    //判断数据有没改变
+                    if (currSelf.BindingDataIsChang && currSelf.SelectStatus) {
+                        currSelf.AllSaveData(0);
+                    }
+                }
+            },
+            //保存绑定主子表数据
+            AllSaveData: function (IsFinish) {
+                var currSelf = this;
+                //保存绑定主表
+                var jsonStr = JSON.stringify({
+                    "HGBD_HGTMH": currSelf.BindingList.PalletCode,//货柜编码号
+                    "HGBD_NZSL": currSelf.ZBNum,//内箱数量
+                    "HGBD_DDHM": currSelf.BindingList.WordCode,//订单号码
+                    "HGBD_NO_CODE": IsFinish,//是否完成
+                    "JGMES_PB_HGBD_ID": currSelf.BindingID,
+                    "HGBD_YZSL": currSelf.CartonBarcode.length,
+                });
+                //保存绑定子表
+                var jsonStrDetail = [];
+                for (var i in currSelf.CartonBarcode) {
+                    var element = currSelf.CartonBarcode[i];
+                    jsonStrDetail.push({
+                        "HGBDZB_ZBTMH": element.HGBDZB_ZBTMH.trim(),//栈板条码号
+                        "HGBDZB_HGTMH": currSelf.BindingList.PalletCode,//货柜编码号
+                        "JGMES_PB_HGBDZB_ID": element.GMES_PB_ZBBDZB_ID,
+                    })
+                }
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!doSaveHGTM.action",
+                    data: {
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        jsonStr: jsonStr,
+                        jsonStrDetail: JSON.stringify(jsonStrDetail),
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = result;
+                        if (retData.IsSuccess) {
+                            if (retData.Data || retData.Data == null) {
+
+
+                                if (retData.message == "" || retData.message == null || retData.message == undefined) {
+                                    if (currSelf.BindingList.PalletCode && currSelf.ZBNum == currSelf.CartonBarcode.length) {
+                                        currSelf.CartonBarcode = [];
+                                        currSelf.BindingList.PalletCode = "";
+                                        currSelf.ZBNum = "";
+                                    } else {
+                                        if (retData.Data != null) {
+                                            if (retData.Data.detail && retData.Data.detail.length > 0) {
+                                                currSelf.CartonBarcode = retData.Data.detail;
+                                            }
+                                        }
+                                    }
+                                    $.toptip("保存成功", "success");
+                                    AudioUtils.Play(AudioUtils.SaveSuccess);
+                                    currSelf.BindingDataIsChang = false;
+                                } else {
+                                    if (retData.Data != null) {
+                                        if (retData.Data.detail) {
+                                            currSelf.CartonBarcode = retData.Data.detail;
+                                        }
+                                    }
+                                    $.toptip(retData.message, "error");
+                                    AudioUtils.Play(AudioUtils.ErrorMessage);
+                                }
+
+                                currSelf.ProcessingListData = retData.Data;
+                                if (retData.Data != null) {
+                                    currSelf.BindingID = retData.Data.JGMES_PB_HGBD_ID;
+                                }
+
+
+                            }
+
+                        } else {
+                            $.toptip(retData.message, "warning")
+                            AudioUtils.Play(AudioUtils.ErrorMessage);
+                        }
+
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取信息失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                })
+            },
+            //保存绑定主子表数据
+            SaveData: function () {
+                var currSelf = this;
+                if (currSelf.BindingList.PalletCode || currSelf.CartonBarcode.length > 0) {
+                    $.modal({
+                        title: "操作提示",
+                        text: "数据保存类型？",
+                        buttons: [
+                            {
+                                text: "保存", onClick: function () {
+                                    currSelf.AllSaveData(0);
+
+                                }
+                            },
+                            {
+                                text: "尾数保存", onClick: function () {
+
+                                    if (!currSelf.BindingList.PalletCode) {
+                                        $.toptip("货柜编码为空，不能进行尾数保存", "warning");
+                                        AudioUtils.Play(AudioUtils.OuterBarcodeEmpty);
+                                    } else if (currSelf.CartonBarcode.length == 0) {
+                                        $.toptip("栈板条码为空，不能进行尾数保存", "warning");
+                                        AudioUtils.Play(AudioUtils.OuterBarcodeEmpty);
+                                    } else {
+                                        currSelf.AllSaveData(1);
+
+                                    }
+                                }
+                            },
+                            { text: "取消", className: "default", onClick: function () { } },
+
+                        ]
+                    });
+                }
+            },
+            //是否选中自动保存按钮
+            IsChecked: function (e) {
+                var currSelf = this;
+                if (e.target.checked === true) {
+                    currSelf.SelectStatus = e.target.checked;
+                } else if (e.target.checked === false) {
+                    currSelf.SelectStatus = e.target.checked;
+                }
+
+            },
+            //切换到绑定页面清空数据
+            GetBindingListData: function () {
+                var currSelf = this;
+                $("#ScanCode").focus();
+                $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+                $(".tabbar>div>a").eq(2).addClass("active");//添加当前元素的样式
+                $('.content>div').hide();
+                $('.content>div').eq(2).show();
+
+                if (currSelf.CartonBarcode.length == 0) {
+                    currSelf.CartonBarcode = [];
+                    currSelf.BindingList.PalletCode = "";
+                    currSelf.ZBNum = "";
+                    currSelf.BindingID = "";
+                }
+            },
+            //历史列表的选中/取消选中
+            HistoryListCheck: function (item) {
+                var currSelf = this;
+                if (!item.isShow) {
+                    item.isShow = true;
+                    currSelf.selectedHistoryList.push(item.JGMES_PB_HGBD_ID)
+                } else {
+                    item.isShow = false;
+                    var index = currSelf.selectedHistoryList.indexOf(item.JGMES_PB_HGBD_ID);
+                    if (index > -1) {
+                        currSelf.selectedHistoryList.splice(index, 1);
+                    }
+                }
+                currSelf.$forceUpdate();//强制刷新渲染
+            },
+            //历史列表的批量删除
+            HistoryListDelect: function () {
+                var currSelf = this;
+                if (currSelf.selectedHistoryList.length > 0) {
+                    $.confirm(" 确定要删除选中数据？", "操作提示",
+                        function () {
+                            //点击确认后的回调函数
+                            for (var i = 0; i < currSelf.HistoryListData.length; i++) {
+                                if (currSelf.HistoryListData[i].isShow) {
+                                    currSelf.HistoryListData.splice(i, 1)
+                                    i--
+                                }
+                            }
+                            var ids = currSelf.selectedHistoryList.join(',');
+                            $.showLoading();
+                            $.ajax({
+                                type: "post",
+                                url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!doDeleteHGBD.action",
+                                data: {
+                                    mac: LocalUserInfo.GetUserInfo().Mac,
+                                    userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                    zbId: ids,
+                                    zbzbId: ""
+                                },
+                                dataType: "json",
+                                success: function (result) {
+                                    var retData = ReturnData(result);
+                                    if (retData.IsSuccess) {
+                                    }
+                                    currSelf.selectedHistoryList = [];
+                                },
+                                error: function (xhr, status, errorThrow) {
+                                    console.error(status);
+                                    $.alert("获取信息失败!");
+                                },
+                                complete: function () {
+                                    $.hideLoading();
+                                },
+                            })
+                        }
+
+                    );
+                } else {
+                    $.toptip("请选择您要删除的数据", "warning");
+                    AudioUtils.Play(AudioUtils.SelectDeleted);
+                }
+            },
+            //历史列表编辑信息切换到绑定列表
+            HistorySwitch: function (item) {
+                var currSelf = this;
+                $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+                $(".tabbar>div>a").eq(2).addClass("active");//添加当前元素的样式
+                $('.content>div').hide();
+                $('.content>div').eq(2).show();
+
+                currSelf.BindingList.PalletCode = item.HGBD_HGTMH;
+                currSelf.BindingID = item.JGMES_PB_HGBD_ID;
+                currSelf.ZBNum = item.HGBD_NZSL;
+                currSelf.BindingList.WordCode = item.HGBD_DDHM;
+                if (item.detail && item.detail.length > 0) {
+                    currSelf.CartonBarcode = item.detail;
+                }
+            },
+            //历史列表查询按钮
+            HistoryListSearch: function () {
+                var currSelf = this;
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!getHGTMSj.action",
+                    data: {
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        isComplete: '1',
+                        ddhm: "",
+                        barCode: currSelf.HistoryPalletNumber,
+                        PageSize: currSelf.HistoryPageSize,
+                        CurrPage: currSelf.HistoryCurrPage,
+                        rq: currSelf.HistorySearchDate,
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            currSelf.HistoryListData = retData.Data;
+                            currSelf.HistoryTotalCount = retData.TotalCount;
+
+                            for (var key in currSelf.HistoryListData) {
+                                currSelf.HistorySearchDate = "";
+                                currSelf.HistoryPalletNumber = "";
+                                return false;//返回false，不为空对象
+                            }
+                            currSelf.HistoryTotalCount = 1;
+                            currSelf.HistorySearchDate = "";
+                            currSelf.HistoryPalletNumber = "";
+                            $.toptip("未找到相关信息", "error");
+                            return true;//返回true，为空对象
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取信息失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                })
+            },
+            //历史列表数据获取
+            GetHistoryListData: function () {
+                var currSelf = this;
+                currSelf.HistoryCurrPage = 1;
+                $("#hisorder").focus();
+                currSelf.HistoryOrderNumber = ""; //历史列表订单号码
+                currSelf.HistoryPalletNumber = "";//历史列表货柜编码 
+                currSelf.CartonBarcode = [];
+                if (currSelf.BindingDataIsChang) {
+                    $.modal({
+                        title: "操作提示",
+                        text: "离开绑定数据会丢失，请先保存！",
+                        buttons: [
+                            {
+                                text: "否", onClick: function () {
+                                    $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+                                    $(".tabbar>div>a").eq(3).addClass("active");//添加当前元素的样式
+                                    $('.content>div').hide();
+                                    $('.content>div').eq(3).show();
+                                    currSelf.CartonBarcode = [];
+                                    currSelf.BindingList.WordCode = "";
+                                    currSelf.BindingDataIsChang = false;
+                                    currSelf.tmyygzDynaBean = [];
+                                }
+                            },
+                            {
+                                text: "是", onClick: function () {
+                                    $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+                                    $(".tabbar>div>a").eq(2).addClass("active");//添加当前元素的样式
+                                    $('.content>div').hide();
+                                    $('.content>div').eq(2).show();
+                                }
+                            },
+                        ]
+                    });
+                } else {
+                    $(".tabbar>div>a").removeClass("active");//删除当前元素的样式
+                    $(".tabbar>div>a").eq(3).addClass("active");//添加当前元素的样式
+                    $('.content>div').hide();
+                    $('.content>div').eq(3).show();
+
+                    currSelf.CartonBarcode = [];
+                    currSelf.BindingList.WordCode = "";
+                    currSelf.tmyygzDynaBean = [];
+                }
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesBarCodeAction!getHGTMSj.action",
+                    data: {
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        isComplete: '1',
+                        ddhm: currSelf.HistoryOrderNumber,
+                        barCode: currSelf.HistoryPalletNumber,
+                        PageSize: currSelf.HistoryPageSize,
+                        CurrPage: currSelf.HistoryCurrPage,
+                        rq: currSelf.HistorySearchDate,
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            currSelf.HistoryListData = retData.Data
+                            for (var index in currSelf.HistoryListData) {
+                                currSelf.HistoryListData[index].isShow = false;
+                                currSelf.HistoryTotalCount = retData.TotalCount;
+                                return false;//返回false，不为空对象
+                            }
+                            currSelf.HistoryTotalCount = 1;
+                            $.toptip("未找到相关信息", "error");
+                            return true;//返回true，为空对象
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取信息失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                })
+            },
+            //历史列表查询
+            HistorySearch: function () {
+                var currSelf = this;
+                currSelf.HistoryCurrPage = 1;
+                currSelf.HistoryListSearch();
+            },
+            //历史列表上一页
+            Historypre: function () {
+                var currSelf = this;
+                if (currSelf.HistoryCurrPage > 1) {
+                    currSelf.HistoryCurrPage--;
+                    currSelf.HistoryListSearch();
+                }
+            },
+            //历史列表下一页
+            Historynext: function () {
+                var currSelf = this;
+                if (currSelf.HistoryCurrPage < Math.ceil(currSelf.HistoryTotalCount / currSelf.HistoryPageSize)) {
+                    currSelf.HistoryCurrPage++;
+                    currSelf.HistoryListSearch();
+                }
+            }
+        }
+    })
+</script>
+
+</html>

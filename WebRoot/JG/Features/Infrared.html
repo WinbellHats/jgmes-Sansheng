@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta http-equiv="Access-Control-Allow-Origin" content="*"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/css/TabletsGlobal.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/JG/Content/css/Infrared.css">
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/css/bootstrap-select.min.css" rel="stylesheet"/>
+
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+
+    <!-- <title>设备计数-生产任务单</title> -->
+    <title>红外线-生产任务单</title>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        .btn {
+            margin-left: 3px;
+            width: 80px;
+            height: 35px;
+        }
+    </style>
+</head>
+
+<body>
+<header class="header">
+    <div class="empty">
+        <span id="Infrared"></span>
+    </div>
+    <div class="header_title">
+        <!-- <a href="javascript:;">生产任务单(设备计数)</a> -->
+        <a href="javascript:;">红外线-生产任务单</a>
+    </div>
+    <div class="item item2">
+        <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+            <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+        </div>
+    </div>
+</header>
+<div id="MainPage" class="MainPage" v-cloak>
+    <!--    弹窗-->
+    <div tabindex="-1" class="modal fade" id="myModal" role="dialog" aria-hidden="false" aria-labelledby="myModalLabel">
+        <div class="modal-dialog content_dialog">
+            <div class="modal-content">
+                <!--头部-->
+                <div class="modal-header content_header">
+                    <div class="close_div">
+                        <button class="close" aria-hidden="true" type="button" data-dismiss="modal">×</button>
+                        <h4 class="modal-title" id="myModalLabel">产前准备</h4>
+                    </div>
+                </div>
+                <!--内容部分-->
+                <div class="modal-body content_body" id="tanchu" style="overflow-x: auto;overflow-y: auto;">
+                    <div class="bs-example" data-example-id="hoverable-table">
+                        <table class="table table-hover" id="btable">
+                            <tbody id="tableble">
+                            <tr id="SCYB">
+                                <th>生产样板</th>
+                                <th><input type="radio" name="SCYB" id="SCYB1" style="margin: 0 10px 0 -100px;" v-model="FormData.SCYB" value="1">有<input type="radio" name="SCYB" id="SCYB2" style="margin: 0 10px 0 50px;" v-model="FormData.SCYB" value="0">无</th>
+                            </tr>
+                            <tr id="SXJXB">
+                                <th>上下极限板</th>
+                                <th><input type="radio" name="SXJXB" id="SXJXB1" style="margin: 0 10px 0 -100px;" v-model="FormData.SXJXB" value="1">有<input type="radio" name="SXJXB" id="SXJXB2" style="margin: 0 10px 0 50px;" v-model="FormData.SXJXB" value="0">无</th>
+                            </tr>
+                            <tr id="BLPB">
+                                <th>不良品板</th>
+                                <th><input type="radio" name="BLPB" id="BLPB1" style="margin: 0 10px 0 -100px;" v-model="FormData.BLPB" value="1">有<input type="radio" name="BLPB" id="BLPB2" style="margin: 0 10px 0 50px;" v-model="FormData.BLPB" value="0">无</th>
+                            </tr>
+                            <tr id="CZSMS">
+                                <th>操作说明书</th>
+                                <th><input type="radio" name="CZSMS" id="CZSMS1" style="margin: 0 10px 0 -100px;" v-model="FormData.CZSMS" value="1">有<input type="radio" name="CZSMS" id="CZSMS2" style="margin: 0 10px 0 50px;" v-model="FormData.CZSMS" value="0">无</th>
+                            </tr>
+                            <tr id="PLB">
+                                <th>排拉表</th>
+                                <th><input type="radio" name="PLB" id="PLB1" style="margin: 0 10px 0 -100px;" v-model="FormData.PLB" value="1">有<input type="radio" name="PLB" id="PLB2" style="margin: 0 10px 0 50px;" v-model="FormData.PLB" value="0">无</th>
+                            </tr>
+                            <tr id="SBZT">
+                                <th>设备状态</th>
+                                <th><input type="radio" name="SBZT" id="SBZT1" style="margin: 0 10px 0 -86px;" v-model="FormData.SBZT" value="1">正常<input type="radio" name="SBZT" id="SBZT2" style="margin: 0 10px 0 36px;" v-model="FormData.SBZT" value="0">异常</th>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--底部分页部分-->
+                <div class="modal-footer page_footer">
+                    <div class="page_num">
+                        <button type="button" class="btn btn-danger next" @click="cancel()"
+                                id="wgButState"
+                        >取消</button>
+                        <button type="button" class="btn btn-success prev" @click="StartFull()"
+                        >开工</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="navbar-form navbar-left">
+        生产线&nbsp;
+        <div class="form-group" style="width:15em">
+            <select class="form-control" id="ProductionLineCode" v-model="FormData.ProductionLineCode">
+                <option v-for="(item,index) in ProLineData" v-bind:value="item.CXSJ_CXBM">{{item.CXSJ_CXMC}}
+                </option>
+            </select>
+        </div>
+    </div>
+    <!--<div class="navbar-form navbar-left">-->
+    <!--生产状态&nbsp;-->
+    <!--<div class="form-group" style="width:15em">-->
+    <!--<select id="" v-model="FormData.TaskState" class="selectpicker" multiple="multiple">-->
+    <!--<option v-for="(item,index) in TaskStateData" v-bind:value="item.DICTIONARYITEM_ITEMCODE">{{item.DICTIONARYITEM_ITEMNAME}}-->
+    <!--</option>-->
+    <!--</select>-->
+    <!--</div>-->
+    <!--</div>-->
+    <div class="navbar-form navbar-left">
+        <button type="submit" class="btn btn-default" v-on:click="SearchForm()">搜索</button>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>计划生产日期</th>
+            <!-- <th>任务单号\订单号</th> -->
+            <th>MO\PO</th>
+            <th>产品编码\名称</th>
+            <!-- <th>产品规格</th> -->
+            <th>组装工序</th>
+            <th>计划数量</th>
+            <th>完成数量</th>
+            <!-- <th>生产段</th> -->
+            <th>生产注意事项</th>
+            <th>生产状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(item,index) in TaskList">
+            <td>{{index+1}}</td>
+            <td>{{item.SCRW_JHKGSJ}}</td>
+            <!-- <td>{{item.SCRW_RWDH}}<br />{{item.SCRW_DDHM}}</td> -->
+            <td>{{item.SCRW_SCDH}}<br/>{{item.SCRW_DDHM}}</td>
+            <!-- <td>{{item.SCRW_CPBH}}<br />{{item.SCRW_NAME}}</td> -->
+            <td>{{item.SCRW_CASE}}<br/>{{item.SCRW_NAME}}</td>
+            <!-- <td>{{item.SCRW_CPGG}}</td> -->
+            <td>{{item.SCRW_ZGXMC}}</td>
+            <td>{{item.SCRW_PCSL}}</td>
+            <td>{{item.SCRW_WCSL}}</td>
+            <td>{{item.SCRW_ZYSX}}</td>
+            <!-- <td>
+                 <label v-if="item.SCRWZT_CXD=='CXD01'">全段</label>
+                 <label v-if="item.SCRWZT_CXD=='CXD02'">前段</label>
+                 <label v-if="item.SCRWZT_CXD=='CXD03'">后段</label>
+             </td> -->
+            <td>
+                <label v-if="item.SCRW_RWZT_CODE=='RWZT01'">待生产</label>
+                <label v-if="item.SCRW_RWZT_CODE=='RWZT02'">生产中</label>
+                <label v-if="item.SCRW_RWZT_CODE=='RWZT03'">完成生产</label>
+                <label v-if="item.SCRW_RWZT_CODE=='RWZT04'">暂停</label>
+            </td>
+            <td class="operation">
+                <!-- <button v-if="item.SCRW_RWZT_CODE!='RWZT02' && item.SCRW_RWZT_CODE!='RWZT03'" id="StartFull"
+                    class="btn btn-success" @click="StartFull(item)">开工</button> -->
+                <button v-if="item.SCRW_RWZT_CODE!='RWZT02' && item.SCRW_RWZT_CODE!='RWZT03'" id="StartFull"
+                        class="btn btn-success" @click="StartCheck(item)">全段开工
+                </button>
+                <!-- <button v-if="item.SCRW_RWZT_CODE!='RWZT02' && item.SCRW_RWZT_CODE!='RWZT03'" id="FrontSection"
+                    class="btn btn-success" @click="FrontSection(item)">前段开工</button>
+                <button v-if="item.SCRW_RWZT_CODE!='RWZT02' && item.SCRW_RWZT_CODE!='RWZT03'" id="RearEnd"
+                    class="btn btn-success" @click="RearEnd(item)">后段开工</button> -->
+                <button v-if="item.SCRW_RWZT_CODE=='RWZT02'" class="btn btn-danger"
+                        @click="Completed(item)">生产完工
+                </button>
+                <button v-if="item.SCRW_RWZT_CODE=='RWZT02'" class="btn btn-warning"
+                        @click="StopProduction(item)">暂停生产
+                </button>
+                <button class="btn btn-primary" onclick="javascript:location.href='/JG/Features/SwipingCard.html'">
+                    刷卡考勤
+                </button>
+                <button class="btn btn-danger" v-if="item.SCRW_RWZT_CODE=='RWZT02'" @click="SkipBadnessSubmitted(item)">
+                    不良报工
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+
+<script src="/JG/Content/jquery/fastclick.js"></script>
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/Utils.js?v=1"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/bootstrap-select.min.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        bootbox.setDefaults("locale", "zh_CN");
+        FastClick.attach(document.body);
+        var stations = LocalUserInfo.GetUserInfo();
+        $("#Infrared").html(stations.ProductionLineName + '-' + stations.StationName);
+        var timer = null;
+        if (timer) {
+            clearInterval(timer);
+        }else{
+            timer = setInterval(function(){
+                console.log("重新获取产线信息！");
+                vmPage.SearchForm();
+                if (document.getElementById("ProductionLineCode") === null) {
+                    clearInterval(timer);
+                    return;
+                }
+            },6000);
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(".operation>span").each(function (index) {
+        $(this).on("click", function () {
+            $(".operation>span").eq(index).addClass("active").siblings(".operation>span").removeClass("active")
+        })
+    })
+</script>
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el: "#MainPage",
+        data: {
+            FormData: {
+                ProductionLineCode: "",
+                //TaskState:[],     //搜索框选中的状态搜索集合
+                curDate: "",    //当前产线时间
+                SCYB: 0,
+                SXJXB: 0,
+                BLPB: 0,
+                CZSMS: 0,
+                PLB: 0,
+                SBZT: 0,
+            },
+            TaskList: [],
+            ProLineData: [],    //产线集合
+            TaskCode: "",               //任务单号
+            TaskStatu: "",             //任务状态
+            //TaskStateData:[],        //任务状态集合
+            StartItems:[],//点击开工后保存当前的item
+        },
+
+        mounted: function () {
+            var currself = this;
+            currself.InitData();
+        },
+        beforeDestory: function () {
+            // clearInterval(timer);
+        },
+        methods: {
+            InitData: function () {
+                var currSelf = this;
+                //请求数据字典中的状态数据
+                // var data = GetDictionary("JGMES_DIC_RWZT");
+                // if (data && data.IsSuccess) {
+                //     currSelf.TaskStateData = data.Data;
+                //     currSelf.FormData.TaskState.push("RWZT01");
+                //     currSelf.FormData.TaskState.push("RWZT02");
+                // }
+                // currSelf.GetProductTask();
+
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    async: true,   //异步
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesBaseAction!getCxList.action",
+                    data: {},
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            if (retData.Data) {
+                                currSelf.ProLineData = retData.Data;
+                                currSelf.FormData.ProductionLineCode = LocalUserInfo.GetUserInfo().ProductionLineCode;
+                            }
+                            currSelf.SearchForm();
+                        } else if (!retData.Data) {
+                            var showMsg = "未能找到产线信息";
+                            $.toptip(showMsg, "warning");
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取产线失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                });
+            },
+            //搜索功能方法
+            SearchForm: function () {
+                var currSelf = this;
+                if (!currSelf.FormData.ProductionLineCode) {
+                    // bootbox.show("请选择生产线!");
+                    $("#ProductionLineCode").focus();
+                } else
+                    currSelf.GetProductTask();
+            },
+            StartCheck:function(item){
+                var currself = this;
+                currself.StartItems=[];
+                currself.StartItems=item;
+                console.log("开工");
+                if (item.SCRW_RWZT_CODE=="RWZT04"){
+                    bootbox.confirm({
+                        message: "是否对当前任务单的进行开工吗？", buttons: {
+                            confirm: {
+                                label: '是',
+                                className: 'btn-success'
+                            },
+                            cancel: {
+                                label: '否',
+                                className: 'btn-danger'
+                            }
+                        }, callback: function (result) {
+                            if (result) {
+                                currself.ProductionOrderStatus(item, "RWZT02", "CXD01");
+                            }
+                        }
+                    });
+                }else{
+                    //初始化
+                    currself.FormData.SCYB  = item.SCRW_SCYB_CODE==1?1:0;
+                    currself.FormData.SXJXB = item.SCRW_SXJXB_CODE==1?1:0;
+                    currself.FormData.BLPB  = item.SCRW_BLPB_CODE==1?1:0;
+                    currself.FormData.CZSMS = item.SCRW_CZSMS_CODE==1?1:0;
+                    currself.FormData.PLB   = item.SCRW_PLB_CODE==1?1:0;
+                    currself.FormData.SBZT  = item.SCRW_SBZT_CODE==1?1:0;
+                    $("#myModal").modal("show");
+                }
+
+            },
+
+            cancel:function(){
+                $("#myModal").modal("hide");
+            },
+            //“全段”,”CXD01”),CXDQD(“前段”,”CXD02”),CXDHD(“后段”,”CXD03”）
+            StartFull: function () {
+                var currself = this;
+                var item=currself.StartItems;
+                console.log(item)
+                //生产样板和 操作说明书 需从系统里取值，当有一项为false，或者这两项都为false时，点击“全段开工”会无效并提示“物料不全“
+                // if (currself.FormData.SCYB==0||currself.FormData.CZSMS==0){
+                //     $.toptip("物料不全", "error");
+                //     return;
+                // }else{
+
+                    var jsonStr = {
+                        "JGMES_PLAN_SCRW_ID": item.JGMES_PLAN_SCRW_ID,
+                        "SCRW_SCYB_CODE":currself.FormData.SCYB,
+                        "SCRW_SXJXB_CODE":currself.FormData.SXJXB,
+                        "SCRW_BLPB_CODE":currself.FormData.BLPB,
+                        "SCRW_CZSMS_CODE":currself.FormData.CZSMS,
+                        "SCRW_PLB_CODE":currself.FormData.PLB,
+                        "SCRW_SBZT_CODE":currself.FormData.SBZT,
+                    };
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesInfraredAction!updateSCRWData.action",
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            jsonStr: JSON.stringify(jsonStr),
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess) {
+                                currself.ProductionOrderStatus(item, "RWZT02", "CXD01");
+                            }else{
+                                $.toptip(retData.message, "error");
+                            }
+                        }, error: function (xhr, status, errorThrown) {
+                            $.alert("请求失败");
+                        }, complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                //     bootbox.confirm({
+                //         message: "是否对当前任务单的进行开工吗？", buttons: {
+                //             confirm: {
+                //                 label: '是',
+                //                 className: 'btn-success'
+                //             },
+                //             cancel: {
+                //                 label: '否',
+                //                 className: 'btn-danger'
+                //             }
+                //         }, callback: function (result) {
+                //             if (result) {
+                //                 currself.ProductionOrderStatus(item, "RWZT02", "CXD01");
+                //             }
+                //         }
+                //     });
+                // }
+
+            },
+            FrontSection: function (item) {
+                var currself = this;
+                bootbox.confirm({
+                    message: "是否对当前任务单的产线前段进行开工吗？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            currself.ProductionOrderStatus(item, "RWZT02", "CXD02");
+                        }
+                    }
+                });
+            },
+            RearEnd: function (item) {
+                var currself = this;
+                bootbox.confirm({
+                    message: "是否对当前任务单的产线后段进行开工吗？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            currself.ProductionOrderStatus(item, "RWZT02", "CXD03");
+                        }
+                    }
+                });
+            },
+            Completed: function (item) {
+                var currself = this;
+                bootbox.confirm({
+                    message: "<label style='font-size:25px'>是否要完工当前任务单吗？</label>", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            currself.ProductionOrderStatus(item, "RWZT03");
+                        }
+                    }
+                });
+            },
+            StopProduction: function (item) {
+                var currself = this;
+                bootbox.confirm({
+                    message: "是否要暂停生产当前任务单吗？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            currself.ProductionOrderStatus(item, "RWZT04");
+                        }
+                    }
+                });
+            },
+
+            //选择生产任务状态
+            ProductionOrderStatus: function (item, SCRW_RWZT_CODE, LineSegment) {
+                var currSelf = this;
+                //修改任务单的生产状态
+                $.showLoading();
+                LineSegment = LineSegment ? LineSegment : item.SCRWZT_CXD;
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesInfraredAction!updateScrwZtB.action",
+                    data: {
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        prodLineCode: currSelf.FormData.ProductionLineCode,
+                        taskCode: item.SCRW_RWDH,
+                        //taskCode: item.SCRW_SCDH,
+                        startSection: LineSegment,
+                        taskStatus: SCRW_RWZT_CODE,
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        if (retData.IsSuccess) {
+                            $.toptip("操作成功！", "success");
+                            $("#myModal").modal("hide");
+                            currSelf.GetProductTask();
+                            // if (SCRW_RWZT_CODE == "RWZT02" && retData.Data.CXJTGL_JTH) { //开工重置数量
+                            //     currSelf.SetParamter(retData.Data.CXJTGL_JTH, 0);
+                            // }
+                        } else {
+                            $.toptip("操作失败,错误原因:" + retData.message, "error");
+                        }
+                    }, error: function (xhr, status, errorThrown) {
+                        console.error(errorThrown);
+                        $.alert("请求失败");
+                    }, complete: function () {
+                        $.hideLoading();
+                    }
+                });
+            },
+            //获取当前产线生产任务单列表
+            GetProductTask: function () {
+                var currSelf = this;
+                // currSelf.TaskList = [];
+                // $.showLoading();
+                $.ajax({
+                    type: "post",
+                    async: true,
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesInfraredAction!getCxScrw.action",
+                    Global: false,
+                    data: {
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        prodLineCode: currSelf.FormData.ProductionLineCode,
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        if (retData.IsSuccess && ret.Data) {
+                            currSelf.TaskList = retData.Data;
+                        } else {
+                            currSelf.TaskList = [];
+                        }
+                    }, error: function (xhr, status, errorThrown) {
+                        $.alert("请求失败");
+                    }, complete: function () {
+                        // $.hideLoading();
+                    }
+                });
+
+
+                // $.ajax({
+                //     type: "post",
+                //     url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrw.action",
+                //     data: {
+                //         userCode: LocalUserInfo.GetUserInfo().UserCode,
+                //         mac: LocalUserInfo.GetUserInfo().Mac,
+                //         "prodLineCode": currSelf.FormData.ProductionLineCode,
+                //         "curDate":currSelf.FormData.curDate,    //当前产线的时间
+                //         "zt": currSelf.FormData.TaskState.join(','),      //任务状态
+                //     },
+                //     dataType: "json",
+                //     success: function (ret) {
+                //         var retData = ReturnData(ret);
+                //         if (retData.IsSuccess && ret.Data) {
+                //             currSelf.TaskList = retData.Data;
+                //         }
+                //     }, error: function (xhr, status, errorThrown) {
+                //         $.alert("请求失败");
+                //     }, complete: function () {
+                //         $.hideLoading();
+                //     }
+                // });
+
+            },
+            //跳转到物料不良页面
+            SkipBadnessSubmitted: function (item) {
+                var currSelf = this;
+                console.log(item);
+                var itemJson = JSON.stringify(item);
+                sessionStorage.setItem("itemJson", itemJson);
+                console.log(itemJson);
+                window.location.href = "/JG/ProcessReport/JJBadnessSubmitted.html";
+            },
+        }
+    });
+</script>
+
+</html>

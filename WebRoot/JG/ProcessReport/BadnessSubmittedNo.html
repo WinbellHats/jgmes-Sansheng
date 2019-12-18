@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>不良报工-扫码-精工云MES系统移动端</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/BadnessSubmitted.css">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <style>
+        .weui-toptips {
+            z-index: 1051;
+            font-size: 3.0em !important;
+            height: 70px !important;
+            padding-top: 10;
+            padding-bottom: 10;
+            line-height: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="empty">
+            <span id="stations"></span>
+        </div>
+        <div class="header_title">
+            <a href="javascript:;">不良报工-扫码</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+    <div id="MainPage">
+        <div class="top_modal">
+            <div class="left_list">
+                <div class="pro_line">
+                    <span>产线</span>
+                    <input list="changxian" v-model="changxianzhi" type="text" placeholder="录入或下拉或扫描">
+                    <datalist class="datalist" id="changxian">
+                        <option style="width:100%;" v-for="(item,index) in ProLineData" :value="item.chanxian">
+                            {{item.chanxian}}</option>
+                        <!--<option value="总装线2">总装线2</option>-->
+                        <!--<option value="lili">lili</option>-->
+                        <!--<option value="总装线4">总装线4</option>-->
+                    </datalist>
+                </div>
+                <div class="pro_line">
+                    <span>工序</span>
+                    <input type="text" list="gongxu" placeholder="录入或下拉或扫描">
+                    <datalist id="gongxu">
+                        <option v-for="(item,index) in ProcessData" :value="item.gongxu">{{item.gongxu}}</option>
+                        <!--<option value="mama">mama</option>-->
+                        <!--<option value="工序3">工序3</option>-->
+                        <!--<option value="ppp">ppp</option>-->
+                    </datalist>
+                </div>
+                <div class="pro_line">
+                    <span>产品</span>
+                    <span class="product_name">产品名称</span>
+                </div>
+            </div>
+
+            <div class="right_list">
+                <div class="pro_line">
+                    <span>工位</span>
+                    <input type="text" list="gongwei" placeholder="录入或下拉或扫描">
+                    <datalist id="gongwei">
+                        <option v-for="(item,index) in StationData" :value="item.gongwei">{{item.gongwei}}</option>
+                        <!--<option value="工序2">工序2</option>-->
+                        <!--<option value="工序3">工序3</option>-->
+                        <!--<option value="工序4">工序4</option>-->
+                    </datalist>
+                </div>
+                <div class="pro_line">
+                    <span>工单号码</span>
+                    <input type="text" list="gongdan" placeholder="录入或下拉或扫描">
+                    <datalist id="gongdan">
+                        <option v-for="(item,index) in WorkCodeData" :value="item.gongdanhao">{{item.gongdanhao}}
+                        </option>
+                        <!--<option value="工序2">工序2</option>-->
+                        <!--<option value="工序3">工序3</option>-->
+                        <!--<option value="工序4">工序4</option>-->
+                    </datalist>
+                </div>
+            </div>
+            <!--清除浮动-->
+            <div class="clean"></div>
+        </div>
+        <div class="bad_modal">
+            <div class="bad_list">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>不良项</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item,index) in DefectiveItemData">
+                            <td>
+                                <span><img src="/JG/Content/images/photo.png" alt=""></span>
+                            </td>
+                            <td>{{item.BliangXian}}</td>
+                            <td>
+                                <span><img src="/JG/Content/images/1540967101(1).png" alt=""></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--翻页部分-->
+                <!--<div class="page">-->
+                <!--<span>上一页</span>-->
+                <!--<div class="page_list">-->
+                <!--<span>1</span>-->
+                <!--<span>2</span>-->
+                <!--<span>3</span>-->
+                <!--</div>-->
+                <!--<span>下一页</span>-->
+                <!--</div>-->
+            </div>
+            <div class="sub_btn">
+                <button type="button" class="btn btn-success">提交</button>
+            </div>
+        </div>
+        <div class="count_modal">
+            <div class="count_list">
+                <div class="bad_count">
+                    <p>不良数:<span>50</span></p>
+                </div>
+                <div class="all_count">
+                    <p>订单总数:<span>120</span></p>
+                </div>
+                <!--清除浮动-->
+                <div class="clean"></div>
+            </div>
+            <div class="bad_img">
+                <img src="/JG/Content/images/bad_img.png" alt="">
+            </div>
+            <!--清除浮动-->
+            <div class="clean"></div>
+
+            <div class="bad_record">
+                <ul>
+                    <li v-for="(item,index) in BadData">
+                        <span class="span_one">{{item.bianhao}}</span>
+                        <span class="span_two">{{item.mingchen}}</span>
+                        <span class="span_three">{{item.shijian}}</span>
+                        <span class="span_four">删除</span>
+                        <span class="span_five"><img src="/JG/Content/images/bad2.png" alt=""></span>
+                    </li>
+                    <!--<li>-->
+                    <!--<span class="span_one">GG15768532416</span>-->
+                    <!--<span class="span_two">不良项1</span>-->
+                    <!--<span class="span_three">02-15 15:00:00</span>-->
+                    <!--<span class="span_four">删除</span>-->
+                    <!--<span class="span_five"><img src="/JG/Content/images/bad2.png" alt=""></span>-->
+                    <!--</li>-->
+                    <!--<li>-->
+                    <!--<span class="span_one">GG15768532416</span>-->
+                    <!--<span class="span_two">不良项1</span>-->
+                    <!--<span class="span_three">02-15 15:00:00</span>-->
+                    <!--<span class="span_four">删除</span>-->
+                    <!--<span class="span_five"><img src="/JG/Content/images/bad2.png" alt=""></span>-->
+                    <!--</li>-->
+                    <!--<li>-->
+                    <!--<span class="span_one">GG15768532416</span>-->
+                    <!--<span class="span_two">不良项1</span>-->
+                    <!--<span class="span_three">02-15 15:00:00</span>-->
+                    <!--<span class="span_four">删除</span>-->
+                    <!--<span class="span_five"><img src="/JG/Content/images/bad2.png" alt=""></span>-->
+                    <!--</li>-->
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/Utils.js?v=1"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script type="text/javascript" src="/JG/Content/Flip-over.js?v=1"></script>
+
+<script type="text/javascript">
+    //赋值滚动条
+    window.onload = function () {
+        var BodyWidth = $(window).width();
+        //console.log(BodyWidth);
+        if (BodyWidth > 1281) {
+            var BodyHeight = $(window).height();
+            var MainPageHeight = BodyHeight - 90;
+            //赋值给div
+            $("#MainPage").height(MainPageHeight);
+
+        } else if (BodyWidth < 1281 && BodyWidth > 1023) {
+            var BodyHeight = $(window).height();
+            var MainPageHeight = BodyHeight - 90;
+            //赋值给div
+            $("#MainPage").height(MainPageHeight);
+
+        } else if (BodyWidth < 1024 && BodyWidth > 767) {
+            var BodyHeight = $(window).height();
+            var MainPageHeight = BodyHeight - 90;
+            //赋值给div
+            $("#MainPage").height(MainPageHeight);
+        } else {
+            var BodyHeight = $(window).height();
+            var MainPageHeight = BodyHeight - 70;
+            //赋值给div
+            $("#MainPage").height(MainPageHeight);
+        }
+    }
+</script>
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el: "#MainPage",
+        data: {
+            changxianzhi: "",
+            ProLineData: [     //产线集合
+                {
+                    chanxian: "总装线"
+                },
+                {
+                    chanxian: "检测电池"
+                },
+                {
+                    chanxian: "过站"
+                },
+                {
+                    chanxian: "去毛刺"
+                },
+                {
+                    chanxian: "扫码过站"
+                },
+            ],
+            StationData: [    //工位集合
+                {
+                    gongwei: "扫码产品"
+                },
+                {
+                    gongwei: "外观检测"
+                },
+                {
+                    gongwei: "装箱"
+                },
+            ],
+            ProcessData: [    //工序集合
+                {
+                    gongxu: "性能返修"
+                },
+                {
+                    gongxu: "投料"
+                },
+                {
+                    gongxu: "部件绑定"
+                },
+                {
+                    gongxu: "工位"
+                },
+            ],
+            WorkCodeData: [    //工单号集合
+                {
+                    gongdanhao: "167418765"
+                },
+                {
+                    gongdanhao: "4876232"
+                },
+                {
+                    gongdanhao: "48762"
+                },
+                {
+                    gongdanhao: "156796"
+                },
+            ],
+            DefectiveItemData: [     //不良项集合
+                {
+                    BliangXian: "不良项1"
+                },
+                {
+                    BliangXian: "不良项2"
+                },
+                {
+                    BliangXian: "不良项3"
+                },
+                {
+                    BliangXian: "不良项4"
+                },
+                {
+                    BliangXian: "不良项6"
+                },
+                {
+                    BliangXian: "不良项5"
+                },
+                {
+                    BliangXian: "不良项7"
+                },
+                {
+                    BliangXian: "不良项8"
+                },
+            ],
+            BadData: [      //不良信息添加集合
+                {
+                    bianhao: "GG20190221001",
+                    mingchen: "不良1",
+                    shijian: "02-25 5:10:00",
+                },
+                {
+                    bianhao: "GG20190221001",
+                    mingchen: "不良2",
+                    shijian: "02-25 5:10:00",
+                },
+                {
+                    bianhao: "GG20190221001",
+                    mingchen: "不良3",
+                    shijian: "02-25 5:10:00",
+                },
+                {
+                    bianhao: "GG20190221001",
+                    mingchen: "不良4",
+                    shijian: "02-25 5:10:00",
+                },
+                {
+                    bianhao: "GG20190221001",
+                    mingchen: "不良5",
+                    shijian: "02-25 5:10:00",
+                },
+            ],
+        },
+        methods: {
+
+        },
+    });
+</script>
+
+</html>

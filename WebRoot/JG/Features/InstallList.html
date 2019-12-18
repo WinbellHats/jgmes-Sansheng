@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <title>安灯系统-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/InstallList.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+
+<body>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="item header_title">
+            <a href="javascript:;">安灯系统</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="MainPage">
+        <div class="weui-tab">
+            <div class="weui-navbar">
+                <a class="pending weui-navbar__item weui-bar__item--on" href="#tab1">
+                    待处理
+                    <span v-if="TobeProcessedData.length>0">({{TobeProcessedData.length}})</span>
+                </a>
+                <!-- <a class="in_hand weui-navbar__item" href="#tab2">
+                    处理中
+                    <span v-if="ProcessingData.length>0">({{ProcessingData.length}})</span>
+                </a> -->
+                <a class="processed weui-navbar__item" href="#tab3">
+                    已处理
+                    <span v-if="ProcessedData.length>0">({{ProcessedData.length}})</span>
+                </a>
+            </div>
+            <div class="weui-tab__bd">
+                <div id="tab1" class="weui-tab__bd-item weui-tab__bd-item--active">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>提报时间</th>
+                                <th>安灯类型</th>
+                                <th>产线</th>
+                                <th>工位</th>
+                                <th>提报人</th>
+                                <th width="11%">详情</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item,index) in TobeProcessedData">
+                                <td width="15%">{{item.ReportTime}}</td>
+                                <td width="14%" style="vertical-align:middle;">{{item.LampSystemTypeName}}</td>
+                                <td>{{item.ProductionLineName}}</td>
+                                <td>{{item.StationName}}</td>
+                                <td>{{item.Submitter}}</td>
+                                <td width="11%" style="vertical-align:middle;">
+                                    <a :href="'/JG/Features/Install.html?ycclId='+item.LampSystemID" class="btn btn-default">
+                                        <span>
+                                            <!--<img src="/JG/Content/images/1545895202(1).png" alt="">-->
+                                            查看明细
+                                        </span>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- <div id="tab2" class="weui-tab__bd-item">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>安灯系统类型</th>
+                                <th>异常信息</th>
+                                <th>提报时间</th>
+                                <th width="11%">详情</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item,index) in ProcessingData">
+                                <td width="14%" style="vertical-align:middle;">{{item.LampSystemTypeName}}</td>
+                                <td width="65%">{{item.Abnormal}}</td>
+                                <td width="15%">{{item.ReportTime}}</td>
+                                <td width="11%" style="vertical-align:middle;">
+                                    <a href="javascript:;" v-on:click="LookDetail(item)" class="glyphicon">
+                                        <img src="/JG/Content/images/1545895202(1).png" alt="">
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div> -->
+                <div id="tab3" class="weui-tab__bd-item">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>提报时间</th>
+                                <th>安灯类型</th>
+                                <th>产线</th>
+                                <th>工位</th>
+                                <th>异常原因</th>
+                                <th>处理时间</th>
+                                <th width="11%">详情</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item,index) in ProcessedData">
+                                <td width="15%">{{item.ReportTime}}</td>
+                                <td width="14%" style="vertical-align:middle;">{{item.LampSystemTypeName}}</td>
+                                <td>{{item.ProductionLineName}}</td>
+                                <td>{{item.StationName}}</td>
+                                <td>{{item.ProcessReasonName}}</td>
+                                <td>{{item.ProcessTime}}</td>
+                                <td width="11%" style="vertical-align:middle;">
+                                    <a :href="'/JG/Features/Install.html?ycclId='+item.LampSystemID" class="btn btn-default">
+                                        <!--<img src="/JG/Content/images/1545895202(1).png" alt="">-->
+                                        查看明细
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/swiper.min.js"></script>
+    <script src="/JG/Content/jquery/fastclick.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script>
+        $(function () {
+            FastClick.attach(document.body);
+        });
+    </script>
+    <script type="text/javascript">
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                TobeProcessedData: [],//待处理集合
+                ProcessingData: [], //处理中集合
+                ProcessedData: [], //已处理集合
+            },
+            mounted: function () {
+                var currSelf = this;
+                $.showLoading();
+                //待处理
+                $.ajax({
+                    type: "post",
+                    async: false,
+                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getYcClList.action",
+                    data: { "userCode": LocalUserInfo.GetUserInfo().UserCode, "mac": LocalUserInfo.GetUserInfo().Mac, "ycztCode": "YCZT01", "cxCode": LocalUserInfo.GetUserInfo().ProductionLineCode },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        if (retData.IsSuccess) {
+                            if (retData.Data && retData.Data.length > 0) {
+                                for (var i in retData.Data) {
+                                    var element = retData.Data[i];
+                                    currSelf.TobeProcessedData.push({
+                                        ReportTime: element.ADYCCL_TBSJ, LampSystemTypeName: element.ADYCCL_ADLX_NAME, ProductionLineName: element.ADYCCL_CXMC,
+                                        StationName: element.ADYCCL_GWMC,
+                                        Submitter: element.SY_CREATEUSERNAME,
+                                        LampSystemID: element.JGMES_PB_ADYCCL_ID
+                                    });
+                                }
+                                // retData.Data.forEach(element => {
+                                //     currSelf.TobeProcessedData.push({
+                                //         ReportTime: element.ADYCCL_TBSJ, LampSystemTypeName: element.ADYCCL_ADLX_NAME, ProductionLineName: element.ADYCCL_CXMC,
+                                //         StationName: element.ADYCCL_GWMC,
+                                //         Submitter: element.SY_CREATEUSERNAME,
+                                //         LampSystemID: element.JGMES_PB_ADYCCL_ID
+                                //     });
+                                // });
+                            }
+                        }
+                    }, error: function (xhr, status, error) {
+                         console.error(status);
+                        alert("请求失败");
+                    }, complete: function () {
+                        $.hideLoading();
+                    }
+                });
+                //处理中
+                // $.ajax({
+                //     type: "post",
+                //     async: false,
+                //     url: LocalConfig.SrvPath + "/jgmes/commonAction!getYcClList.action",
+                //     data: { "userCode": LocalUserInfo.GetUserInfo().UserCode, "mac": LocalUserInfo.GetUserInfo().Mac, "ycztCode": "YCZT02", "cxCode": LocalUserInfo.GetUserInfo().ProductionLineCode },
+                //     dataType: "json",
+                //     success: function (ret) {
+                //         var retData = ReturnData(ret);
+                //         if (retData.IsSuccess) {
+                //             if (retData.Data && retData.Data.length > 0) {
+                //                 retData.Data.forEach(element => {
+                //                     currSelf.ProcessingData.push({ ReportTime: element.ADYCCL_TBSJ, Abnormal: element.ADYCCL_YCYY, LampSystemTypeName: element.ADYCCL_ADLX_NAME, LampSystemID: element.JGMES_PB_ADYCCL_ID });
+                //                 });
+                //             }
+                //         }
+                //     }, error: function (xhr, status, error) {
+                //          console.error(status);
+                //         alert("请求失败");
+                //     }, complete: function () {
+                //         $.hideLoading();
+                //     }
+                // });
+                //已处理
+                $.ajax({
+                    type: "post",
+                    async: false,
+                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getYcClList.action",
+                    data: { "userCode": LocalUserInfo.GetUserInfo().UserCode, "mac": LocalUserInfo.GetUserInfo().Mac, "ycztCode": "YCZT03", "cxCode": LocalUserInfo.GetUserInfo().ProductionLineCode },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        if (retData.IsSuccess) {
+                            if (retData.Data && retData.Data.length > 0) {
+                                for (var i in retData.Data) {
+                                    var element = retData.Data[i];
+                                    currSelf.ProcessedData.push({
+                                        ReportTime: element.ADYCCL_TBSJ, LampSystemTypeName: element.ADYCCL_ADLX_NAME, ProductionLineName: element.ADYCCL_CXMC,
+                                        StationName: element.ADYCCL_GWMC,
+                                        Submitter: element.SY_CREATEUSERNAME,
+                                        LampSystemID: element.JGMES_PB_ADYCCL_ID,
+                                        ProcessReasonName: element.ADYCCL_ADLXMX_NAME,
+                                        ProcessTime: element.ADYCCL_CLSJ
+                                    });
+                                }
+                                // retData.Data.forEach(element => {
+                                //     currSelf.ProcessedData.push({
+                                //         ReportTime: element.ADYCCL_TBSJ, LampSystemTypeName: element.ADYCCL_ADLX_NAME, ProductionLineName: element.ADYCCL_CXMC,
+                                //         StationName: element.ADYCCL_GWMC,
+                                //         Submitter: element.SY_CREATEUSERNAME,
+                                //         LampSystemID: element.JGMES_PB_ADYCCL_ID,
+                                //         ProcessReasonName: element.ADYCCL_ADLXMX_NAME,
+                                //         ProcessTime: element.ADYCCL_CLSJ
+                                //     });
+                                // });
+                            }
+                        }
+                    }, error: function (xhr, status, error) {
+                         console.error(status);
+                        $.alert("请求失败");
+                    }, complete: function () {
+                        $.hideLoading();
+                    }
+                });
+            },
+            methods: {
+            }
+        });
+    </script>
+</body>
+
+</html>

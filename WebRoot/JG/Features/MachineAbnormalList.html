@@ -1,0 +1,444 @@
+﻿﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <title>通知公告-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--<meta name="viewport" content="width=1920, initial-scale=1.0,maximum-scale=2.0, minimum-scale=0.5, user-scalable=no,target-densitydpi=device-dpi" />-->
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap-select.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/MachineAbnormaltList.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+<body style="overflow:auto">
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="header_title">
+            <a href="javascript:;">机台异常通知</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+    <!--主体部分-->
+    <div id="MainPage" class="panel panel-default" >
+        <div class="navbar-form navbar-left">
+            异常日期&nbsp;
+            <div class="form-group" style="width:15em" >
+                <input type="text" data-toggle='date' class="form-control" id="ProductionDate"  bind-value="" />
+            </div>
+        </div>
+        <div class="navbar-form navbar-left">
+            异常类型
+            <div class="form-group" style="height:44px;">
+                <select id="AbnormalType" class="selectpicker form-group" multiple="multiple"
+                        data-live-search="true" v-model="FormData.AbnormalType" style="background-color: #FFFFFF">
+                    <option v-for="(item,index) in AbnormalTypeList"
+                            :value="item.DICTIONARYITEM_ITEMCODE">
+                        {{item.DICTIONARYITEM_ITEMNAME}}</option>
+                </select>
+            </div>
+        </div>
+<!--        <div class="navbar-form navbar-left">-->
+<!--            机台-->
+<!--            <div class="form-group">-->
+<!--                <input id="JTYCTZ_JTH" class="form-control" v-model="FormData.JTYCTZ_JTH" type="text"-->
+<!--                       placeholder="输入机台编号模糊搜索">-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="navbar-form navbar-left">
+            设备
+            <div class="form-group">
+                <input id="JTYCTZ_JTMC" class="form-control" v-model="FormData.JTYCTZ_JTMC" type="text"
+                       placeholder="输入机台名称模糊搜索">
+            </div>
+        </div>
+        <div class="navbar-form navbar-left">
+            处理状态
+            <div class="form-group" style="height:44px;">
+                <select id="YCCLZTdata" class="selectpicker form-group"  multiple="multiple"
+                        data-live-search="true" v-model="FormData.YCCLZT" style="background-color: #FFFFFF">
+                    <option v-for="(item,index) in YCCLZTdata" :value="item.DICTIONARYITEM_ITEMCODE" v-if="item.DICTIONARYITEM_ITEMCODE=='CLZT01'||item.DICTIONARYITEM_ITEMCODE=='CLZT07'||item.DICTIONARYITEM_ITEMCODE=='CLZT03'||item.DICTIONARYITEM_ITEMCODE=='CLZT04'">
+                        {{item.DICTIONARYITEM_ITEMNAME}}</option>
+                </select>
+            </div>
+<!--            <div class="form-group" style="height:44px;">-->
+<!--                <select id="ydState" class="selectpicker form-group"  multiple="multiple"-->
+<!--                        data-live-search="true" v-model="FormData.ReadNot" style="background-color: #FFFFFF">-->
+<!--                    <option v-for="(item,index) in ydState" :value="item.DICTIONARYITEM_ITEMCODE">-->
+<!--                        {{item.DICTIONARYITEM_ITEMNAME}}</option>-->
+<!--                </select>-->
+<!--            </div>-->
+        </div>
+        <div class="navbar-form navbar-left">
+            <button type="submit" class="btn btn-default" v-on:click="SearchForm()">搜索</button>
+        </div>
+
+        <!--表格部分-->
+        <table class="table">
+            <thead>
+                <tr class="panel  panel-success">
+                    <th class="panel-heading">异常类型</th>
+                    <th class="panel-heading">通知内容</th>
+<!--                    <th class="panel-heading">机台号</th>-->
+                    <th class="panel-heading">机台名称</th>
+                    <th class="panel-heading">异常时间</th>
+<!--                    <th class="panel-heading">通知人</th>-->
+                    <th class="panel-heading">异常处理状态</th>
+                    <th class="panel-heading"></th>
+                </tr>
+            </thead>
+            <tbody class="panel-body">
+                <tr v-for="(item,index) in AnnouncementList">
+                    <td style="vertical-align:middle;">{{item.JTYCTZ_JTYCLX_NAME}}</td>
+                    <td style="vertical-align:middle;">{{item.JTYCTZ_TZNR}}</td>
+<!--                    <td style="vertical-align:middle;">{{item.JTYCTZ_JTH}}</td>-->
+                    <td style="vertical-align:middle;">{{item.JTYCTZ_JTMC}}</td>
+                    <td style="vertical-align:middle;">{{getTime(item.JTYCJL_YCSJ)}}</td>
+<!--                    <td style="vertical-align:middle;">{{item.JTYCTZ_TZR}}</td>-->
+                    <td style="vertical-align:middle;">{{item.JTYCJL_JTYCCLZT_NAME}}</td>
+                    <td style="vertical-align:middle;">
+                        <label v-if="item.JTYCJL_JTYCCLZT_CODE=='CLZT01'">
+                            <button style="width:100px;" class="btn btn-success" v-on:click="startDispose(item)">开始处理</button>
+                        </label>
+                        <span v-if="item.JTYCJL_JTYCCLZT_CODE=='CLZT07'"><button style="width:100px;" class="btn btn-success" v-on:click="solve(item)">已处理</button>&nbsp;&nbsp;
+                        <button style="width:100px;" class="btn btn-danger" v-on:click="ignore(item)">不予处理</button>
+                            <div>首检时长：<input type="number" placeholder="请输入首检时长" :name="item.JGMES_ADMK_JTYCJL_ID" style="width: 200px;height:44px;border: 1px solid #ccc;border-radius: 4px;"></div>
+                            <div>异常备注：<input type="text" placeholder="请输入异常备注" :name="item.JGMES_ADMK_JTYCJL_ID" style="width: 200px;height:44px;border: 1px solid #ccc;border-radius: 4px;"></div>
+                    </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script src="/JG/Content/bootstrap.min.js"></script>
+    <script src="/JG/Content/bootstrap-select.min.js"></script>
+    <script type="text/javascript">
+        //给div动态赋值滚动条
+        window.onload=function(){
+            var BodyHeight=$(window).height();
+            var MainPageHeight=BodyHeight-90;
+            //赋值给div
+            $("#MainPage").height(MainPageHeight);
+            $("#ProductionDate").calendar({inputReadOnly:false});
+        }
+
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                AnnouncementList: [],
+                FormData: {
+                    JTYCTZ_JTCode:"",
+                    JTYCTZ_JTMC:"",
+                    ReadNot:[],
+                    AbnormalType:[],
+                    JGMES_ADMK_JTYCTZ_ID:"",
+                    YCCLZT:['CLZT01','CLZT07'],
+                },
+                ydState:[],
+                AbnormalTypeList:[],
+                YCCLZTdata:[],
+
+            },
+            mounted: function () {
+                var currSelf = this;
+                var data = GetDictionary("JGMES_DIC_YDZT");
+                if (data && data.IsSuccess) {
+                    currSelf.ydState = data.Data;
+                }
+                var AbnormalTypeList= GetDictionary("JGMES_DIC_JTYCLX");
+                if (AbnormalTypeList && AbnormalTypeList.IsSuccess) {
+                    currSelf.AbnormalTypeList = AbnormalTypeList.Data;
+                }
+                var YCCLZTdata = GetDictionary("JGMES_DIC_JTYCCLZT");
+                if (YCCLZTdata && YCCLZTdata.IsSuccess) {
+                    currSelf.YCCLZTdata = YCCLZTdata.Data;
+                }
+                //初始化方法
+                currSelf.initData();
+            },
+            methods:{
+                //初始化
+                initData:function(){
+                    var currSelf = this;
+                    //debugger;
+                    var url=LocalConfig.SrvPath + "/jgmes/jgmesNoticeAction!getMachineAbnormalList.action";
+                    //显示加载时弹窗
+                    $.showLoading();
+                    $.ajax({
+                        type:"post",
+                        url:url,
+                        data:{
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            ReadNot:currSelf.FormData.ReadNot.join(','),
+                            yczt:currSelf.FormData.YCCLZT.join(','),
+                        },
+                        datatype:"json",
+                        success:function(result){
+                            //将字符串转为对象
+                            var data=JSON.parse(result);
+                            console.log(data);
+                            var back = ReturnData(data);
+                            //判断是否请求成功
+                            if(back.IsSuccess){
+                                if(back.Data.length>0){
+                                    for(var i in back.Data){
+                                        var item = back.Data[i];
+                                        currSelf.AnnouncementList.push({
+                                            ID: item.JGMES_ADMK_JTYCTZ_ID,//主键id
+                                            JTYCJL_JTH:item.JTYCJL_JTH,//机台号
+                                            JTYCTZ_JTYCLX_NAME: item.JTYCJL_JTYCLX_NAME,//异常类型名称
+                                            JTYCJL_JTYCLX_CODE:item.JTYCJL_JTYCLX_CODE,
+                                            JTYCTZ_TZNR: item.JTYCTZ_TZNR,//异常通知内容
+                                            JTYCJL_YCSJ: item.JTYCJL_YCSJ,//异常时间
+                                            JTYCTZ_JTMC:item.JTYCJL_JTMC,//机台名称
+                                            JTYCJL_JTYCCLZT_NAME:item.JTYCJL_JTYCCLZT_NAME,//处理情况
+                                            JTYCJL_JTYCCLZT_CODE:item.JTYCJL_JTYCCLZT_CODE,//处理情况code
+                                            JGMES_ADMK_JTYCJL_ID:item.JGMES_ADMK_JTYCJL_ID,
+
+                                        });
+                                    }
+                                }
+                            }
+                        },
+                        error:function(XMLHttpRequest, textStatus, errorThrown){
+                            alert("请求失败" + errorThrown);
+                        },
+                        complete: function () {
+                             //当数据加载完成隐藏加载弹窗
+                             $.hideLoading();
+                        }
+                    });
+                },
+                getTime:function(time){
+                    // time = time.replace(/-/g, '/');
+                    // var date = new Date(time);
+                    // return date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+                    return time;
+                },
+
+
+                //搜索功能方法
+                SearchForm: function () {
+                    var currSelf = this;
+                    currSelf.GetMachineAbnorma();
+                },
+
+                //获取当前机台异常通知列表
+                GetMachineAbnorma: function () {
+                    var currSelf = this;
+                    var d = $("#ProductionDate").val();
+                    console.log(d);
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesNoticeAction!getMachineAbnormalList.action",
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            jtCode:currSelf.FormData.JTYCTZ_JTH,
+                            jtName:currSelf.FormData.JTYCTZ_JTMC,
+                            ReadNot:currSelf.FormData.ReadNot.join(','),
+                            AbnormalType:currSelf.FormData.AbnormalType.join(","),
+                            date:d,
+                            yczt:currSelf.FormData.YCCLZT.join(','),
+                            // prodLineCode: currSelf.FormData.ProductionLineCode.join(','),
+                            // noLike: currSelf.FormData.ProTaskCode,    //获取当前用户输入任务单号
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess) {
+                                currSelf.AnnouncementList=[];
+                                if(retData.Data.length>0){
+                                    for(var i in retData.Data){
+                                        var item = retData.Data[i];
+                                        currSelf.AnnouncementList.push({
+                                            ID: item.JGMES_ADMK_JTYCTZ_ID,//主键id
+                                            JTYCJL_JTH:item.JTYCJL_JTH,//机台号
+                                            JTYCTZ_JTYCLX_NAME: item.JTYCJL_JTYCLX_NAME,//异常类型名称
+                                            JTYCJL_JTYCLX_CODE:item.JTYCJL_JTYCLX_CODE,
+                                            JTYCTZ_TZNR: item.JTYCTZ_TZNR,//异常通知内容
+                                            JTYCJL_YCSJ: item.JTYCJL_YCSJ,//异常时间
+                                            JTYCTZ_JTMC:item.JTYCJL_JTMC,//机台名称
+                                            JTYCJL_JTYCCLZT_NAME:item.JTYCJL_JTYCCLZT_NAME,//处理情况
+                                            JTYCJL_JTYCCLZT_CODE:item.JTYCJL_JTYCCLZT_CODE,//处理情况code
+                                            JGMES_ADMK_JTYCJL_ID:item.JGMES_ADMK_JTYCJL_ID,
+                                        });
+                                    }
+                                }
+                            }
+
+                        }, error: function (xhr, status, errorThrown) {
+                            $.alert("请求失败");
+                        }, complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+
+                LookDetail: function (item) {
+                    // 指向重新打开另外个页面，并且带参数
+                    var mc = encodeURI(encodeURI(item.JTYCTZ_JTMC));
+                    window.location.href = "/JG/Features/MAchineAbnormalDetail.html?jth=" + item.JTYCTZ_JTH+"&jtName="+mc+"&tzpk="+item.JGMES_ADMK_JTYCTZ_ID;
+                 },
+
+
+                confirm: function (item) {
+                    var currSelf = this;
+                    var state = "CLZT02";//已确认
+                    currSelf.ChangeAbnormalState(state,item);
+                },
+                startDispose:function(item){
+                    var currSelf = this;
+                    var state = "CLZT07";//开始处理
+                    currSelf.ChangeAbnormalState(state,item);
+                },
+                solve: function (item) {
+                    var currSelf = this;
+                    var state = "CLZT03";//已处理
+                    currSelf.ChangeAbnormalState(state,item);
+
+                },
+                ignore: function (item) {
+                    var currSelf = this;
+                    var state = "CLZT04";//不予解决
+                    currSelf.ChangeAbnormalState(state,item);
+                },
+                ChangeAbnormalState: function (state,item) {
+                    var currSelf = this;
+                    var id = item.JGMES_ADMK_JTYCJL_ID;
+                    var jth = item.JTYCJL_JTH;
+                    var yclx = item.JTYCJL_JTYCLX_CODE;
+                    if (state=="CLZT03") {
+                        //时长
+                        var sc = $("input[name="+id+"][type='number']").val();
+                        if (sc=="undefined"||sc==null||sc==""){
+                            sc = "";
+                        }
+                        var pz = $("input[name="+id+"][type='text']").val();
+                        if (pz=="undefined"||sc==null||sc==""){
+                            pz = "";
+                        }
+                    }
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!changeAbnormalState.action",
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            state: state,
+                            id: id,
+                            jth: jth,
+                            "PageSize": currSelf.FormData.PageSize,   //每页条数
+                            "CurrPage": currSelf.FormData.CurrPage,     //当前页
+                            yclx: yclx,
+                            sc:sc,//首检时长
+                            pz:pz,
+
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess) {
+                                //console.log(retData)
+                                if (retData.Data) {
+                                    if (state == "CLZT03" || state == "CLZT04") {
+                                        // currSelf.ReleaseAlarm(state, yclx, jth);
+                                    }
+                                    $(".page_num").addClass("page_num_show");   //当带点击搜索按钮是请求数据成功便显示分页部分
+                                    // currSelf.TableListData = retData.Data;
+                                    $.toptip("操作成功", "success");
+                                    currSelf.GetMachineAbnorma();
+
+                                } else {
+                                    currSelf.FormData.CurrPage = 0;
+                                    $(".page_num").removeClass("page_num_show");    //当带点击搜索按钮是请求数据成功便隐藏分页部分
+                                    $.toptip("未搜索到相关数据", "success");
+                                }
+                                currSelf.FormData.AllCount = retData.TotalCount;    //获取当前选择产线的总条数
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            console.error(status);
+                            $.alert("请求失败");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+                ReleaseAlarm: function (state, yclx, jth) {
+                    var currSelf = this;
+                    var Mold = 0;//模具异常
+                    var Device = 0;//设备异常
+                    var Quality = 0;//品质异常
+                    var Materiel = 0;//物料异常
+                    var CallMonitor = 0;//呼叫班长
+                    switch (yclx) {
+                        case "JTYCLX01":
+                            Mold = 1;
+                            break;
+                        case "JTYCLX02":
+                            Device = 1;
+                            break;
+                        case "JTYCLX03":
+                            Quality = 1;
+                            break;
+                        case "JTYCLX04":
+                            Materiel = 1;
+                            break;
+                        case "JTYCLX05":
+                            CallMonitor = 1;
+                            break;
+                    }
+                    $.ajax({
+                        type: "post",
+                        async: false,
+                        url: "http://192.168.1.5:8088/LhDviceService/ReleaseAlarm",
+                        data: {
+                            DeviceID: jth,
+                            Mold: Mold,
+                            Device: Device,
+                            Quality: Quality,
+                            Materiel: Materiel,
+                            CallMonitor: CallMonitor,
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            console.log(ret);
+                            if (ret.resultCode == 0) {
+                                $.toptip("解除报警成功", "success");
+                                console.log("解除报警成功");
+                            } else{
+                                $.toptip(ret.message, "error")
+                                console.log("解除报警失败" + ret.message);
+                            }
+
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            console.error(errorThrown);
+                            $.alert("解除报警发生异常");
+                        }
+                    });
+                },
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+﻿<html>
+
+<head>
+    <title>移动巡检-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/MobileInspection.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+
+</head>
+
+<body>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="item header_title">
+            <a href="javascript:;">移动巡检</a>
+        </div>
+
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+
+
+    <div id="MainPage" class="MainPage">
+        <div class="weui-grids">
+            <a href="" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <!--<img src="/JG/Content/images/one.png" />-->
+                    <span class="polling_icon polling1"></span>
+                </div>
+                <p class="weui-grid__label">
+                    首件检验
+                </p>
+            </a>
+            <a href="" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="polling_icon polling2"></span>
+                </div>
+                <p class="weui-grid__label">
+                    IQC来料检
+                </p>
+            </a>
+            <a href="" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="polling_icon polling3"></span>
+                </div>
+                <p class="weui-grid__label">
+                    IPQC过程检
+                </p>
+            </a>
+            <a href="" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="polling_icon polling4"></span>
+                </div>
+                <p class="weui-grid__label">
+                    OQC成品出厂检
+                </p>
+            </a>
+            <a href="/JG/Features/Polling.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="polling_icon polling4"></span>
+                </div>
+                <p class="weui-grid__label">
+                    巡检
+                </p>
+            </a>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    // //控制浏览器滚动条
+    // window.addEventListener('resize',$event=>{
+    //     //console.log($event.target.innerHeight);
+    //     //浏览器窗口大小动态赋值给body
+    //     document.body.style.height = $event.target.innerHeight;
+    // });
+</script>
+
+</html>

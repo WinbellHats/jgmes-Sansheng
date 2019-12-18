@@ -1,0 +1,241 @@
+﻿﻿﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>生产任务-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/bootstrap/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/TabletsGlobal.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/ProductionTask.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+<body>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="header_title">
+            <a href="javascript:;">机台状态</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+    <div id="allPage">
+        <div>
+            <div style="height: 150px;width:100%;line-height: 200px" id="searchDiv">
+                <div class="navbar-form navbar-left">
+                    机台名称
+                    <div class="form-group">
+                        <input id="JtName" class="form-control" v-model="FormData.JtName" type="text"
+                               placeholder="输入机台名称模糊搜索">
+                    </div>
+                </div>
+                <div class="navbar-form navbar-left">
+                    机台状态
+                    <div class="form-group" style="height:44px;">
+                        <select id="machineState" class="selectpicker form-group"
+                                data-live-search="true" v-model="FormData.machineState" style="background-color: #FFFFFF">
+                            <option value="">全部</option>
+                            <option value="1">正常</option>
+                            <option value="2">异常</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="navbar-form navbar-left" style="margin-top: 88px">
+                    <button id="SearchData" class="btn btn-default" v-on:click="SearchData()">搜索</button>
+                </div>
+            </div>
+        </div>
+        <div id="MainPage" class="MainPage">
+            <!--列表部分-->
+            <div>
+                <div class="weui-grids receptacle" style="line-height: 180px">
+                    <a v-for="(item,index) in TableListData" id=""  class="weui-grid js_grid"
+                       :style="'backgroundColor:'+item.color" style="width: 500px;height: 200px;margin:0 100px 50px 100px " @click="LookDetail(item)">
+                        <p class="weui-grid__label" style="fontSize:30;color:white">
+                            {{item.JTDA_JTMC}}
+                        </p>
+                    </a>
+                </div>
+            </div>
+            <!--页码部分 -->
+            <div class="page_num">
+                <button type="button" class="btn btn-success prev" :disabled="FormData.CurrPage==1"  @click="PrevFunction">上一页</button>
+                <span>第{{FormData.CurrPage}}页/总{{Math.ceil(FormData.AllCount/FormData.PageSize)}}页 每页{{FormData.PageSize}}条 总{{FormData.AllCount}}条</span>
+                <button type="button" class="btn btn-success next" :disabled="FormData.CurrPage==(Math.ceil(FormData.AllCount/FormData.PageSize))"  @click="NextFunction">下一页</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js"></script>
+    <script src="/JG/Content/bootstrap.min.js"></script>
+    <script src="/JG/Content/bootstrap-select.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootstrap-datetimepicker.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+
+    <script type="text/javascript">
+        var vmPage = new Vue({
+            el: "#allPage",
+            data: {
+                FormData: {
+                    AllCount: 0,    //请求到前端的全部条数
+                    PageSize: 12,    //每页条数
+                    TotalCountPages: "",    //总页数
+                    CurrPage: 1,     //当前页
+                    JGMES_ADMK_JTDA_ID:"",
+                    color:"",
+                    machineState:[],
+                    JtName:"",
+                },
+                TableListData: [],   //列表集合
+                machineStateList:[],
+            },
+            mounted: function () {
+                var currSelf = this;
+                // currSelf.ProLineStation();
+                currSelf.initData();
+            },
+            methods: {
+                //初始化
+                initData: function () {
+                    var currSelf = this;
+                    var s= GetDictionary("JGMES_DIC_JTZT");
+
+                    if (s && s.IsSuccess) {
+                        currSelf.machineStateList = s.Data;
+                    }
+                    console.log(currSelf.machineStateList);
+                    currSelf.getJtState();
+                },
+                //点击搜索按钮方法
+                SearchData: function () {
+                    var currSelf = this;
+                    currSelf.FormData.CurrPage = 1;
+                    currSelf.getJtState();
+                },
+                getJtState: function () {
+                    var currSelf = this;
+                    console.log(currSelf.FormData);
+                    var a = $("#machineState option:selected").val();
+                    console.log(a);
+                    $.showLoading();
+                        $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getMachineState.action",
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            "PageSize": currSelf.FormData.PageSize,   //每页条数
+                            "CurrPage": currSelf.FormData.CurrPage,     //当前页
+                            state:currSelf.FormData.machineState,
+                            JtName:currSelf.FormData.JtName,
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess) {
+                                //console.log(retData)
+                                if(retData.Data){
+                                    $(".page_num").addClass("page_num_show");   //当带点击搜索按钮是请求数据成功便显示分页部分
+                                    currSelf.TableListData = retData.Data;
+                                }else{
+                                    currSelf.FormData.CurrPage = 0 ;
+                                    $(".page_num").removeClass("page_num_show");
+                                    $.toptip("未搜索到相关数据", "success");
+                                }
+                                currSelf.FormData.AllCount = retData.TotalCount;
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            console.error(status);
+                            $.alert("请求失败");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+
+                },
+                ChangeAbnormalState:function(state,id,jth,yclx){
+                    var currSelf = this;
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!changeAbnormalState.action",
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            state:state,
+                            id:id,
+                            jth:jth,
+                            "PageSize": currSelf.FormData.PageSize,   //每页条数
+                            "CurrPage": currSelf.FormData.CurrPage,     //当前页
+                            yclx:yclx,
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess) {
+                                //console.log(retData)
+                                if(retData.Data){
+                                    $(".page_num").addClass("page_num_show");   //当带点击搜索按钮是请求数据成功便显示分页部分
+                                    currSelf.TableListData = retData.Data;
+                                    console.log(currSelf.TableListData);
+                                    $.toptip("处理成功", "success");
+                                }else{
+                                    currSelf.FormData.CurrPage = 0 ;
+                                    $(".page_num").removeClass("page_num_show");    //当带点击搜索按钮是请求数据成功便隐藏分页部分
+                                    $.toptip("未搜索到相关数据", "success");
+                                }
+                                currSelf.FormData.AllCount = retData.TotalCount;    //获取当前选择产线的总条数
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            console.error(status);
+                            $.alert("请求失败");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+                //点击上一页按钮方法
+                PrevFunction: function () {
+                    var currSelf = this;
+                    currSelf.FormData.CurrPage--;    //当当前页大于1的时候就减减
+                    currSelf.getJtState();
+                },
+
+                //点击下一页按钮方法
+                NextFunction: function () {
+                    var currSelf = this;
+                    currSelf.FormData.CurrPage++;    //当当前页小于总页数的时候就加加
+                    currSelf.getJtState();
+                },
+                LookDetail: function (item) {
+                    // 指向重新打开另外个页面，并且带参数
+                    console.log(item);
+                    console.log(item.JTDA_JTMC);
+                    var mc = encodeURI(encodeURI(item.JTDA_JTMC));
+                    window.location.href = "/JG/Features/MAchineAbnormalDetail.html?jth=" + item.JTDA_JTH+"&jtName="+mc;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

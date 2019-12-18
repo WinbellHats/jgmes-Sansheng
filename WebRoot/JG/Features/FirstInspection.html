@@ -1,0 +1,200 @@
+﻿<html>
+<head>
+    <title>首件检验-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/FirstInspection.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+</head>
+<body ontouchstart>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="header_title">
+            <a href="javascript:;">首件检验</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Features/MobileInspection.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+
+
+    <div id="MainPage" class="MainPage">
+        <div class="input-group" style="text-align:center;font-size:18px;">
+            <label class="input-group-addon" for="BarCode">产品码</label>
+            <input type="text" class="form-control" pr maxlength="25" v-model="BarCode" placeholder="扫描或输入产品码回车" id="BarCode" />
+        </div>
+        <div id="tab2" class="weui-tab__bd-item">
+            <div class="left">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        产品名称&nbsp; &nbsp;{{FormData.InvName}}
+                    </li>
+                    <li class="list-group-item">
+                        产品型号&nbsp; &nbsp;{{FormData.InvStd}}
+                    </li>
+                    <li class="list-group-item">
+                        产品码&nbsp; &nbsp;{{FormData.InvBarCode}}
+                    </li>
+                </ul>
+            </div>
+
+            <div class="right swiper-container  panel panel-default">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#OperateRecord" data-toggle="tab">操作记录</a>
+                    </li>
+                    <li>
+                        <a href="#Swiper" data-toggle="tab">操作指导</a>
+                    </li>
+                </ul>
+                <div class="tab-content tabs">
+                    <div class="tab-pane fade in active" id="OperateRecord">
+                        <ul style="height:100%;overflow-y:auto;">
+                            <li>
+                                菜鸟教程是一个提供最新的web技术站点，本站免费提供了建站相关的技术文档，
+                                帮助广大web技术爱好者快速入门并建立自己的网站
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" id="Swiper">
+                        <div class="swiper-container">
+                            <div class="swiper-wrapper" id="Top_Swiper">
+                            </div>
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        首检项目
+                    </div>
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>首检项</th>
+                                <th>结果</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item,index) in DetectionItemData">
+                                <td>{{item.ItemName}}</td>
+                                <td>{{item.CriticalResult}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-12">
+                <button type="button" class="btn btn-success" role="button">确认结果</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/bootstrap.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/swiper.min.js"></script>
+    <script src="/JG/Content/jquery/fastclick.js"></script>
+    <script>
+        //给div动态赋值滚动条
+        // window.onload=function(){
+        //     var BodyHeight=$(window).height();
+        //     console.log(BodyHeight);
+        //     var MainPageHeight=BodyHeight-90;
+        //     console.log(MainPageHeight);
+        //     //赋值给div
+        //     $("#MainPage").height(MainPageHeight);
+        // }
+
+
+        $(function () {
+            FastClick.attach(document.body);
+        });
+    </script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script type="text/javascript">
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                BarCode: "",
+                FormData: {
+                    InvCode: "",
+                    InvName: "",
+                    InvStd: "",
+                    InvBarCode: "",
+                    SOPImagePaths: [],
+                },
+                DetectionItemData: [],
+            },
+            mounted: function () {
+                var currSelft = this;
+                $("#BarCode").bind("keypress", currSelft.SearchBarCode);
+
+                $("#BarCode").focus();
+                currSelft.FormData.InvCode = "A123456789";
+                currSelft.FormData.InvName = "天猫精灵智能音箱";
+                currSelft.FormData.InvStd = "SRT1.2.36";
+                currSelft.FormData.InvBarCode = "SN123456789";
+                currSelft.FormData.SOPImagePaths.push({ Url: "https://img.alicdn.com/bao/uploaded/i1/2616970884/O1CN011IOuae1Qek1QecB_!!2616970884.jpg" });
+                currSelft.FormData.SOPImagePaths.push({ Url: "https://img.alicdn.com/imgextra/i3/2616970884/O1CN011IOuabufY9Z7tvR_!!2616970884.jpg_430x430q90.jpg" });
+                currSelft.FormData.SOPImagePaths.push({ Url: "https://img.alicdn.com/imgextra/i4/2616970884/O1CN011IOuadQgRw0pbvq_!!2616970884.jpg_430x430q90.jpg" });
+                var htmlAppend = "";
+                for (var index in currSelft.FormData.SOPImagePaths) {
+                    var item = currSelft.FormData.SOPImagePaths[index];
+                    htmlAppend += "<div class='swiper-slide'><img style='width:100%;height:100%' src='" + item.Url + "'/></div>";
+                }
+                $("#Top_Swiper").append(htmlAppend);
+                if (currSelft.FormData.SOPImagePaths && currSelft.FormData.SOPImagePaths.length > 1) {
+                    $(".swiper-container").swiper({
+                        loop: true,
+                        autoplay: 3000
+                    });
+                }
+
+                //currSelft.StationRecord.push({ BarCode: "SN123456", InvName: "天猫精灵智能音箱", InvStd: "SRT1.2.36", StationTime: "15:12:01", Operator: "demo" });
+                //currSelft.StationRecord.push({ BarCode: "SN123456", InvName: "天猫精灵智能音箱", InvStd: "SRT1.2.36", StationTime: "15:09:01", Operator: "demo" });
+                //currSelft.StationRecord.push({ BarCode: "SN123456", InvName: "天猫精灵智能音箱", InvStd: "SRT1.2.36", StationTime: "15:03:01", Operator: "demo" });
+                //currSelft.StationRecord.push({ BarCode: "SN123456", InvName: "天猫精灵智能音箱", InvStd: "SRT1.2.36", StationTime: "15:02:01", Operator: "demo" });
+                //判定结果:OK/NG
+                currSelft.DetectionItemData.push({ ID: 0, ItemName: "项目1", UnitName: "V", StartValue: "200", EndValue: "230", DetectedValue: "210", CriticalResult: "OK" });
+                currSelft.DetectionItemData.push({ ID: 0, ItemName: "项目2", UnitName: "A", StartValue: "1", EndValue: "1.5", DetectedValue: "", CriticalResult: "" });
+                currSelft.DetectionItemData.push({ ID: 0, ItemName: "项目3", UnitName: "V", StartValue: "1000", EndValue: "", DetectedValue: "", CriticalResult: "" });
+                currSelft.DetectionItemData.push({
+                    ID: 0, ItemName: "项目4", UnitName: "MA", StartValue: "", EndValue: "10", DetectedValue: "3", CriticalResult: "OK"
+                });
+            },
+            methods: {
+                submitData: function () {
+                    alert("提交成功");
+                },
+                SearchBarCode: function (event) {
+                    var currSelf = this;
+                    if (event.which == 13) {
+                        alert(currSelf.BarCode);
+                    }
+                },
+                SubmitDetectionItem: function (item) {
+                    alert(item.ItemName);
+                    //检测提交数据
+                }
+            },
+        });
+    </script>
+</body>
+</html>

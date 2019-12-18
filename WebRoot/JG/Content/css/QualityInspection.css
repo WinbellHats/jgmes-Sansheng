@@ -1,0 +1,496 @@
+body{
+    background-color:#E7F0EF;
+    min-width: 557px;
+}
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 90px;
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index: 50;
+}
+
+.item, .header_title,.empty {
+    width: 33.33%;
+    line-height: 50px;
+}
+.empty>span{
+    font-size: 1.2em;
+    color:#FFFFFF;
+    margin-left: 10px;
+}
+.header_title {
+    padding-left: 15px;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title>a {
+    font-size: 3em;
+    color: #FFFFFF;
+}
+.clean{
+    content: "";
+    clear: both;
+}
+.user_img,.set{
+    float: right;
+}
+.user_img{
+    float: right;
+    padding-right: 15px;
+}
+
+
+#tab2 {
+    display: flex;
+    display: -webkit-flex;
+    display:-moz-flex ;
+    flex-direction: row;
+    flex-flow: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.left {
+    flex: 0 0 49%;
+    /* height: 386px; */
+}
+
+.right {
+    height: 386px;
+    flex: 0 0 49%;
+    margin-left: 2%;
+}
+.tabs {
+    height: 330px;
+    overflow: hidden;
+}
+.tabs>div:first-child{
+    padding: 5px 5px;
+    height: 100%;
+}
+
+.input-group-addon{
+    background-color: #DEEFD8;
+    color:#49874D;
+}
+.panel-default>.panel-heading {
+    background-color: #DEEFD8 !important;
+    color:#49874D !important;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+
+.btn{
+    position: relative;
+    border: 1px solid #FFFFFF;
+    outline: none !important;
+}
+.btn:hover{
+    box-shadow:none;
+    transition: all 0.5s ease;
+}
+.btn1{
+    box-shadow: #5EB663 0px 3px 0px 1px;
+}
+/*.btn2{*/
+    /*box-shadow: #EC9B3D 0px 3px 0px 1px;*/
+/*}*/
+.btn3{
+    box-shadow: #D03735 0px 3px 0px 1px;
+}
+.btn>span{
+    position: absolute;
+    top:5px;
+    right:5px;
+}
+.btn>span>img{
+    width:20px;
+}
+.form-control {
+    height: 50px;
+    font-size: 1.5em;
+}
+.input-group-addon {
+    padding: 10px 12px;
+    font-size: 1.5em;
+}
+.list-group-item {
+    font-size: 1.5em;
+}
+.nav>li>a {
+    font-size: 1.5em;
+    color: #4C8670;
+}
+.nav-tabs>li {
+    background-color: #DDEED8;
+}
+
+#record>p, #Top_Swiper>p {
+    font-size: 1.3em;
+}
+thead>tr>th{
+    font-size: 1.5em;
+}
+tbody>tr>td{
+     font-size: 1.3em;
+ }
+
+.back{
+    width:85px;
+    height:30px;
+    display: inline-block;
+}
+.back>img{
+    width:60%;
+}
+.over_station{
+    margin-top: 40px;
+}
+/* 模态框样式 */
+.modal-content{
+    font-size: 1.2rem;
+}
+button.close{
+    font-size: 2rem;
+}
+.bootbox-cancel{
+    font-size: 1rem;
+    margin-right: 2rem;
+}
+.bootbox-accept{
+    font-size: 1rem;
+}
+/************弹窗部分样式*****************/
+.set{
+    width:auto;
+    cursor: pointer;
+    padding-right: 15px;
+}
+.menu{
+    width:100%;
+    height:100%;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index: 10;
+    background-color: rgba(0,0,0,0.1);
+    display: none;
+}
+.menu_list{
+    width:0;
+    height:100%;
+    float: right;
+    background-color: #ffffff;
+    /*padding: 1.5rem;*/
+    border-radius: 2px;
+    transition: all 0.3s linear;
+}
+.menu_list_show{
+    width:300px;
+    transition: all 0.3s linear;
+    background-color:#E7F0EF;
+}
+.menu_list>ul{
+    width:100%;
+    padding:1rem 0rem;
+    list-style: none;
+}
+.menu_list>ul>li{
+    width:100%;
+    line-height: 4rem;
+    cursor: pointer;
+    margin-top: 15px;
+}
+.menu_list>ul>li:hover span:last-child{
+    border-radius: 2px;
+    box-shadow: #F0F0F0 0px 0px 0px 2px;
+}
+
+.menu_list>ul>li>span:last-child{
+    line-height: 1rem;
+    padding: 15px 20px;
+}
+.menu_list>ul>li>span{
+    font-size: 1.5em;
+    display: block;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+
+/************图片弹窗部分样式*************/
+.dialog{
+    position: fixed;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    background-color: #f6f6f6;
+    z-index: 9999;
+    display: none;
+}
+
+.dialog>span{
+    position: absolute;
+    right: .3em;
+    
+}
+.dialog>span>img{
+    float: right;
+    width: 15%;
+    margin: 10px;
+    border-radius: 50%;
+}
+.dialog_img>img{
+    display: block;
+    margin:auto;
+}
+.andon_icon{
+    width:80px;
+    height:80px;
+    margin: 0 auto;
+    background: url("../images/andon.png") no-repeat;
+}
+.andon1{
+    background-position: -80px -5px;
+}
+.andon2{
+    background-position: -240px -5px;
+}
+.andon3{
+    background-position: -160px -5px;
+}
+.andon4{
+    background-position: 0px 0px;
+}
+
+/*顶部提示窗部分*/
+/*.weui-toptips {*/
+    /*z-index: 1051;*/
+    /*width: 75%;*/
+    /*height: 70px !important;*/
+    /*font-size: 2.8em !important;*/
+    /*margin: auto 12.5%;*/
+    /*border-radius: 5px;*/
+/*}*/
+
+
+
+
+
+/**********************平板端的媒体查询*********************************/
+@media screen and (min-width:1280px) and (max-width:1920px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.8em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+}
+
+
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (min-width:1024px) and (max-width:1280px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .input-group-addon {
+        font-size: 1.3em;
+    }
+    .form-control {
+        font-size: 1.3em;
+    }
+    .list-group-item {
+        font-size: 1.3em;
+    }
+    .nav>li>a {
+        font-size: 1.3em;
+    }
+    #record>p, #Top_Swiper>p {
+        font-size: 1em;
+    }
+    .set>span>img{
+        width:45px !important;
+    }
+    .menu_list_show {
+        width: 11rem;
+    }
+    .menu_list>ul {
+        padding: 1rem 3rem;
+    }
+    .header_title>a {
+        font-size: 2.2em;
+    }
+    .back {
+        width: 70px;
+        height: 30px;
+    }
+    .set>span::before {
+        font-size: 42px;
+    }
+    .table thead>tr>th {
+        font-size: 1.1em;
+    }
+    tbody>tr>th {
+        font-size: 1.1em;
+    }
+    .menu_list>ul>li>span:last-child {
+        line-height: 1rem;
+        padding: 15px 10px;
+    }
+    .tabs {
+        height: 333px;
+        overflow: hidden;
+    }
+}
+
+
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (min-width:768px) and (max-width:1024px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+    .input-group-addon {
+        font-size: 1.3em;
+    }
+    .form-control {
+        font-size: 1.3em;
+    }
+    .list-group-item {
+        font-size: 1.3em;
+    }
+    .nav>li>a {
+        font-size: 1.3em;
+    }
+    #record>p, #Top_Swiper>p {
+        font-size: 1em;
+    }
+    #tab2 {
+        display: block;
+    }
+    .right {
+        height: 550px;
+        margin-left: 0%;
+    }
+    .tabs {
+        height: 499px;
+        overflow: hidden;
+    }
+    .set>span>img {
+        width:40px !important;
+    }
+    .table thead>tr>th {
+        font-size: 1em;
+    }
+    tbody>tr>th {
+        font-size: 1em;
+    }
+    .tabs>div:first-child{
+        padding: 5px 5px;
+    }
+    .tabs>div{
+        height: 100%;
+    }
+}
+@media screen and (min-width:557px) and (max-width:768px){
+
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 1.5em;
+    }
+    .back {
+        width: 60px;
+        height: 30px;
+    }
+    .input-group-addon {
+        font-size: 1em;
+    }
+    .form-control {
+        font-size: 1em;
+    }
+    .list-group-item {
+        font-size: 1em;
+    }
+    .nav>li>a {
+        font-size: 1em;
+    }
+    #record>p, #Top_Swiper>p {
+        font-size: 1em;
+    }
+    .set>span::before{
+        font-size: 40px;
+    }
+    .item, .header_title, .empty {
+        line-height: 40px;
+    }
+    #tab2 {
+        display: block;
+    }
+    .right {
+        margin-left: 0%;
+    }
+    /*.left {
+         height: 330px;
+    } */
+    .menu_list_show {
+        width: 190px;
+    }
+    .table thead>tr>th {
+        font-size: 1em;
+    }
+    tbody>tr>th {
+        font-size: 1em;
+    }
+    .tabs {
+        height: 340px;
+        overflow: hidden;
+    }
+}

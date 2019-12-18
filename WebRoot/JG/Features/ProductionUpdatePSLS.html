@@ -1,0 +1,499 @@
+﻿﻿<!DOCTYPE html>
+<html lang="zh_CN" xmlns:v-on="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/TabletsGlobal.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/Infrared.css">
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap-select.min.css" rel="stylesheet" />
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+	<script src="/JG/Content/Numkeyboard.js"></script>
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<style>
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+.mykb-box{
+    width:390px;
+    height:370px;
+    background:rgba(0,0,0,0.6);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000,endColorstr=#99000000);
+    box-shadow:0 0 10px rgb(43, 42, 42);
+    padding:20px;
+    border-radius:10px;
+    user-select: none;
+    -ms-user-select: none;
+    position:absolute;
+    display: none;
+    left: 50% !important;
+}
+.mykb-box ul,.mykb-box li{
+    list-style: none;
+}
+.mykb-box li{
+    width:60px;
+    height:60px;
+    line-height:60px;
+    text-align: center;
+    background:#f5f5f5;
+    border-radius:10px;
+    font-weight:bold;
+    margin:10px;
+    float:left;
+    box-shadow: 0px 2px 1px #000;
+    color:#1b50a2;
+    font-size:24px;
+    cursor:pointer;
+}
+.mykb-box li.active{
+    box-shadow:0px -2px 1px #000;
+}
+.mykb-box .func{color:#fff;width:90px;}
+.mykb-box .exit{background:#F44336;}
+.mykb-box .del{background:#ff9800}
+.mykb-box .clearall{background:#2196F3}
+.mykb-box .sure{background: #4CAF50;width:170px;}
+
+
+</style>
+	
+	
+    <title>生产任务单</title>
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .btn {
+            margin-left: 3px;
+            width: 80px;
+            height: 35px;
+        }
+        .weui-toptips {
+            z-index: 1051;
+            font-size: 3.0em !important;
+            height: 70px !important;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            line-height: 50px;
+        }
+    </style>
+</head>
+
+<body>
+<header class="header">
+    <div class="empty">
+<!--        <span id="Infrared"></span>-->
+    </div>
+    <div class="header_title">
+        <a href="javascript:;">片数，列数修改</a>
+    </div>
+    <div class="item item2">
+        <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+            <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+        </div>
+    </div>
+</header>
+<div id="MainPage" class="MainPage" v-cloak>
+    <!--    弹窗-->
+    <div tabindex="-1" class="modal fade" id="myModal" role="dialog" aria-hidden="false" aria-labelledby="myModalLabel">
+        <div class="modal-dialog content_dialog">
+            <div class="modal-content">
+                <!--头部-->
+                <div class="modal-header content_header">
+                    <div class="close_div">
+                        <button class="close" aria-hidden="true" type="button" data-dismiss="modal">×</button>
+                        <h4 class="modal-title" id="myModalLabel">片数，列数修改</h4>
+                    </div>
+                </div>
+                <!--内容部分-->
+                <div class="modal-body content_body" id="tanchu" style="overflow-x: auto;overflow-y: auto;">
+                    <div class="bs-example" data-example-id="hoverable-table">
+                        <table class="table table-hover" id="btable">
+                            <tbody id="tableble">
+                            <tr id="PS">
+                                <th>片数</th>
+                                <th><label for="PSNum" class="sum-img"></label>
+                                    <input id="PSNum"   type="text" placeholder="请输入修改的片数数量" class="form-control"></th>
+                            </tr>
+                            <tr id="LS">
+                                <th>列数</th>
+                                <th><label for="LSNum" class="sum-img"></label>
+                                    <input id="LSNum"  type="text" placeholder="请输入修改的列数数量" class="form-control"></th>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--底部分页部分-->
+                <div class="modal-footer page_footer">
+                    <div class="page_num">
+                        <button type="button" class="btn btn-danger next" @click="cancel()"
+                                id="wgButState"
+                        >取消</button>
+                        <button type="button" class="btn btn-success prev" @click="UpdateData()"
+                        >修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="navbar-form navbar-left">
+        排产日期&nbsp;
+        <div class="form-group" style="width:15em" >
+            <input type="text" data-toggle='date' class="form-control" id="ProductionDate"  bind-value="" />
+        </div>
+    </div>
+
+    <div class="navbar-form navbar-left">
+        设备
+        <div class="form-group" style="height:44px;">
+            <select id="ProductionLineCode" class="selectpicker form-group" multiple="multiple"
+                    data-live-search="true" v-model="FormData.ProductionLineCode" style="background-color: #FFFFFF">
+<!--                <option value="">查询所有产线</option>-->
+                <option v-for="(item,index) in ProLineData" v-bind:value="item.CXSJ_CXBM">
+                    {{item.CXSJ_CXMC}}</option>
+            </select>
+        </div>
+    </div>
+    <!--产品名称-->
+    <div class="navbar-form navbar-left">
+        物料编号
+        <div class="form-group">
+            <input v-model="FormData.KeyWord" class="form-control" type="text" placeholder="输入产品编码/名称/型号模糊搜索">
+        </div>
+    </div>
+
+    <div class="navbar-form navbar-left">
+        班组
+        <div class="form-group" style="height:44px;">
+            <select id="BzData" class="selectpicker form-group" multiple="multiple"
+                    data-live-search="true" v-model="FormData.Bz" style="background-color: #FFFFFF">
+                <option v-for="(item,index) in BzData" :value="item.DICTIONARYITEM_ITEMNAME">
+                    {{item.DICTIONARYITEM_ITEMNAME}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="navbar-form navbar-left">
+        班别
+        <div class="form-group" style="height:44px;">
+            <select id="teamOfTime" class="selectpicker form-group" multiple="multiple"
+                    data-live-search="true" v-model="FormData.teamOfTime" style="background-color: #FFFFFF">
+                    <option value="日">日</option>
+                <option value="夜">夜</option>
+            </select>
+        </div>
+    </div>
+    <div class="navbar-form navbar-left">
+        生产状态
+        <div class="form-group" style="height:44px;">
+            <select id="TaskStateData" class="selectpicker form-group" multiple="multiple"
+                    data-live-search="true" v-model="FormData.TaskState" style="background-color: #FFFFFF">
+                <option v-for="(item,index) in TaskStateData"
+                        :value="item.DICTIONARYITEM_ITEMCODE">
+                    {{item.DICTIONARYITEM_ITEMNAME}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="navbar-form navbar-left">
+        <button type="submit" class="btn btn-default" v-on:click="SearchForm()">搜索</button>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th><input type='checkbox'  id="iteamCheckboxAll"/></th>
+            <th>排产日期</th>
+            <th>班别</th>
+            <th>班组</th>
+            <th>设备</th>
+<!--            <th>工令单号\订单号</th>-->
+            <th>物料编号</th>
+            <th>产品名称</th>
+<!--            <th>产品规格</th>-->
+
+<!--            <th>计划数量</th>-->
+
+            <!-- <th>生产段</th> -->
+            <th>正班计划数量</th>
+            <th>加班计划数量</th>
+            <th>计划总数</th>
+            <th>完成数量</th>
+            <th>片数</th>
+            <th>列数</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(item,index) in TaskList" id="itemsList">
+            <td>{{index+1}}</td>
+            <td ><input type='checkbox' name='iteamCheckbox'/></td>
+            <td>{{item.SCRW_PCRQ}}</td>
+            <td>{{item.SCRW_BB}}</td>
+            <td>{{item.SCRW_BZNAME}}</td>
+            <td>{{item.SCRW_SB}}</td>
+<!--            <td>{{item.SCRW_GLDH}}<br />{{item.SCRW_DDHM}}</td>-->
+            <td>{{item.SCRW_CPGG}}</td>
+            <td>{{item.SCRW_NAME}}</td>
+<!--            <td>{{item.SCRW_CPGG}}</td>-->
+
+<!--            <td>{{item.SCRW_PCSL}}</td>-->
+            <td>{{item.SCRW_ZBJHCL}}</td>
+            <td>{{item.SCRW_JBJHCL}}</td>
+            <td>{{countNum(item.SCRW_ZBJHCL,item.SCRW_JBJHCL)}}</td>
+            <td>{{item.SCRW_WCSL}}</td>
+            <td style="display:none" name="itemSingle">{{item}}</td>
+            <td>{{item.SCRW_PS}}</td>
+            <td>{{item.SCRW_LS}}</td>
+            <td><button id="UpdatePS" class="btn btn-success" @click="StartUpdate(item)">修改</button></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+
+<script src="/JG/Content/jquery/fastclick.js"></script>
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/Utils.js?v=1"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/bootstrap-select.min.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+<script src="/JG/Content/Common.js"></script>
+<script type="text/javascript" src="/JG/Content/AudioUtils.js"></script>
+<script src="/JG/Content/Numkeyboard.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        bootbox.setDefaults("locale", "zh_CN");
+        FastClick.attach(document.body);
+        var stations = LocalUserInfo.GetUserInfo();
+        $("#Infrared").html(stations.ProductionLineName + '-' + stations.StationName);
+    });
+</script>
+<script>
+    $(function() {
+        $("#iteamCheckboxAll").click(function() {
+            $('input[name="iteamCheckbox"]').prop("checked",this.checked);
+        });
+        // var today = new Date();
+        // var day = today.getDate();
+        // var month = today.getMonth() + 1;
+        // var year = today.getFullYear();
+        // console.log(year);//获取日期
+        // var date = year + "-" + month + "-" + day;
+        // $("#ProductionDate").val(date);
+        // var $iteamCheckbox = $("input[name='iteamCheckbox']");
+        // $iteamCheckbox.click(function(){
+        //     $("#iteamCheckboxAll").attr("checked",$iteamCheckbox.length == $("input[name='iteamCheckbox']:checked").length ? true : false);
+        // });
+		$("#Hgs").mynumkb();
+		$("#Nhgs").mynumkb();
+		$("#ProductionLineNum").mynumkb();
+        $("#ProductionDate").calendar({inputReadOnly:false});
+
+    });
+
+</script>
+<script type="text/javascript">
+    $(".operation>span").each(function (index) {
+        $(this).on("click", function () {
+            $(".operation>span").eq(index).addClass("active").siblings(".operation>span").removeClass("active")
+        })
+
+    })
+</script>
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el: "#MainPage",
+        data: {
+            FormData: {
+                // ProductionLineCode: "",
+                ProductionLineCode: [],
+                TaskState:[],     //搜索框选中的状态搜索集合
+                curDate: "",    //当前产线时间
+                AllCount: 0,    //请求到前端的全部条数
+                PageSize: 10,    //每页条数
+                TotalCountPages: "",    //总页数
+                CurrPage: 1,     //当前页
+                teamOfTime:[],  //班别选中的状态搜索集合
+                Bz:[],      //班组选中的状态搜索集合
+				ReportSkillState:"",
+                PS:0        ,//片数
+                LS:0,       //列数
+            },
+			ProductionLineNum:"",
+            TaskList: [],
+            ProLineData: [],    //产线集合
+            TaskCode: "",               //任务单号
+            TaskStatu: "",             //任务状态
+            TaskStateData:[],        //任务状态集合
+            BzData:[],              //班组
+            saveDataList:[],
+            updateData:[],//即将更新的数据中转储存
+        },
+        computed:{
+            countNum:function (one,two) {
+                return Number(one)+Number(two);
+            }
+        },
+        mounted: function () {
+            var currSelf = this;
+            currSelf.InitData();
+        },
+        methods: {
+            countNum:function (one,two) {
+                return Number(one)+Number(two);
+            },
+            InitData: function () {
+                var currSelf = this;
+                var data = GetDictionary("JGMES_DIC_RWZT");
+                if (data && data.IsSuccess) {
+                    currSelf.TaskStateData = data.Data;
+                }
+                var bzData = GetDictionary("JGMEST_DIC_LHBZ");
+                if (bzData && bzData.IsSuccess) {
+                    currSelf.BzData = bzData.Data;
+                    currSelf.FormData.Bz.push("高冲");
+                }
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    async: false,   //异步
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesBaseAction!getCxList.action",
+                    data: {},
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            if (retData.Data && retData.Data.length>0) {
+                                currSelf.ProLineData = retData.Data;
+                                //this.ProLineData = retData.Data;
+                                // currSelf.FormData.ProductionLineCode = LocalUserInfo.GetUserInfo().ProductionLineCode;
+                            }
+                        } else if (!retData.Data) {
+                            var showMsg = "未能找到产线信息";
+                            $.toptip(showMsg, "warning");
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取产线失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                });
+                currSelf.GetProductTask();
+            },
+
+            //搜索功能方法
+            SearchForm: function () {
+                var currSelf = this;
+                currSelf.GetProductTask();
+                currSelf.InitData();
+            },
+
+            //获取当前产线生产任务单列表
+            GetProductTask: function () {
+                var currSelf = this;
+                var d = $("#ProductionDate").val();
+                if (d=="undefined"||d==null||d==""){
+                    d = "";
+                }
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesInfraredAction!getBatchCxScrw.action",
+                    data: {
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        // prodLineCode: currSelf.FormData.ProductionLineCode,
+                        prodLineCode: currSelf.FormData.ProductionLineCode.join(','),
+                        date:d,
+                        noLike: currSelf.FormData.ProTaskCode,    //获取当前用户输入任务单号
+                        cpLike: currSelf.FormData.KeyWord,     //获取当前用户输入产品关键字
+                        zt: currSelf.FormData.TaskState.join(','),//状态
+                        teamOfTime: currSelf.FormData.teamOfTime.join(','),
+                        BzData:currSelf.FormData.Bz.join(','),
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        if (retData.IsSuccess && ret.Data) {
+                            currSelf.TaskList = retData.Data;
+                        }else{
+                            currSelf.TaskList =[];
+                        }
+                    }, error: function (xhr, status, errorThrown) {
+                        $.alert("请求失败");
+                    }, complete: function () {
+                        $.hideLoading();
+                    }
+                });
+            },
+            cancel:function(){
+                $("#myModal").modal("hide");
+            },
+            StartUpdate:function (item) {
+                var currSelf = this;
+                currSelf.updateData=[];//初始化中转储存
+                currSelf.updateData = item;
+                $("#LSNum").val("");
+                $("#PSNum").val("");
+                $("#myModal").modal("show");
+            },
+            UpdateData:function () {
+                var currSelf = this;
+                var item  =  currSelf.updateData;
+                var jsonStr = {
+                    "JGMES_PLAN_SCRW_ID": item.JGMES_PLAN_SCRW_ID,
+                    "SCRW_PS":$("#PSNum").val(),
+                    "SCRW_LS":$("#LSNum").val(),
+                };
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesInfraredAction!updateSCRWData.action",
+                    data: {
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        jsonStr: JSON.stringify(jsonStr),
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        if (retData.IsSuccess) {
+                            $.toptip("更新成功", "success");
+                            currSelf.GetProductTask();
+                            $("#myModal").modal("hide");
+                        }else{
+                            $.toptip(retData.message, "error");
+                        }
+                    }, error: function (xhr, status, errorThrown) {
+                        $.alert("请求失败");
+                    }, complete: function () {
+                        $.hideLoading();
+                    }
+                });
+            }
+
+        }
+    });
+</script>
+
+</html>

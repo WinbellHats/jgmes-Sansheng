@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>电子秤报工-精工云MES系统移动端</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/ElectronicScale.css">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+
+        .weui-toptips {
+            z-index: 1051;
+            font-size: 2.8em !important;
+            height: 70px !important;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            line-height: 50px;
+            border-radius: 0.1em;
+            width: 75%;
+            margin: auto 12.5%;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="empty">
+            <span id="stations"></span>
+        </div>
+        <div class="header_title">
+            <a href="javascript:;">电子秤报工</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+    <div id="MainPage" v-cloak>
+        <div class="top_modal">
+            <div class="left_list">
+
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">扫码</label>
+                    </div>
+                    <input id="BarCode" type="text" placeholder="扫描生产任务单号" v-model="FormData.TaskCode" autofocus>
+                </div>
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">报工工序</label>
+                    </div>
+                    <div class="weui-cell__hd">
+                        <span class="proitem" v-for="(item,index) in ProcessData" :key="index"
+                            @click="ProductProcessClick(index)">
+                            <button v-bind:class="{'clickBgColor':CurrSelectGx.GxSerial==item.GxSerial}"
+                                type="button">{{item.GxSerial}}.{{item.InvProcessItem}}</button>
+                        </span>
+                    </div>
+                    <!-- <div class="weui-cell__bd"> 
+                        
+                        
+                       <select class="weui-select" name="select2" placeholder="请选择工序" v-model="ProductProcessCode"
+                            @change="ProductProcessClick(this)" @click.stop="GetProcessData">
+                            <option disabled selected value>请选择工序</option>
+                            <option v-for="(item,index) in ProcessData" :key="index" :value="item.GYLXGX_GXNUM">
+                                {{item.GYLXGX_GXNAME}}
+                            </option>
+                        </select> 
+                    </div>-->
+                </div>
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">生产线</label>
+                    </div>
+
+                    <span class="product_name">{{FormData.ProductLineName}}</span>
+                </div>
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">任务数量</label>
+                    </div>
+                    <span class="product_name">{{FormData.TaskNum}}</span>
+                </div>
+
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">已报数量</label>
+                    </div>
+                    <span class="product_name">{{FormData.AlreadyFinishNum}}</span>
+                </div>
+            </div>
+            <div class="right_list">
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">条码号</label>
+                    </div>
+                    <span>{{FormData.BarCode}}</span>
+                </div>
+                <!-- <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">工序</label>
+                    </div>
+
+                    <span class="product_name">{{ProductProcessName}}</span>
+                </div> -->
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">工单号码</label>
+                    </div>
+                    <span class="product_name">{{FormData.WorkOrder}}</span>
+                </div>
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">产品名称</label>
+                    </div>
+
+                    <span class="product_name">{{FormData.ProductName}}</span>
+                </div>
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">订单数量</label>
+                    </div>
+                    <span class="product_name">{{FormData.OrderQuantity}}</span>
+                </div>
+
+                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                    <div class="weui-cell__hd">
+                        <label for="" class="weui-label">报工数量</label>
+                    </div>
+                    <input type="tel" placeholder="录入或接收电子秤数量" id="weight"
+                        :readonly="CheckedChange ?  'readonly' :false" :value="FormData.WorkNumber"
+                        @keyup="AutoReportWork"
+                        onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                        onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" />
+                </div>
+            </div>
+            <!--清除浮动-->
+            <div class="clean"></div>
+        </div>
+        <div class="middle_btn">
+            <div class="autosubmit">
+                <span style="display: inline-block;">
+                    <img :src="CheckedChange?'/JG/Content/images/none1.png':'/JG/Content/images/none2.png'"
+                        @click="IsChecked($event)" alt="" style="height: 30px;width: 30px;">
+                </span>
+                <span style="display: inline-block;margin-right: 3rem;">自动报工</span>
+            </div>
+            <div class="submit">
+                <button type="button" class="btn btn-success submitbtn" @click="SaveData">提交</button>
+            </div>
+        </div>
+        <div class="recordtitle">
+            <div class="record">报工记录</div>
+            <ul class="recorditem">
+                <li>序号</li>
+                <li>任务单号</li>
+                <li>报工数量</li>
+                <li>报工时间</li>
+                <li>操作</li>
+            </ul>
+            <div id="recodeheight" style="overflow-y: auto;">
+                <ul v-for="(item,index) in WorkRecordData" :key="index" class="recordcontent">
+                    <li>{{WorkRecordNum+index}}</li>
+                    <li>任务单号{{item.ReportWorkcode}}报工</li>
+                    <li>{{item.ReportWorkNum}}</li>
+                    <li>{{item.ReportWorkTime}}</li>
+                    <li>
+                        <span @click="DelectOne(index,item)">
+                            删除
+                            <img src="/JG/Content/images/bad_img.png" alt="">
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/Utils.js?v=1"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/Common.js"></script>
+<script type="text/javascript">
+    //body赋值滚动条
+    window.onload = function () {
+        var BodyWidth = $(window).width();
+        var BodyHeight = $(window).height();
+        var recodeheight = BodyHeight / 3
+        $("#recodeheight").height(recodeheight);
+        if (BodyWidth > 1280) {
+            //给Main的div加垂直滚动条
+            var MainPageHeight = BodyHeight - 90;
+            $("#MainPage").height(MainPageHeight);
+        } else if (BodyWidth < 1281 && BodyWidth > 1023) {
+            var MainPageHeight = BodyHeight - 90;
+            $("#MainPage").height(MainPageHeight);
+        } else if (BodyWidth < 1024 && BodyWidth > 768) {
+            var MainPageHeight = BodyHeight - 90;
+            $("#MainPage").height(MainPageHeight);
+        } else {
+            var MainPageHeight = BodyHeight - 70;
+            $("#MainPage").height(MainPageHeight);
+        }
+    }
+</script>
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el: "#MainPage",
+        data: {
+            FormData: {
+                ScrwID: "",
+                TaskCode: "",//扫码号
+                BarCode: "",//任务单号
+                ProductName: "",//产品名称
+                ProductCode: "",//产品编码
+                WorkOrder: "",//工单号码
+                OrderQuantity: "",//订单数量
+                WorkNumber: "",//报工数量
+                ProductLineCode: "",//生产线编码
+                ProductLineName: "",//生产线名称               
+                AlreadyFinishNum: "",//已报数量
+                TaskNum: "",//任务数量
+
+            },
+            bgSjId: "",//主表id
+            ProcessData: [],//工序集合
+            CurrSelectGx: { GxSerial: "" }, //当前选择的工序
+            ProductProcessCode: "",//工序编号
+            ProductProcessName: "",//工序名称
+            GxSerial: "",  //工序序号
+            WorkRecordData: [],//报工记录集合
+            CheckedChange: false,//是否自动报工
+            CheckedImgSrc: "",//获取选中或未选中自动报工的图片路径
+            WorkRecordNum: 1,//报工记录序号
+            timer: null,//自动报工执行的定时器
+            interval: null,
+            AutoReporttimer: null,
+            errorValue: 0,
+            IsValuesChange: "",
+        },
+        mounted: function () {
+            var currSelf = this;
+            $("#BarCode").bind("keypress", currSelf.GetTaskData)
+            $("#BarCode").focus();
+            currSelf.GetProductLine();
+        },
+        methods: {
+            Open: function () {
+                var currSelf = this;
+                //获取电子秤回传数值
+                var BackArr = [];
+                //获取一秒内的5个值
+                var arr1 = [];
+                if (typeof JGDeviceWin != "undefined") {
+                    var ret = JGDeviceWin.OpenWeight("COM3", 9600);
+                    if (ret) {
+                        //alert("成功开启串口监控");
+                        var value;
+                        //获取五个值
+                        currSelf.interval = setInterval(function () {
+                            // value = JGDeviceWin.CurrGWeight();
+                            value = JGDeviceWin.GetCurrAmount(3);
+                            BackArr.push(value)
+                            if (BackArr.length > 5) {
+                                arr1 = BackArr.splice(BackArr.length - 5)
+                            }
+                        }, 166);
+                        //判断五个值是否相等
+                        currSelf.timer = setInterval(function () {
+                            for (var i = 0; i < arr1.length; i++) {
+                                var isEqual = true;
+                                if (Math.abs(arr1[i] - arr1[0]) > currSelf.errorValue) {
+                                    //$.toptip("不等" + arr1, "warning");                                   
+                                    isEqual = false;
+                                    break;
+                                }
+                            }
+                            $("#weight").val(value);
+
+                            if (isEqual) {
+                                clearInterval(currSelf.timer);
+                                clearInterval(currSelf.interval);
+                                //$.toptip("等" + arr1, "warning");
+                                currSelf.AutoReportWork()
+                            }
+                        }, 1000);
+
+                    } else
+                        alert("串口监控开启失败");
+                } else {
+                    alert("请使用工位平板(Win版本)")
+                }
+
+            },
+            //判断
+            Close: function () {
+                var currSelf = this;              
+                currSelf.FormData.WorkNumber = "";
+                $("#weight").val("");
+                if (currSelf.interval) {
+                    clearInterval(currSelf.interval);
+                    JGDeviceWin.Close();
+                }
+                clearInterval(currSelf.timer);
+            },
+            //获取全部产线信息方法
+            GetProductLine: function () {
+                var currSelf = this;
+                //获取产线和工位接口
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    async: true,   //异步
+                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getCxGwList.action",
+                    data: {},
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            if (retData.Data) {
+                                currSelf.ProductLineData = retData.Data;
+                            }
+                        } else if (!retData.Data) {
+                            var showMsg = "未能找到产线信息";
+                            $.toptip(showMsg, "warning");
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取产线失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                });
+            },
+
+            //扫码获取任务单信息
+            GetTaskData: function (event) {
+                var currSelf = this;
+                if (event.which == 13) {
+                    if (currSelf.FormData.TaskCode) {
+                        currSelf.Close();
+                        $.showLoading();
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/jgmesElectronicScaleAction!getScrwByRwNo.action",
+                            data: {
+                                mac: LocalUserInfo.GetUserInfo().Mac,
+                                userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                rwNo: currSelf.FormData.TaskCode.trim(),
+                            },
+                            dataType: "json",
+                            success: function (result) {
+                                var retData = ReturnData(result);
+                                if (retData.IsSuccess) {
+                                    for (var element in retData.Data) {
+                                        currSelf.FormData.ScrwID = retData.Data.JGMES_PLAN_SCRW_ID;
+                                        currSelf.FormData.BarCode = retData.Data.SCRW_RWDH;
+                                        currSelf.FormData.ProductName = retData.Data.SCRW_NAME;//产品名称
+                                        currSelf.FormData.WorkOrder = retData.Data.SCRW_GDHM;//工单号码
+                                        currSelf.FormData.OrderQuantity = retData.Data.SCRW_DDSL;//订单数量  
+                                        currSelf.FormData.ProductCode = retData.Data.SCRW_CPBH;//产品编码
+                                        currSelf.FormData.ProductLineName = retData.Data.SCRW_CXMC;
+                                        currSelf.FormData.ProductLineCode = retData.Data.SCRW_CXBM;
+                                        currSelf.FormData.TaskNum = retData.Data.SCRW_PCSL;
+                                        //currSelf.FormData.AlreadyFinishNum = retData.Data.SCRW_WCSL;
+
+                                        currSelf.ProcessData = [];
+                                        currSelf.CurrSelectGx = { GxSerial: "" };
+                                        currSelf.FormData.AlreadyFinishNum = "";
+                                        currSelf.ProductProcessCode = "",//工序编号
+                                            currSelf.ProductProcessName = ""
+                                        //根据产品获取工序
+                                        if (currSelf.FormData.ProductCode) {
+                                            $.showLoading();
+                                            $.ajax({
+                                                type: "post",
+                                                url: LocalConfig.SrvPath + "/jgmes/commonAction!getGXList.action",
+                                                data: {
+                                                    mac: LocalUserInfo.GetUserInfo().Mac,
+                                                    userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                                    cpCode: currSelf.FormData.ProductCode,
+                                                },
+                                                dataType: "json",
+                                                success: function (result) {
+                                                    var retData = ReturnData(result);
+                                                    if (retData.IsSuccess) {
+                                                        if (retData.Data && retData.Data.length > 0) {
+                                                            //currSelf.ProcessData = retData.Data;
+                                                            for (var i in retData.Data) {
+                                                                var element = retData.Data[i];
+
+                                                                currSelf.ProcessData.push({
+                                                                    InvProcessItem: element.GYLXGX_GXNAME,
+                                                                    GxID: element.GYLXGX_ID,
+                                                                    GylxgsGxnum: element.GYLXGX_GXNUM,  // 工序编号
+                                                                    GxSerial: element.SY_ORDERINDEX,
+                                                                })
+                                                            }
+
+                                                        }
+
+                                                    }
+
+                                                },
+                                                error: function (xhr, status, errorThrow) {
+                                                    console.error(status);
+                                                    $.alert("获取信息失败!");
+                                                },
+                                                complete: function () {
+                                                    $.hideLoading();
+                                                },
+                                            })
+                                        }
+                                        currSelf.FormData.WorkNumber = "";
+                                        currSelf.FormData.TaskCode = "";
+                                        return false;//返回false，不为空对象
+                                    }
+                                    $.toptip("未获取到生产任务单号！", "error");
+                                    currSelf.FormData.TaskCode = "";
+                                    return true;//返回true，为空对象
+
+                                }
+
+                            },
+                            error: function (xhr, status, errorThrow) {
+                                console.error(status);
+                                $.alert("获取信息失败!");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            },
+                        })
+                        //判断回车条码号不为空并且勾选了自动报工
+                        if (currSelf.FormData.BarCode && currSelf.CheckedChange) {
+                            currSelf.Open();
+                        }
+                    } else {
+                        $.toptip("请扫描生产任务单号", "error");
+                    }
+
+                }
+            },
+            //是否选中自动报工按钮
+            IsChecked: function (e) {
+                var currSelf = this;
+                currSelf.FormData.WorkNumber = $("#weight").val();
+                currSelf.CheckedImgSrc = e.target.src.slice(-9);
+                if (currSelf.CheckedImgSrc === "none2.png") {
+                    currSelf.CheckedChange = true;
+                    currSelf.Open();
+                } else if (currSelf.CheckedImgSrc === "none1.png") {
+                    currSelf.CheckedChange = false;
+                    clearInterval(currSelf.timer);
+                    clearInterval(currSelf.interval);
+                    currSelf.FormData.WorkNumber = "";
+                    $("#weight").val("");
+                    currSelf.Close();
+                }
+            },
+            //自动报工
+            AutoReportWork: function () {
+                var currSelf = this;
+                currSelf.FormData.WorkNumber = $("#weight").val();
+                if (currSelf.CheckedChange) {
+                    //选中自动报工定时器函数                  
+                    if (currSelf.FormData.BarCode && currSelf.ProductProcessName && currSelf.FormData.WorkNumber > 0 && currSelf.CheckedChange) {
+                        //报工主表
+                        var jsonStr = JSON.stringify({
+                            "BGSJ_SCRWID": currSelf.FormData.ScrwID,//任务单ID
+                            "BGSJ_SCRW": currSelf.FormData.BarCode,//任务单号
+                            "BGSJ_BGLX": "0",//报工类型
+                            "BGSJ_CPBH": currSelf.FormData.ProductCode,//产品编号
+                            "BGSJ_CPMC": currSelf.FormData.ProductName,//产品名称
+                            "BGSJ_GXBH": currSelf.ProductProcessCode,//工序编号
+                            "BGSJ_GXMC": currSelf.ProductProcessName,//工序名称
+                            "BGSJ_SL": currSelf.FormData.WorkNumber,//报工数量
+                            "BGSJ_GDHM": currSelf.FormData.WorkOrder,//工单号码
+                            "BGSJ_DDSL": currSelf.FormData.OrderQuantity,//订单数量
+                            "BGSJ_CXBM": currSelf.FormData.ProductLineCode//产线编码
+                        });
+                        //报工子表
+                        var jsonStrDetail = [];
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/jgmesBgBatchAction!doJsonSave.action",
+                            data: {
+                                mac: LocalUserInfo.GetUserInfo().Mac,
+                                userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                jsonStr: jsonStr,
+                                jsonStrDetail: JSON.stringify(jsonStrDetail),
+                                wordcode: currSelf.FormData.WorkOrder
+                            },
+                            dataType: "json",
+                            success: function (result) {
+                                var retData = ReturnData(result);
+                                if (retData.IsSuccess) {
+                                    if (retData.Data) {
+                                        var record = {
+                                            ReportWorkcode: retData.Data.BGSJ_SCRW,
+                                            ReportWorkNum: retData.Data.BGSJ_SL,
+                                            ReportWorkTime: retData.Data.BGSJ_GZSJ,
+                                        };
+                                        //报工完后添加一条报工记录
+                                        currSelf.WorkRecordData.splice(0, 0, record);
+                                        $.ajax({
+                                            type: "post",
+                                            url: LocalConfig.SrvPath + "/jgmes/jgmesBgBatchAction!getAlreadyReportedNum.action",
+                                            data: {
+                                                scrwId: currSelf.FormData.ScrwID,
+                                                gxbh: currSelf.ProductProcessCode,
+                                            },
+                                            dataType: "json",
+                                            success: function (result) {
+                                                var retData = ReturnData(result);
+                                                if (retData.IsSuccess) {
+                                                    currSelf.FormData.AlreadyFinishNum = retData.Data;
+
+                                                }
+                                            },
+                                            error: function (xhr, status, errorThrow) {
+                                                console.error(status);
+                                                $.alert("获取信息失败!");
+                                            },
+                                            complete: function () {
+                                                $.hideLoading();
+                                            },
+                                        })
+                                        clearInterval(currSelf.timer);
+                                        clearInterval(currSelf.interval);
+                                        $.toptip("自动报工成功", "success");
+                                    }
+                                } else {
+                                    //$.toptip("自动报工失败", "warning");  
+                                    currSelf.Open();
+                                }
+                            },
+                            error: function (xhr, status, errorThrow) {
+                                console.error(status);
+                                $.alert("获取信息失败!");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            },
+                        })
+                        return true;
+                    } else {
+                        //$.toptip("自动报工条件不满足", "warning");
+                        currSelf.Open()
+                        return false;
+                    }
+                }
+            },
+            //根据产品获取工序       
+            // GetProcessData: function () {
+            //     var currSelf = this;
+            //     if (!currSelf.FormData.ProductCode) {
+            //         $.toptip("条码号不能为空", "warning");
+            //     }
+            // },
+            //选中的工序
+            // ProductProcessClick: function () {
+            //     var currSelf = this;
+            //     if (currSelf.FormData.ProductCode) {
+            //         if (currSelf.ProcessData.length > 0) {
+            //             $.each(currSelf.ProcessData, function (index, item) {
+            //                 if (currSelf.ProductProcessCode == item.GYLXGX_GXNUM) {
+            //                     currSelf.ProductProcessName = item.GYLXGX_GXNAME;
+            //                     currSelf.FormData.WorkNumber = "";
+            //                 }
+            //             });
+            //             if (currSelf.ProductProcessCode) {
+
+
+            //                 $.showLoading();
+            //                 $.ajax({
+            //                     type: "post",
+            //                     url: LocalConfig.SrvPath + "/jgmes/jgmesBgBatchAction!getAlreadyReportedNum.action",
+            //                     data: {
+            //                         scrwId: currSelf.FormData.ScrwID,
+            //                         gxbh: currSelf.ProductProcessCode,
+            //                     },
+            //                     dataType: "json",
+            //                     success: function (result) {
+            //                         var retData = ReturnData(result);
+            //                         if (retData.IsSuccess) {
+            //                             currSelf.FormData.AlreadyFinishNum = retData.Data;
+            //                             // for (var element in retData.Data) {
+            //                             //     currSelf.FormData.AlreadyFinishNum = retData.Data;
+            //                             //     return false;//返回false，不为空对象
+            //                             // }
+            //                             // return true;//返回true，为空对象
+            //                         }
+            //                     },
+            //                     error: function (xhr, status, errorThrow) {
+            //                         console.error(status);
+            //                         $.alert("获取信息失败!");
+            //                     },
+            //                     complete: function () {
+            //                         $.hideLoading();
+            //                     },
+            //                 })
+            //             }
+
+            //         } else {
+            //             $.toptip("该产品无相关工序", "warning");
+            //         }
+            //         //判断回车条码号不为空并且勾选了自动报工
+            //         if (currSelf.CheckedChange) {
+            //             currSelf.Open();
+            //         }
+            //     } else {
+            //         $.toptip("该条码号不能为空", "warning");
+            //     }
+            // },
+            //保存报工数据
+            SaveData: function () {
+                var currSelf = this;
+                currSelf.FormData.WorkNumber = $("#weight").val();
+                if (!currSelf.FormData.BarCode) {
+                    $.toptip("请扫描生产任务单号", "warning");
+                } else if (!currSelf.CurrSelectGx.GxSerial) {
+                    $.toptip("请选择报工工序", "warning");
+                } else if (!currSelf.FormData.WorkNumber) {
+                    $.toptip("请录入或接收电子秤数量", "warning");
+                } else {
+                    //报工主表
+                    var jsonStr = JSON.stringify({
+                        "BGSJ_SCRWID": currSelf.FormData.ScrwID,//任务单ID
+                        "BGSJ_SCRW": currSelf.FormData.BarCode,//任务单号
+                        "BGSJ_BGLX": "0",//报工类型
+                        "BGSJ_CPBH": currSelf.FormData.ProductCode,//产品编号
+                        "BGSJ_CPMC": currSelf.FormData.ProductName,//产品名称
+                        "BGSJ_GXBH": currSelf.ProductProcessCode,//工序编号
+                        "BGSJ_GXMC": currSelf.ProductProcessName,//工序名称
+                        "BGSJ_SL": currSelf.FormData.WorkNumber,//报工数量
+                        "BGSJ_GDHM": currSelf.FormData.WorkOrder,//工单号码
+                        "BGSJ_DDSL": currSelf.FormData.OrderQuantity,//订单数量
+                        "BGSJ_CXBM": currSelf.FormData.ProductLineCode,//产线编码
+                        "BGSJ_CXMC": currSelf.FormData.ProductLineName,
+                    });
+                    //报工子表
+                    var jsonStrDetail = [];
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesBgBatchAction!doJsonSave.action",
+                        data: {
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            jsonStr: jsonStr,
+                            jsonStrDetail: JSON.stringify(jsonStrDetail),
+                            wordcode: currSelf.FormData.WorkOrder
+                        },
+                        dataType: "json",
+                        success: function (result) {
+                            var retData = ReturnData(result);
+                            if (retData.IsSuccess) {
+                                if (retData.Data) {
+                                    var record = {
+                                        ReportWorkcode: retData.Data.BGSJ_SCRW,
+                                        ReportWorkNum: retData.Data.BGSJ_SL,
+                                        ReportWorkTime: retData.Data.BGSJ_GZSJ,
+                                        bgSjId: retData.Data.JGMES_PB_BGSJ_ID,
+                                    };
+                                    $.toptip("报工成功", "success");
+                                    //报工完后添加一条报工记录
+                                    currSelf.WorkRecordData.splice(0, 0, record);//
+
+                                    $.showLoading();
+                                    $.ajax({
+                                        type: "post",
+                                        url: LocalConfig.SrvPath + "/jgmes/jgmesBgBatchAction!getAlreadyReportedNum.action",
+                                        data: {
+                                            scrwId: currSelf.FormData.ScrwID,
+                                            gxbh: currSelf.ProductProcessCode,
+                                        },
+                                        dataType: "json",
+                                        success: function (result) {
+                                            var retData = ReturnData(result);
+                                            if (retData.IsSuccess) {
+                                                currSelf.FormData.AlreadyFinishNum = retData.Data;
+                                                // for (var element in retData.Data) {
+                                                //     currSelf.FormData.AlreadyFinishNum = retData.Data;
+                                                //     return false;//返回false，不为空对象
+                                                // }
+                                                // return true;//返回true，为空对象
+                                            }
+                                        },
+                                        error: function (xhr, status, errorThrow) {
+                                            console.error(status);
+                                            $.alert("获取信息失败!");
+                                        },
+                                        complete: function () {
+                                            $.hideLoading();
+                                        },
+                                    })
+                                }
+                            }
+                        },
+                        error: function (xhr, status, errorThrow) {
+                            console.error(status);
+                            $.alert("获取信息失败!");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        },
+                    })
+                }
+            },
+            //删除某条报工记录
+            DelectOne: function (index, item) {
+                var currSelf = this;
+                console.log(item)
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    async: true,   //异步
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesElectronicScaleAction!deleteBgSj.action",
+                    data: {
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        bgSjId: item.bgSjId,
+                        bgSjZbId: "",
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            $.toptip("删除成功", "success");
+                            currSelf.WorkRecordData.splice(index, 1);
+                            //删除获取新的报工数量
+                            $.showLoading();
+                            $.ajax({
+                                type: "post",
+                                url: LocalConfig.SrvPath + "/jgmes/jgmesBgBatchAction!getAlreadyReportedNum.action",
+                                data: {
+                                    scrwId: currSelf.FormData.ScrwID,
+                                    gxbh: currSelf.ProductProcessCode,
+                                },
+                                dataType: "json",
+                                success: function (result) {
+                                    var retData = ReturnData(result);
+                                    if (retData.IsSuccess) {
+                                        currSelf.FormData.AlreadyFinishNum = retData.Data;
+                                    }
+                                },
+                                error: function (xhr, status, errorThrow) {
+                                    console.error(status);
+                                    $.alert("获取信息失败!");
+                                },
+                                complete: function () {
+                                    $.hideLoading();
+                                },
+                            })
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取产线失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                });
+            },
+            //   工序部分点击选择显示样式方法
+            ProductProcessClick: function (index) {
+                var currSelf = this;
+                currSelf.CurrSelectGx = currSelf.ProcessData[index];
+                currSelf.ProductProcessCode = currSelf.CurrSelectGx.GylxgsGxnum,//工序编号
+                    currSelf.ProductProcessName = currSelf.CurrSelectGx.InvProcessItem,//工序名称
+
+                    //获取当前工序对应的已报工数接口
+                    $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesBgBatchAction!getAlreadyReportedNum.action",
+                    data: {
+                        scrwId: currSelf.FormData.ScrwID,
+                        gxbh: currSelf.ProductProcessCode,
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            currSelf.FormData.AlreadyFinishNum = retData.Data;
+                            // for (var element in retData.Data) {
+                            //     currSelf.FormData.AlreadyFinishNum = retData.Data;
+                            //     return false;//返回false，不为空对象
+                            // }
+                            // return true;//返回true，为空对象
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取信息失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                })
+            },
+        },
+
+        beforeDestroy: function () {
+            var currSelf = this;
+            clearInterval(currSelf.timer)
+            if (currSelf.interval) {
+                clearInterval(currSelf.interval);
+            }
+        }
+    });
+</script>
+
+</html>

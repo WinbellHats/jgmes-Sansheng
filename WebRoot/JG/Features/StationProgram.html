@@ -1,0 +1,146 @@
+﻿<html>
+
+<head>
+    <title>工站程序-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/StationProgram.css?v=1">
+    <link rel="stylesheet" href="/JG/Content/css/TabletsGlobal.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+
+<body>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="item header_title">
+            <a href="javascript:;">工站程序</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+    <div id="MainPage" class="MainPage">
+        <div class="weui-grids">
+            <a href="/JG/Features/FirstStation.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <!--<img src="/JG/Content/images/touru.png" />-->
+                    <span class="station_icon station1"></span>
+                </div>
+                <p class="weui-grid__label">
+                    投入站(扫描投入)
+                </p>
+            </a>
+            <a href="/JG/Features/FirstPrintStation.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="station_icon station2"></span>
+                </div>
+                <p class="weui-grid__label">
+                    投入站(打印贴码)
+                </p>
+            </a>
+            <a href="/JG/Features/ScanningStation.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="station_icon station3"></span>
+                </div>
+                <p class="weui-grid__label">
+                    扫码过站
+                </p>
+            </a>
+            <a href="/JG/Features/ComponentsStation.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="station_icon station4"></span>
+                </div>
+                <p class="weui-grid__label">
+                    关键部件过站
+                </p>
+            </a>
+            <a href="/JG/Features/ComponentsBatchStation.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="station_icon station4"></span>
+                </div>
+                <p class="weui-grid__label">
+                    关键部件(批次码)过站
+                </p>
+            </a>
+            <a href="/JG/Features/ComponentsPrintStation.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="station_icon station4"></span>
+                </div>
+                <p class="weui-grid__label">
+                    关键部件(打印)过站
+                </p>
+            </a>
+            <a href="/JG/Features/QualityInspection.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="station_icon station5"></span>
+                </div>
+                <p class="weui-grid__label">
+                    无检测数据过站
+                </p>
+            </a>
+            <a href="/JG/Features/SafetyInspection.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="station_icon station6"></span>
+                </div>
+                <p class="weui-grid__label">
+                    有检测数据过站
+                </p>
+            </a>
+            <a href="/JG/Features/OutputStation.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="station_icon station7"></span>
+                </div>
+                <p class="weui-grid__label">
+                    产出站
+                </p>
+            </a>
+            <a href="/JG/Features/PackingList.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="station_icon station8"></span>
+                </div>
+                <p class="weui-grid__label">
+                    装箱过站
+                </p>
+            </a>
+            
+            <a href="#" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="station_icon station9"></span>
+                </div>
+                <p class="weui-grid__label">
+                    工装绑定
+                </p>
+            </a>
+            <a href="/JG/Features/ComponentsReplacement.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="station_icon station10"></span>
+                </div>
+                <p class="weui-grid__label">
+                    关键物料更换
+                </p>
+            </a>
+        </div>
+    </div>
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+    <script type="text/javascript">
+        $("#btnClear").on("click", function () {
+            LocalUserInfo.ClearUser();
+            window.location.href = window.location.href;
+        });
+
+    </script>
+</body>
+
+</html>

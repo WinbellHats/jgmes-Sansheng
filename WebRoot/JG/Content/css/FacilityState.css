@@ -1,0 +1,216 @@
+body{
+    background-color:#E7F0EF;
+    min-width: 557px;
+    overflow: hidden;
+}
+/*heder部分样式*/
+.header {
+    width:100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index:50;
+}
+
+.item,.header_title,.empty{
+    width:33.33%;
+    line-height: 39px;
+}
+.header_title{
+    padding-left: 15px;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title>a{
+    font-size: 3em;
+    color:#FFFFFF;
+}
+.user_img{
+    float: right;
+    padding-right: 15px;
+}
+.back{
+    width:85px;
+    height:30px;
+    display: inline-block;
+}
+.back>img{
+    width:60%;
+}
+
+/*设备表格部分*/
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 90px;
+    overflow-y: auto;
+}
+.facility_modal{
+    background-color: #FFFFFF;
+    padding: 10px;
+}
+.table tbody>tr>td{
+    vertical-align: middle;
+    border-top:none;
+    border-bottom: 1px solid #dddddd;
+    font-size: 1.4em;
+}
+.table tbody>tr>td>span{
+    display: inline-block;
+    cursor: pointer;
+}
+.table thead>tr>th {
+    font-size: 1.5em;
+}
+
+/*翻页部分*/
+.page{
+    width:100%;
+    text-align: center;
+    padding: 10px;
+    /*display: none;*/
+}
+.page>span{
+    display: inline-block;
+    width:80px;
+    line-height: 35px;
+    font-size: 1.4em;
+    color:#231A15;
+    cursor: pointer;
+}
+.page>span:hover,.page_list>span:hover{
+    color:green;
+}
+.page_list{
+    display: inline-block;
+    list-style: none;
+}
+.page_list>span{
+    display: inline-block;
+    width:30px;
+    line-height: 30px;
+    font-size: 1.4em;
+    color:#231A15;
+    cursor: pointer;
+}
+
+
+
+
+
+
+/**********************平板端的媒体查询*********************************/
+@media screen and (min-width:1280px) and (max-width:1920px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.8em;
+    }
+}
+@media all and (min-height:1024px) and (max-height:1080px){}
+
+
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (min-width:1024px) and (max-width:1280px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 11px;
+        padding-top: 12px;
+    }
+    .header_title>a {
+        font-size: 2.5em;
+    }
+    .back>img{
+        width: 45px;
+    }
+}
+@media all and (min-height:891px) and (max-height:1024px){}
+
+
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (min-width:768px) and (max-width:1024px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 13px;
+        padding-top: 13px;
+    }
+    .header_title>a {
+        font-size: 2em;
+    }
+    .back>img{
+        width: 40px;
+    }
+    .table thead>tr>th {
+        font-size: 1.4em;
+    }
+    .table tbody>tr>td {
+        font-size: 1.3em;
+    }
+}
+@media screen and (min-width:557px) and (max-width:768px){
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 1.5em;
+    }
+    .back {
+        width: 50px;
+    }
+    .back>img{
+        width: 35px;
+    }
+    .table thead>tr>th {
+        font-size: 1.1em;
+    }
+    .table tbody>tr>td {
+        font-size: 1em;
+    }
+    .page>span {
+        font-size: 1.1em;
+    }
+    .table tbody>tr>td>span>img{
+        width:25px;
+    }
+}
+@media all and (min-height:768px) and (max-height:891px){}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

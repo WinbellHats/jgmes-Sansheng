@@ -1,0 +1,304 @@
+body{
+    background-color:#E7F0EF;
+    min-width: 557px;
+}
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 90px;
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index: 50;
+}
+
+.item {
+    width:25%;
+    line-height: 50px;
+}
+.item, .header_title,.empty {
+    width: 33.33%;
+    line-height:50px;
+}
+.header_title {
+    padding-left: 15px;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title>a {
+    font-size: 3em;
+    color: #FFFFFF;
+}
+
+.clean{
+    content: "";
+    clear: both;
+}
+.user_img,.set{
+    float: right;
+}
+
+.user_img{
+    float: right;
+    padding-right: 15px;
+}
+.input-group{
+    margin-top: 20px;
+}
+.form-control{
+    background-color: #FFFFFF;
+}
+.affirm>.btn2{
+    font-size: 1.5em !important;
+    color:#FFFFFF;
+    width: 200px;
+    height:60px;
+    background-color: #5CB85C;
+    margin: 0 auto;
+}
+.affirm{
+    margin: 0 auto;
+}
+.btn3{
+    background-color: #DEEFD8;
+    color:#498768;
+    border:1px solid #49874D;
+    padding: 8px 12px;
+    font-size: 1.5em;
+}
+
+
+.btn4{
+    padding: 8px 12px;
+    font-size: 1.5em;
+}
+.btn{
+    padding: 8px 12px;
+    font-size: 1.5em;
+}
+.input-group-addon {
+    padding: 10px 12px;
+    font-size: 1.5em;
+}
+.form-control {
+    height: 50px;
+    font-size: 1.5em;
+}
+
+
+
+
+
+/************弹窗部分样式*****************/
+/*.set{*/
+    /*width:auto;*/
+    /*cursor: pointer;*/
+    /*padding-right: 8px;*/
+/*}*/
+/*.menu{*/
+    /*width:100%;*/
+    /*height:100%;*/
+    /*position: fixed;*/
+    /*top:0;*/
+    /*left:0;*/
+    /*z-index: 10;*/
+    /*background-color: rgba(0,0,0,0.1);*/
+    /*display: none;*/
+/*}*/
+/*.menu_list{*/
+    /*width:0;*/
+    /*height:100%;*/
+    /*float: right;*/
+    /*background-color: #ffffff;*/
+    /*!*padding: 1.5rem;*!*/
+    /*border-radius: 2px;*/
+    /*transition: all 0.3s linear;*/
+/*}*/
+/*.menu_list_show{*/
+    /*width:250px;*/
+    /*transition: all 0.3s linear;*/
+    /*background-color:#E7F0EF;*/
+/*}*/
+/*.menu_list>ul{*/
+    /*width:100%;*/
+    /*padding:1rem 0rem;*/
+    /*list-style: none;*/
+/*}*/
+/*.menu_list>ul>li{*/
+    /*width:100%;*/
+    /*line-height: 4rem;*/
+    /*cursor: pointer;*/
+    /*margin-top: 15px;*/
+/*}*/
+/*.menu_list>ul>li>span{*/
+    /*display: block;*/
+    /*font-size: 1.5em;*/
+/*}*/
+/*.menu_list>ul>li:hover span:last-child{*/
+    /*border-radius: 2px;*/
+    /*box-shadow: #F0F0F0 0px 0px 0px 2px;*/
+/*}*/
+
+/*.menu_list>ul>li>span:last-child{*/
+    /*line-height: 1rem;*/
+    /*padding: 15px 20px;*/
+    /*text-align: center;*/
+    /*text-align: -moz-center;*/
+    /*text-align: -webkit-center;*/
+/*}*/
+
+.back{
+    width:85px;
+    height:30px;
+    display: inline-block;
+}
+.back>img{
+    width:60%;
+}
+
+.andon_icon{
+    width:80px;
+    height:80px;
+    margin: 0 auto;
+    background: url("../images/andon.png") no-repeat;
+}
+.andon1{
+    background-position: -80px -5px;
+}
+.andon2{
+    background-position: -240px -5px;
+}
+.andon3{
+    background-position: -160px -5px;
+}
+.andon4{
+    background-position: 0px 0px;
+}
+
+
+
+/**********************平板端的媒体查询*********************************/
+@media screen and (min-width:1280px) and (max-width:1920px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.8em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+}
+@media all and (min-height:1024px) and (max-height:1080px){}
+
+
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (min-width:1024px) and (max-width:1280px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.2em;
+    }
+    .back {
+        width: 70px;
+        height: 30px;
+    }
+    .set>span::before {
+        font-size: 42px;
+    }
+    .input-group-addon {
+        font-size: 1.3em;
+    }
+    .form-control {
+        font-size: 1.3em;
+    }
+    .btn {
+        font-size: 1.3em;
+    }
+}
+@media all and (min-height:891px) and (max-height:1024px){}
+
+
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (min-width:768px) and (max-width:1024px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+    .set>span::before {
+        font-size: 45px;
+    }
+    .input-group-addon {
+        font-size: 1.3em;
+    }
+    .form-control {
+        font-size: 1.3em;
+    }
+    .btn {
+        font-size: 1.3em;
+    }
+}
+@media screen and (min-width:557px) and (max-width:768px){
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 1.5em;
+    }
+    .back {
+        width: 60px;
+        height: 30px;
+    }
+    .set>span::before {
+        font-size: 40px;
+    }
+    .item, .header_title, .empty {
+        line-height: 40px;
+    }
+    .input-group-addon {
+        font-size: 1em;
+    }
+    .form-control {
+        font-size: 1em;
+    }
+    .btn {
+        font-size: 1em;
+    }
+}
+@media all and (min-height:768px) and (max-height:891px){}

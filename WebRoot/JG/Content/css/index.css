@@ -1,0 +1,361 @@
+body{
+    background-color:#E7F0EF;
+    min-width: 557px;
+    /*overflow: hidden;*/
+}
+#MainPage {
+    width: 100%;
+    /*height: auto;*/
+    /*margin-top: 90px;*/
+    /*overflow-y: auto;*/
+}
+.empty_div{
+    content: "";
+    height:90px;
+}
+#MainPage::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 4px;
+}
+#MainPage::-webkit-scrollbar-thumb{/*滚动条里面的滚动滑块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.2);
+}
+#MainPage::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 0;
+    background: rgba(0,0,0,0.1);
+}
+/*header部分样式*/
+.header {
+    width:100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 6.6px;
+    padding-top: 6.62px;
+    background-color: #231A15;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+}
+
+.item {
+    width:20%;
+}
+.item,.item_title{
+    line-height: 25px;
+}
+.item1{
+    margin-left: 10px;
+}
+
+.item_title{
+    width:60%;
+    display: flex;
+    justify-content: center;
+}
+.item_title>.title_text{
+    width:auto;
+    text-align: center;
+    text-align: -webkit-center;
+    text-align: -moz-center;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.title_text>span{
+    font-size: 1em;
+    color:#FFFFFF;
+    display: inline-block;
+    margin-top: 2px;
+}
+.span_icon{
+    width:40px;
+    height:40px;
+    display: inline-block;
+    background: url("../images/warning.png") no-repeat;
+    margin-top: 5px;
+}
+.site1{
+    background-position: -150px 0;
+}
+.site2{
+    background-position: -100px 0;
+}
+.site3{
+    background-position: -200px 0;
+}
+.site4{
+    background-position: -50px 0;
+}
+.site5{
+    background-position: 0 0;
+}
+
+.title_text>.title_img>img{
+    width:100%;
+    border-radius: 50%;
+}
+
+.weui-grid__icon {
+    width: 48px;
+    height: 60px;
+}
+/*.weui-grid__label {*/
+    /*font-size: 2.5em;*/
+    /*color: #ffffff;*/
+/*}*/
+
+.weui-grid {
+    width: 20%;
+    box-shadow: grey 2px 2px 14px -4px;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    margin-top: 35px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #ffffff;
+}
+.weui-grid:focus {
+    box-shadow:none;
+}
+.weui-grids {
+    width:100%;
+    overflow-y: auto;
+    /*position: relative;*/
+    /*overflow: hidden;*/
+    /*padding-left: 60px;*/
+    /*padding-right: 60px;*/
+}
+.weui_show{
+    box-shadow: none;
+}
+.header_img{
+    width:100%;
+    /*line-height: 30px;*/
+}
+
+.header_img>img{
+    width:480px;
+}
+.user_img>img{
+    width:auto;
+    max-width:100%;
+    max-height:100%;
+    flex: 0 0 50%;
+    border-radius: 50%;
+}
+.exit{
+    padding: 8px 7px;
+    outline: none;
+    background-color: #231A15;
+    font-size: 1.5em;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    color:#FFFFFF;
+}
+.exit:focus{
+    color:#249F56;
+}
+.clean{
+    content: "";
+    clear: both;
+}
+.item2_text,.user_img{
+    float: right;
+}
+.user_img{
+    width:55px;
+    padding-right: 15px;
+    margin-top: 10px;
+    /*line-height: 30px;*/
+}
+
+.item2_text{
+    margin-top: 17px;
+    /*line-height: 30px;*/
+}
+
+/*底部状态样式*/
+.base{
+    width:100%;
+    border:1px solid #CBD1D1;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color:#E7F0EF;
+    position: fixed;
+    bottom: 0px;
+}
+ul{
+    margin-bottom: 0px;
+}
+.base>ul>li{
+    /*width:25%;*/
+    text-align: center;
+    text-align: -webkit-center;
+    text-align: -moz-center;
+    float: left;
+    list-style: none;
+}
+.state_button_online{
+    display: inline-block;
+    width:18px;
+    height:18px;
+    border-radius: 50%;
+    background-color: #00963A;
+}
+.state_button_offline{
+    display: inline-block;
+    width:18px;
+    height:18px;
+    border-radius: 50%;
+    background-color: #CBD1D1
+}
+
+.user_icon{
+    width:50px;
+    height:50px;
+    display: inline-block;
+    /*background: url("../images/function.png") no-repeat;*/
+}
+.module1{
+    width: 55px;
+    height: 55px;
+    display: inline-block;
+}
+.module1>img{
+    width:100%;
+}
+
+
+
+/**********************平板端的媒体查询*********************************/
+@media screen and (min-width:1280px) and (max-width:1920px){
+    .header_img>img {
+        width: 480px;
+    }
+    .item {
+        width: 20%;
+    }
+    .item_title {
+        width: 60%;
+    }
+    .item_title>.title_text {
+        padding-right: 18px;
+    }
+}
+
+
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (min-width:1024px) and (max-width:1280px){
+    .empty_div {
+        content: "";
+        height: 80px;
+    }
+    .header_img>img {
+        width: 410px;
+    }
+    .exit {
+        font-size: 1.3em;
+    }
+    .module1 {
+        width: 50px;
+        height: 50px;
+    }
+    #UserName{
+        font-size: 1.3em !important;
+    }
+    .span_icon {
+         margin-top: 0px;
+    }
+    .item_title>.title_text {
+        padding-right: 28px;
+    }
+    .header {
+        padding-bottom: 6.6px;
+        padding-top: 6.42px;
+    }
+    .weui-grid {
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+    .weui-grid__label {
+        font-size: 2em;
+    }
+
+    .item1 {
+        width:30%;
+    }
+    .item2 {
+        width:25%;
+    }
+    .item_title {
+        width: 45%;
+    }
+}
+
+
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (min-width:768px) and (max-width:1024px){
+    .header {
+        padding-bottom: 3.6px;
+        padding-top: 4.42px;
+    }
+    .empty_div {
+        content: "";
+        height: 80px;
+    }
+
+    .header_img>img {
+        width: 390px;
+    }
+    .module1 {
+        width: 45px;
+        height: 45px;
+    }
+    .exit {
+        font-size: 1.1em;
+    }
+    .item_title>.title_text {
+        padding-left: 15px;
+        padding-right: 0px;
+    }
+    .user_img {
+        width: 45px;
+    }
+    .weui-grid {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    .weui-grid__label {
+        font-size: 1.5em;
+    }
+    #UserName{
+        font-size: 1.1em !important;
+    }
+    .item1 {
+        width:30%;
+    }
+    .item2 {
+        width:25%;
+    }
+    .item_title {
+        width: 45%;
+    }
+}
+@media screen and (min-width:557px) and (max-width:768px){
+    .item1 {
+        width:30%;
+    }
+    .item2 {
+        width:25%;
+    }
+    .item_title {
+        width: 45%;
+    }
+}

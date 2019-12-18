@@ -1,0 +1,730 @@
+body{
+    background-color: #FFFFFF;
+    min-width: 557px;
+    overflow: auto;
+    font-size: 1.5em
+}
+/*heder部分样式*/
+.header {
+    width:100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index:50;
+}
+ul li{
+    list-style: none;
+}
+.item,.header_title,.empty{
+    width:33.33%;
+    line-height: 39px;
+}
+.empty>span{
+    font-size: 1.2em;
+    color:#FFFFFF;
+    margin-left: 10px;
+}
+.header_title{
+    padding-left: 15px;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title>a{
+    font-size: 3em;
+    color:#FFFFFF;
+}
+.user_img{
+    float: right;
+    padding-right: 15px;
+}
+.back{
+    width:85px;
+    height:30px;
+    display: inline-block;
+}
+.back>img{
+    width:60%;
+}
+
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 90px;
+    overflow-y: auto;
+}
+
+#MainPage::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 4px;
+}
+#MainPage::-webkit-scrollbar-thumb{/*滚动条里面的滚动滑块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.2);
+}
+#MainPage::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 0;
+    background: rgba(0,0,0,0.1);
+}
+.top_modal{
+    width:100%;
+    background-color: #FFFFFF;
+    padding:0 20px;
+}
+.left_list,.right_list{
+    width:48%;
+    border-radius: 5px;
+}
+.left_list{
+     float: left;
+ }
+.right_list{
+    float: right;
+}
+.weui-cell_select-after{
+    padding-left: 0px;
+    font-size:1.5em ;
+}
+.weui-cell_select .weui-cell__bd:after{
+    width: 20px;
+    height:20px;
+}
+input{
+    border:0px;
+}
+input:focus{
+    border:0px;
+}
+.clean{
+    content: "";
+    clear: both;
+}
+.left_list>div,.right_list>div{
+    padding: 10px;
+    border-bottom: 1px solid #E5E5E5;
+}
+.pro_line>span{
+    margin-right: 10px;
+    font-size: 1.5em;
+    color:#231A15;
+}
+.product_name{
+    font-size: 1.2em !important;
+    color: #B2B2BC !important;
+}
+.pro_line>input{
+    outline-style: none;
+    border: none;
+    line-height: 35px;
+}
+.pro_line>input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    font-size: 1.2em;
+    color: #B2B2BC;
+}
+.pro_line>input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    font-size: 1.2em;
+    color: #B2B2BC;
+}
+.pro_line>input::-moz-placeholder { /* Mozilla Firefox 19+ */
+    font-size: 1.2em;
+    color: #B2B2BC;
+}
+.pro_line>input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    font-size: 1.2em;
+    color: #B2B2BC;
+}
+
+/*检测部分*/
+.polling_modal{
+    width:100%;
+    background-color: #FFFFFF;
+    padding:0 20px;
+    margin-top: 30px;
+}
+.polling_list>ul>li>ul>li{
+    list-style: none;
+    padding: 10px;
+    border-bottom: 1px solid #E5E5E5;
+}
+.left_list,.right_list{
+    width:48%;
+    border-radius: 5px;
+}
+.left_list{
+    float: left;
+}
+.right_list{
+   float: right;
+}
+.clean{
+    content: "";
+    clear: both;
+}
+.polling_list>ul>li>ul>li>span:first-child{
+    margin-right: 10px;
+}
+.polling_list>ul>li>ul>li>span{
+    font-size: 1.5em;
+    color:#231A15;
+    cursor: pointer;
+}
+.polling_modal .bad_count{
+    font-size: 1.2em;
+    padding-left: 2em; 
+}
+.polling_modal .btns{
+    width:100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+.qualified_btn>button,.unqualified_btn>button{
+    font-size: 1.8em;
+    width: 200px;
+    height: 100px;
+    margin:1em 0;
+}
+.polling_title{
+    background-color: #DEEFD8 ;
+    color: #49874D ;
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+
+
+/*显示数量部分*/
+.count_modal{
+    width:100%;
+    background-color: #FFFFFF;
+    padding:0 20px;
+    /* margin-top: 30px; */
+    margin-bottom: 30px; 
+    position: relative;
+}
+.count_list{
+    width: 100%;
+    float: left;
+    font-size:1.5em;
+    border-bottom: 1px solid #E5E5E5;
+    padding-bottom: 10px;
+}
+.count_list div{
+    float: left;
+    padding-right:5px;
+}
+.polling_btn{
+    position: absolute;
+    right: 70px;
+    top: -50px;
+}
+.polling_btn .btn{
+    padding: .2em .6em;
+    
+}
+.polling_btn>button{
+    font-size: 1.5em;
+}
+p {
+    margin: 0 0 0px;
+}
+
+/*不检测记录部分*/
+.PollingTitle{
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+}
+.PollingTitle>li{
+    width: 20%;
+    display: block;
+    font-size: 1.5em;
+    font-weight: bolder;
+}
+.PollingItem{
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+}
+.PollingItem>li{
+    width: 20%;
+    display: block;
+    font-size: 1.5em;
+}
+.polling_record{
+    width:100%;
+    max-height: 500px;
+    overflow-y: auto;
+}
+.polling_record>ul{
+    margin-bottom: 0px;
+}
+.polling_record>ul>li{
+    list-style: none;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #E5E5E5;
+}
+.record{
+    background-color: #DEEFD8 ;
+    color: #49874D ;
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.tctitle{
+    background-color: #DEEFD8 ;
+    color: #49874D ;
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+}
+.ftitle{
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+}
+
+/* 合格弹窗 */
+.mod{
+    position: fixed;
+    z-index: 999;
+    width: 100%;
+    top: 0;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    display: flex;
+    
+}
+.mod1{ 
+    position: relative;
+    width: 50%;
+    height: 40%;
+    /* left: 25%;
+    top: 20%; */
+    background-color: rgb(255, 255, 255);
+    z-Index: 1000;
+    border-radius: 1rem;
+    box-sizing: border-box;
+    font-size: .14rem;
+    margin: auto;
+    align-items: center;
+    /* display: none; */
+}
+/* 不合格弹窗 */
+.mod2{ 
+    position: relative;
+    width: 50%;
+    height: 40%;
+    /* left: 25%;
+    top: 20%; */
+    background-color: rgb(255, 255, 255);
+    z-Index: 1000;
+    border-radius: 1rem;
+    box-sizing: border-box;
+    font-size: .14rem;
+    margin: auto;
+    align-items: center;
+    /* display: none; */
+}
+.contentText{
+    width: 100%;
+    height: 80%;
+    overflow: hidden;
+    padding:3% 0% 3% 3%;
+    text-align: center;
+    text-overflow: ellipsis;
+    font-size: 9em;
+    color:#ad0814;
+    
+  }
+  .contentText>span{
+    display: block;
+    text-align: left;
+  }
+  .contentText>span>input{
+    border:1px solid  #a9a9a9;
+    margin-top: 1%;
+}
+.contentText>span>textarea{
+    margin-top:1%;
+}
+.mod .btn{
+    width: 100%;
+    height: 20%;
+    position: absolute;
+    bottom: 3%;
+    /* position: absolute;
+    bottom: 0; */
+}
+.cancel{
+    width: 20%;
+    padding: 2%;
+    font-size: 2em;
+    margin-right: 30px;
+    background: #d9534f;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}
+.confirm{
+    width: 20%;
+    padding: 2%;
+    font-size: 2em;
+    background: #5cb85c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}  
+
+/*订单号码弹窗遮罩层部分*/
+.modal-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align:center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.polling-dialog {
+    width: 100%;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding: 0px;
+}
+.polling_header {
+    height: 116px;
+}
+.polling_body {
+     padding: 0px;
+}
+.polling_header .close {
+    font-size: 2.5em;
+    margin-top: -12px;
+    margin-right: -13px;
+    width: 45px;
+    height: 40px;
+    outline-style: none;
+    border: 1px solid #797676;
+}
+#btable thead>tr>th {
+    font-size: 1.2em;
+    vertical-align: middle;
+    white-space:nowrap;
+}
+.task_btn{
+    background-color: #DDEED8;
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
+#btable tbody>tr>td{
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+.radio_input{
+    width:50px;
+    line-height: 33px;
+    color:#FFFFFF;
+    border: none;
+    background-color: #4BA250;
+    border-radius: 5px;
+}
+
+
+/*搜索框部分*/
+.search_item, .shut_btn {
+    display: inline-block;
+}
+.search_item>span {
+    /*font-weight: bold;*/
+    font-size: 1.2em;
+}
+.search_item>input {
+    font-size: 1.2em;
+    list-style: none;
+    border: 1px solid #E4E4E4;
+    width: 280px;
+    line-height: 40px;
+    border-radius: 3px;
+    padding-left: 5px;
+}
+.shut_btn>.btn {
+    padding: 0px 30px;
+    font-size: 1.2em;
+    line-height: 2;
+}
+.btn {
+    line-height: 2.2;
+}
+
+/***********页码部分************/
+.page_footer{
+    width:100%;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+    height:60px;
+    margin-top: 0px;
+}
+
+.page_num{
+    width:100%;
+    display: none;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+    font-size: 1.2em;
+}
+.show_page_footer{
+    display: block;
+}
+.page_num>.prev,.page_num>.next{
+    display: inline-block;
+    /*width: 70px;*/
+    line-height: 20px;
+    font-size: 16px;
+    /*border-radius: 2px;*/
+    /*background-color: #8ABE33;*/
+    /*color: #FFFFFF;*/
+    /*border: none;*/
+}
+.modal-footer {
+
+}
+
+
+.weui-toptips{
+    z-index: 1051;
+    font-size: 2.8em !important;
+    height: 70px !important;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 50px;
+    border-radius: 0.1em;
+    width: 75%;
+    margin: auto 12.5%;
+}
+
+
+
+
+/**********************平板端的媒体查询*********************************/
+@media screen and (max-width:1920px){
+    #MainPage {
+        margin-top: 80px;
+        
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.8em;
+    }
+    .contentText{
+        font-size: 7em;
+    }
+}
+
+
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (max-width:1280px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 11px;
+        padding-top: 12px;
+    }
+    .header_title>a {
+        font-size: 2.5em;
+    }
+    .back>img{
+        width: 45px;
+    }
+    .contentText{
+        font-size: 8em;
+    }
+    .contentText input{
+        width: 50%;
+    }
+    /*搜索框部分*/
+    .search_item>input {
+        width: 220px;
+    }
+    .shut_btn>.btn {
+        padding: 0px 17px;
+    }
+
+}
+
+
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (max-width:1024px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 13px;
+        padding-top: 13px;
+    }
+    .header_title>a {
+        font-size: 2em;
+    }
+    .back>img{
+        width: 40px;
+    }
+    .span_four, .span_five {
+        width: 8%;
+        text-align: center;
+    }
+    .polling_btn {
+        position: absolute;
+        right: 25px;
+        top: -40px;
+    }
+    .PollingTitle>li{
+        
+        font-size: 1.5em;
+    }
+    .PollingItem>li{
+        font-size: 1.5em;
+    }
+    .contentText{
+        font-size: 6em;
+    }
+    .contentText input{
+        width: 50%;
+    }
+    .tanchuang{
+        font-size: .8em;
+    }
+    .cancel {
+        font-size: 1.5em;
+    }
+    .confirm{
+        font-size: 1.5em;
+    }
+    /*搜索框部分*/
+    .polling_header {
+        height: 143px;
+    }
+    .search_item>input {
+        width: 220px;
+    }
+    .shut_btn>.btn {
+        padding: 0px 11px;
+    }
+    .search_item>span {
+        display: block;
+    }
+}
+@media screen and (max-width:768px){
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 9px;
+        padding-top: 9px;
+    }
+    .header_title>a {
+        font-size: 1.5em;
+    }
+    .back>img{
+        width: 35px;
+    }
+    .left_list {
+         float: none;
+    }
+    .right_list {
+        float: none;
+    }
+    .left_list, .right_list {
+        width: 100%;
+        border-radius: 5px;
+    }
+    .pro_line>span {
+        font-size: 1.2em;
+    }
+    .count_list {
+        font-size:1em;
+    }
+    .qualified_btn>button {
+        font-size: 1.5em;
+    }
+    .polling_list>ul>li>ul>li>span {
+        font-size: 1.2em;
+    }
+    .polling_btn {
+        position: absolute;
+        right: 25px;
+        top: -25px;
+    }
+    .polling_btn>button{
+        font-size: 1em;
+    }
+    .polling_record>ul>li>span {
+        font-size: 1em;
+    }
+    .span_four, .span_five {
+        width: 8%;
+    }
+    .PollingTitle>li{
+        
+        font-size: 1em;
+    }
+    .PollingItem>li{
+        font-size: 1em;
+    }
+    .contentText{
+        font-size: 6em;
+    }
+    .contentText input{
+        width: 50%;
+    }
+    .cancel {
+        font-size: 1.2em;
+    }
+    .confirm{
+        font-size: 1.2em;
+    }
+    tbody{
+        /* height: 300px; */
+        font-size: .8em;
+    }
+
+    /*搜索框部分*/
+    .polling_header {
+        height: 196px;
+    }
+    .search_item>span{
+        display: block;
+        font-size: 1em;
+    }
+    .search_item, .shut_btn {
+        width: 49%;
+    }
+    .search_item>input {
+        width: 100%;
+    }
+    .state_div{
+        width:100%;
+    }
+    .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+        width: 100%;
+    }
+}

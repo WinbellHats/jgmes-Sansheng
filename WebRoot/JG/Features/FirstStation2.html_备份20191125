@@ -1,0 +1,631 @@
+﻿<html>
+
+<head>
+    <title>首工位过站-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/TabletsGlobal.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/FirstStation.css?v=1">
+    <link rel="stylesheet" href="/JG/Content/css/TabletsGlobal.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body ontouchstart>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty">
+            <span id="stations"></span>
+        </div>
+        <div class="item header_title">
+            <a href="javascript:;">首工位过站</a>
+        </div>
+        <div class="item item2">
+            <div class="set">
+                <!--<span class="glyphicon glyphicon-cog" style="font-size: 50px;color:#FFFFFF"></span>-->
+                <span><img style="width:50px" src="/JG/Content/images/early.png" alt=""></span>
+            </div>
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+            <div class="clean"></div>
+        </div>
+        <!--弹出菜单部分-->
+        <!-- <div class="menu">
+        <div class="menu_list">
+            <ul>
+                <li>
+                    <span onclick="SaveAnLamp('ADLX01','发生设备异常')" class="andon_icon andon1"></span>
+                    <span>设备异常</span>
+                </li>
+                <li>
+                    <span onclick="SaveAnLamp('ADLX02','现场发生品质异常')" class="andon_icon andon2"></span>
+                    <span>品质异常</span>
+                </li>
+                <li>
+                    <span onclick="SaveAnLamp('ADLX03','现场物料不足')" class="andon_icon andon3"></span>
+                    <span>缺料异常</span>
+                </li>
+                <li>
+                    <span onclick="SaveAnLamp('ADLX04','现场呼叫产线主管')" class="andon_icon andon4"></span>
+                    <span>呼叫主管</span>
+                </li>
+            </ul>
+        </div>
+    </div> -->
+    </header>
+
+    <div id="MainPage" class="MainPage" v-cloak>
+        <div class="input-group" style="text-align:center;font-size:18px;">
+            <label class="input-group-addon" for="BarCode">SN码</label>
+            <input type="text" class="form-control" maxlength="50" v-model="BarCode" placeholder="扫描或输入SN码回车"
+                id="BarCode" :disabled="IsDisable" />
+        </div>
+        <div id="tab2" class="weui-tab__bd-item">
+            <div class="left">
+                <ul class="list-group">
+                    <!-- <li class="list-group-item" v-if="CurrProcessName">当前工序&nbsp;&nbsp;{{CurrProcessName}}</li> -->
+                    <li class="list-group-item">当前SN码&nbsp;&nbsp;{{CurrBarCode}}
+                    </li>
+                    <li class="list-group-item">
+                        任务单号&nbsp;&nbsp;{{FormData.TaskCode}}
+                    </li>
+                    <!-- <li class="list-group-item">
+                    产品码&nbsp; &nbsp;{{FormData.InvBarCode}}
+                </li> -->
+                    <!-- <li class="list-group-item">
+                        产品编码&nbsp; &nbsp;
+                    </li> -->
+                    <li class="list-group-item">
+                        产品名称&nbsp; &nbsp;{{FormData.InvName}} {{FormData.InvCode}}
+                    </li>
+                    <li class="list-group-item">
+                        产品型号&nbsp; &nbsp;{{FormData.InvStd}}
+                    </li>
+                    <li class="list-group-item">
+                        订单号码/内部订单号&nbsp;&nbsp;{{FormData.OrderCode}}/{{FormData.ProcessCode}}
+                    </li>
+                    <!-- <li class="list-group-item">
+                        内部订单号&nbsp; &nbsp;{{FormData.ProcessCode}}
+                    </li> -->
+                    <li class="list-group-item">
+                        订单数量/任务数量&nbsp;&nbsp;{{FormData.OrderNum}}/{{FormData.TaskQty}}
+                    </li>
+                    <li class="list-group-item">
+                        <!-- 投入数量&nbsp;&nbsp;{{FormData.InputQty}} -->
+                        已扫数量&nbsp;&nbsp;{{ScanCodeNum}}
+                    </li>
+                    <!-- <li class="list-group-item">
+                        已扫数量&nbsp;&nbsp;{{ScanCodeNum}}
+                    </li> -->
+                </ul>
+            </div>
+            <div class="right panel panel-default">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#OperateRecord" data-toggle="tab">操作记录</a>
+                    </li>
+                    <li>
+                        <a href="#Swiper" data-toggle="tab">操作指导</a>
+                        <!-- <a href="#myCarousel" data-toggle="tab">操作指导</a> -->
+                    </li>
+                </ul>
+                <div class="tab-content tabs">
+                    <div class="tab-pane fade in active" id="OperateRecord">
+                        <ul style="height:100%;overflow-y:auto;">
+                            <li style="font-size: 1.2em" v-for="(item,index) in OperateRecord"
+                                :style="{'color':item.Status?'blue':'red'}">
+                                {{item.Content}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" id="Swiper">
+                        <div class="swiper-container">
+                            <!--轮播图片部分-->
+                            <div class="swiper-wrapper" id="Top_Swiper">
+                            </div>
+                            <!--指示点部分-->
+                            <div class="swiper-pagination"></div>
+                            <!-- 如果需要导航按钮
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 3.9 -->
+            <!-- <div class="carousel slide" id="myCarousel">
+                        轮播（Carousel）指标 -->
+            <!-- <ul style="height:100%;overflow-y:auto;"  class="carousel-indicators">
+                            <li  data-target="#myCarousel" data-slide-to="index"v-for="(item,index) in OperateRecord" 
+                                :style="{'color':item.Status?'blue':'red'}">
+                                {{item.Content}}
+                            </li>
+                        </ul> -->
+            <!-- 轮播（Carousel）项目 -->
+            <!-- <div class="carousel-inner">
+                            
+                            
+                        </div> -->
+            <!-- 轮播（Carousel）导航 -->
+            <!-- <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a> -->
+            <!-- </div>  -->
+        </div>
+
+        <!--操作指导图片弹窗部分-->
+        <div class="dialog">
+            <span><img src="/JG/Content/images/timg.jpg" alt="关闭"></span>
+            <div class="dialog_img"><img src="" id="ShowImg" alt=""></div>
+        </div>
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading panel-heading1">
+                过站记录
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>SN码</th>
+                        <th>产品</th>
+                        <th>过站时间</th>
+                        <th>操作人</th>
+                        <th>操作状态</th>
+                        <th>过站状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item,index) in StationRecord">
+                        <td>{{index+1}}</td>
+                        <td>{{item.BarCode}}</td>
+                        <td>{{item.InvName}}\{{item.InvStd}}</td>
+                        <td>{{item.StationTime}}</td>
+                        <td>{{item.Operator}}</td>
+                        <td><span :style="item.PassState=='Pass'?'color:green':'color:red'">{{item.OperatorState}}</span>
+                        <td><span :style="item.PassState=='Pass'?'color:green':'color:red'">{{item.PassState}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/bootstrap.min.js"></script>
+    <script src="/JG/Content/Common.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+    <script src="/JG/Content/Station.js"></script>
+    <script src="/JG/Content/AudioUtils.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/swiper.min.js"></script>
+    <script src="/JG/Content/jquery/fastclick.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+    <script>
+        $(function () {
+            FastClick.attach(document.body);
+            Station.Init(".header");
+            var stations = LocalUserInfo.GetUserInfo();
+            $("#stations").html(stations.ProductionLineName + '-' + stations.StationName);
+        });
+
+        //操作指导部分点击图片弹出当前图片
+        function popup(e) {
+            $("#ShowImg")[0].src = e.src;     //点击当前图片弹出大图片
+            $(".dialog").fadeIn();
+            //点击关闭按钮，图片弹窗关闭
+            $(".dialog>span").click(function () {
+                $(".dialog").fadeOut();
+            })
+            //关闭文字字体大小
+            // $(".dialog>span").css({
+            //     'position': 'absolute',
+            //     'right': '.3em',
+            //     'font-size':'5em',
+            // })
+        }
+
+    </script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script type="text/javascript">
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                CurrProcessType: "GXLX001", //当前工序类型
+                CurrProcessCode: "",  //当前工序编码
+                CurrProcessName: "",  //当前工序名称
+                CurrProcessIndex: 0,   //当前工序顺序
+                ScanCodeNum: 0,        //扫码数量
+                CurrBarCode: "",       //当前条码
+                BarCode: "",
+                IsDisable: false,
+                FormData: {
+                    ScheduleID: "", //排产ID
+                    TaskCode: "",   //任务号
+                    TaskQty: "", //任务数量
+                    InputQty: 0, //投入数量
+                    InvCode: "",
+                    InvName: "",
+                    InvStd: "",
+                    LineCode: "",
+                    LineName: "",
+                    InvBarCode: "",
+                    InvProcessType: "", //产品工序类型
+                    OrderCode: "",//订单号码
+                    OrderNum: "",//订单数量
+                    ProcessCode: "",//流程卡号
+                },
+                StationRecord: [],//过站记录
+                OperateRecord: [],//操作记录
+                MaxOperatingRecordNum: ""//操作记录显示最大条数
+            },
+            mounted: function () {
+                var currSelf = this;
+                $("#BarCode").bind("keypress", currSelf.SearchBarCode);
+                $("#BarCode").focus();
+                Utils.AutoBarCodeFocus();
+                //currSelf.SetBaseData();
+                var data = MaxOperatingRecord();
+                if (data.IsSuccess && data.Data) {
+                    currSelf.MaxOperatingRecordNum = data.Data;
+                }
+
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByCxCp.action",
+                    data: {
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        if (retData.IsSuccess && ret.Data) {
+                            currSelf.SetBaseData(retData);
+                            //获取当前已扫码数量
+                            var NumData = GetCountScan(currSelf.FormData.ScheduleID);
+                            if (NumData.IsSuccess && NumData.Data) {
+                                currSelf.ScanCodeNum = NumData.Data;
+                            }
+                        }
+                    }, error: function (xhr, status, errorThrown) {
+                        //console.error(status);
+                        $.alert("请求失败");
+                    }, complete: function () {
+                        $.hideLoading();
+                    }
+                });
+            },
+            methods: {
+                InitData: function (barCode) {
+                    var currSelf = this;
+                    $.showLoading();
+                    $.ajax({
+                    	async: false,
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByCxCp.action",
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode,
+                            barCode: barCode,
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess && ret.Data) {
+                                currSelf.SetBaseData(retData);
+                            }
+                        }, error: function (xhr, status, errorThrown) {
+                            //console.error(status);
+                            $.alert("请求失败");
+                        }, complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+                SetOperateRecord: function (content, status) {
+                    var currSelf = this;
+                    var content = (new Date().Format("hh:mm:sss")) + ' ' + content;
+                    currSelf.OperateRecord.splice(0, 0, { Content: content, Status: status });
+                    if (currSelf.OperateRecord.length > currSelf.MaxOperatingRecordNum) {
+                        currSelf.OperateRecord.splice(currSelf.MaxOperatingRecordNum)
+                    }
+                },
+                SetInputQuantity: function (err, data) {
+                    var currSelf = this;
+                    if (!err && data && data.IsSuccess) {
+                        currSelf.FormData.InputQty = data.Data;
+                    }
+                },
+                returnIndex: function () {
+                    var currSelf = this;
+                    var index = getJsonByPassState("Doing",currSelf.StationRecord);
+                    if(index>=0){
+                    	showMsg = '存在请求中的数据，请勿退出！';
+                        $.toptip(showMsg, "warning");
+                        currSelf.SetOperateRecord(showMsg, false);
+                    }else{
+                    	window.location.href = "/JG/Home/Index.html";
+                    }
+                },
+                SetBaseData: function (retData) {
+                    var currSelf = this;
+
+                    currSelf.FormData.ScheduleID = retData.Data.JGMES_PLAN_SCRW_ID;
+                    currSelf.FormData.TaskCode = retData.Data.SCRW_RWDH;
+                    currSelf.FormData.InvCode = retData.Data.SCRW_CPBH;
+                    currSelf.FormData.InvName = retData.Data.SCRW_NAME;
+                    currSelf.FormData.InvStd = retData.Data.SCRW_CPGG;
+                    currSelf.FormData.LineCode = retData.Data.SCRW_CXBM;
+                    // currSelf.FormData.LineCode = retData.Data.SCRW_CXMC;
+                    currSelf.FormData.TaskQty = retData.Data.SCRW_PCSL;
+                    currSelf.FormData.OrderCode = retData.Data.SCRW_DDHM;
+                    currSelf.FormData.OrderNum = retData.Data.SCRW_DDSL;
+                    currSelf.FormData.ProcessCode = retData.Data.SCRW_LCKH;
+                    localStorage.setItem("ProductionLineCode", retData.Data.SCRW_CXBM);
+                    localStorage.setItem("ProductionLineName", retData.Data.SCRW_CXMC);
+
+                    //获取当前用户当前产品的工序
+                    var data = GetCurrentProcess(currSelf.FormData.InvCode);
+                    // //获取当前已扫码数量
+                    // var NumData = GetCountScan(currSelf.FormData.ScheduleID);
+                    // if (NumData.IsSuccess && NumData.Data) {
+                    //     currSelf.ScanCodeNum = NumData.Data;
+                    // }
+
+                    if (data.IsSuccess && data.Data) {
+                        currSelf.FormData.InvProcessType = data.Data.GXGL_GXLX_NAME;
+                        currSelf.CurrProcessCode = data.Data.GXGL_GXNUM;
+                        currSelf.CurrProcessName = data.Data.GXGL_GXNAME;
+
+                        currSelf.CurrProcessIndex = data.Data.GXGL_GXSXH;  //首工位为1,大于1显示投入数量
+                        if (Utils.TabletsGlobalParam.IsOpenInputQtyTask)
+                            GetInputQuantity(currSelf.FormData.InvCode, currSelf.FormData.ScheduleID, currSelf.SetInputQuantity);
+
+                        var ret1 = setInterval(function () {
+                            GetInputQuantity(currSelf.FormData.InvCode, currSelf.FormData.ScheduleID, currSelf.SetInputQuantity);
+                        }, Utils.TabletsGlobalParam.InputQtyTaskFrequency);
+
+                        $(".carousel-indicators>li:first-child").addClass('active');
+                        if (data.Data.GXGL_SOP && data.Data.GXGL_SOP.length > 0) {
+                            var htmlAppend = "";
+                            var imgSOPs = JSON.parse(data.Data.GXGL_SOP);
+                            for (var index in imgSOPs) {
+                                var item = imgSOPs[index];
+                                htmlAppend += "<div><img onclick='popup(this)' style='width:100%;height:100%' src='" + LocalConfig.SrvPath + item.path + "'/></div>";
+                            }
+                            $("#Top_Swiper").append(htmlAppend);
+
+                            $(".carousel-inner>div").addClass('item');
+                            $(".carousel-inner>div:first-child").addClass('active');
+
+                            $(".carousel-inner").append(htmlAppend);
+                            if (imgSOPs && imgSOPs.length > 1) {
+                                $(".swiper-container").swiper({
+                                    loop: true,
+                                    autoplay: 3000
+                                });
+                            }
+                        }
+                    }
+                },
+
+                //把生产任务单开工,ljs
+                startScrw:function(barCode){
+                    var currSelf = this;
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/sanShengAction!startScrwByBarCode.action",
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            "barCode": barCode,
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            if (ret.IsSuccess) {
+                                var showMsg = "条码"+barCode+"所属的生产任务单开工成功";
+                                  currSelf.SetOperateRecord(showMsg, true);
+                                  //获取信息
+                                $.showLoading();
+                                $.ajax({
+                                    type: "post",
+                                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByCxCp.action",
+                                    data: {
+                                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                        mac: LocalUserInfo.GetUserInfo().Mac,
+                                        cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode
+                                    },
+                                    dataType: "json",
+                                    success: function (ret) {
+                                        var retData = ReturnData(ret);
+                                        if (retData.IsSuccess && ret.Data) {
+                                            currSelf.SetBaseData(retData);
+                                            //获取当前已扫码数量
+                                            var NumData = GetCountScan(currSelf.FormData.ScheduleID);
+                                            if (NumData.IsSuccess && NumData.Data) {
+                                                currSelf.ScanCodeNum = NumData.Data;
+                                            }
+                                        }
+                                    }, error: function (xhr, status, errorThrown) {
+                                        //console.error(status);
+                                        $.alert("请求失败");
+                                    }, complete: function () {
+                                        $.hideLoading();
+                                    }
+                                });
+                            }
+                        }, error: function (xhr, status, errorThrown) {
+                            $.alert("请求失败");
+                        }, complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+
+
+                SearchBarCode: function (event) {
+                    var currSelf = this;
+                    if (event.which == 13) {
+                        var barCode = currSelf.BarCode;
+                        currSelf.BarCode = "";
+                        var showMsg;
+                        currSelf.IsDisable = true;
+                        if (!currSelf.FormData.InvCode) {
+                            showMsg = '当前产线无产品在生产中';
+                            $.toptip(showMsg, "warning");
+                            currSelf.SetOperateRecord(showMsg, false);
+                            AudioUtils.Play(AudioUtils.ScanCodeFail);
+                            //开工,ljs
+                            currSelf.startScrw(barCode);
+                        } else if (currSelf.CurrProcessType != currSelf.FormData.InvProcessType) {
+                            showMsg = '工序类型不匹配不能过站,请核对!';
+                            $.toptip(showMsg, Utils.ToptipWaitTime.Warning, "warning");
+                            currSelf.SetOperateRecord(showMsg, false);
+                            AudioUtils.Play(AudioUtils.ScanCodeFail);
+                        } else if (!barCode || barCode.length <= 0) {
+                            showMsg = 'SN码不能为空';
+                            $.toptip(showMsg, "warning");
+                            currSelf.SetOperateRecord(showMsg, false);
+                            AudioUtils.Play(AudioUtils.ScanCodeFail);
+                        } else if(getJsonByBarCode(barCode,currSelf.StationRecord)>=0){
+                        	showMsg = '该条码已经再执行中！';
+                            $.toptip(showMsg, "warning");
+                            currSelf.SetOperateRecord(showMsg, false);
+                        } else {
+
+                            var IsCheckBarCode = CheckProductBarCode(currSelf.FormData.InvCode, barCode, currSelf.FormData.ScheduleID);//校验或换产
+                            if (IsCheckBarCode.IsSuccess) {
+                                $.showLoading();
+                                currSelf.CurrBarCode = barCode;
+                                currSelf.SetOperateRecord(currSelf.CurrBarCode + ",扫码成功", true);
+                                AudioUtils.Play(AudioUtils.ScanCodeSuccess);
+								var uuid  = get_uuid();
+                                var record = {
+                             		   uuid:uuid,
+                                    BarCode: currSelf.CurrBarCode,
+                                    InvName: currSelf.FormData.InvName,
+                                    InvStd: currSelf.FormData.InvStd,
+                                    StationTime: (new Date()).toLocaleTimeString(),
+                                    Operator: LocalUserInfo.GetUserInfo().UserName,
+                                    OperatorState: "报工中",
+                                    PassState: "Doing"
+                                };
+                                currSelf.StationRecord.splice(0, 0, record);
+                                $.hideLoading();
+                                $.ajax({
+                                    type: "post",
+                                    url: LocalConfig.SrvPath + "/jgmes/commonAction!doJsonSaveBGSJAll.action",
+                                    data: {
+                                        "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                        "mac": LocalUserInfo.GetUserInfo().Mac,
+                                        "jsonStr": JSON.stringify({
+                                            "BGSJ_TMH": currSelf.CurrBarCode,
+                                            "BGSJ_CPBH": currSelf.FormData.InvCode,
+                                            "BGSJ_SL": 1,
+                                            "BGSJ_SCRWID": currSelf.FormData.ScheduleID,
+                                            "BGSJ_PDJG_CODE": "PDJG01"
+                                        })
+                                    },
+                                    dataType: "json",
+                                    success: function (ret) {
+                                        var retData = ReturnData(ret);
+                                        if (retData.IsSuccess) {
+                                            currSelf.ScanCodeNum++;
+                                            showMsg = currSelf.CurrBarCode + ",过站成功";
+                                            $.toptip(showMsg, 'success');
+                                            AudioUtils.Play(AudioUtils.OutStationSuccess);
+                                            currSelf.SetOperateRecord(showMsg, true);
+                                        } else {
+                                            AudioUtils.Play(AudioUtils.OutStationFail);
+                                            record.PassState = retData.message;
+                                            currSelf.SetOperateRecord(currSelf.CurrBarCode + ",过站失败," + retData.message, false);
+                                        }
+                                        var record = {
+                                      		   uuid:uuid,
+                                             BarCode: currSelf.CurrBarCode,
+                                             InvName: currSelf.FormData.InvName,
+                                             InvStd: currSelf.FormData.InvStd,
+                                             StationTime: (new Date()).toLocaleTimeString(),
+                                             Operator: LocalUserInfo.GetUserInfo().UserName,
+                                             OperatorState: "报工成功",
+                                             PassState: "Pass"
+                                         };
+                                        var index = getJsonById(uuid,currSelf.StationRecord);
+                                        currSelf.StationRecord.splice(index, 1, record);
+                                    },
+                                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                        console.error("过站发生异常:%s", textStatus);
+                                        currSelf.SetOperateRecord(xhr, false);
+                                        $.alert("过站过程中发生异常!");
+                                    }, complete: function () {
+                                        $.hideLoading();
+                                    }
+                                });
+                            } else {
+                                AudioUtils.Play(AudioUtils.ScanCodeFail);
+                                currSelf.SetOperateRecord("SN码:" + barCode + ",扫码失败!" + IsCheckBarCode.message, false);
+                                // if (IsCheckBarCode.ErrorCode == 10199) { //换产
+                                //     currSelf.SetOperateRecord("生产线已经更换产品{" + currSelf.FormData.InvName + "},请重新扫码", false);
+                                //     currSelf.SetBaseData(IsCheckBarCode.Data);
+                                // }
+                                if (IsCheckBarCode.ErrorCode == 10199) { //换产
+                                    currSelf.SetOperateRecord("生产线任务单{" + currSelf.FormData.TaskCode + "}已经更换,请重新扫码", false);
+                                    currSelf.InitData(barCode);
+                                  //获取当前已扫码数量
+                                    var NumData = GetCountScan(currSelf.FormData.ScheduleID,currSelf.CurrProcessCode,currSelf.FormData.InvCode,LocalUserInfo.GetUserInfo().ProductionLineCode);
+                                        //console.log(NumData);
+                                        if (NumData.IsSuccess && NumData.Data) {
+                                            currSelf.ScanCodeNum = NumData.Data;
+                                        }
+                                    // bootbox.confirm({
+                                    //     message: "是否进行换产？", buttons: {
+                                    //         confirm: {
+                                    //             label: '是',
+                                    //             className: 'btn-success'
+                                    //         },
+                                    //         cancel: {
+                                    //             label: '否',
+                                    //             className: 'btn-danger'
+                                    //         }
+                                    //     }, callback: function (result) {
+                                    //         if (result) {
+
+                                    //             currSelf.InitData(barCode);
+                                    //         }
+                                    //     }
+                                    // });
+
+                                }
+                            }
+                        }
+                        currSelf.IsDisable = false;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

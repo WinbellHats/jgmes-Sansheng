@@ -1,0 +1,73 @@
+<html>
+
+<head>
+    <title>工站报工-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/StationProgram.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+
+<body>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="item header_title">
+            <a href="javascript:;">工站报工</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+    <div id="MainPage" class="MainPage">
+        <div class="weui-grids">
+            <a href="/JG/ProcessReport/BatchSubmittedNo.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <!--<img src="/JG/Content/images/touru.png" />-->
+                    <span class="station_icon station1"></span>
+                </div>
+                <p class="weui-grid__label">
+                    工序报工
+                </p>
+            </a>
+            <a href="/JG/ProcessReport/BadnessSubmitted.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="station_icon station2"></span>
+                </div>
+                <p class="weui-grid__label">
+                    不良报工
+                </p>
+            </a>
+            <a href="/JG/ProcessReport/JJBadnessSubmitted.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <span class="station_icon station2"></span>
+                </div>
+                <p class="weui-grid__label">
+                    不良报工-非扫码
+                </p>
+            </a>
+        </div>
+    </div>
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+    <script type="text/javascript">
+        $("#btnClear").on("click", function () {
+            LocalUserInfo.ClearUser();
+            window.location.href = window.location.href;
+        });
+
+    </script>
+</body>
+
+</html>

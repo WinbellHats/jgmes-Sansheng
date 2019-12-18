@@ -1,0 +1,118 @@
+﻿<html>
+
+<head>
+    <title>巨大SN码替换-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="C:/Users/JG001/Desktop/SN/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="C:/Users/JG001/Desktop/SN/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="C:/Users/JG001/Desktop/SN/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="C:/Users/JG001/Desktop/SN/Content/css/TabletsGlobal.css" rel="stylesheet" />
+    <link rel="stylesheet" href="C:/Users/JG001/Desktop/SN/Content/css/FirstStation.css?v=1">
+    <link rel="stylesheet" href="C:/Users/JG001/Desktop/SN/Content/css/TabletsGlobal.css?v=1">
+    <script src="C:/Users/JG001/Desktop/SN/Content/LocalConfigs.js"></script>
+    <script src="C:/Users/JG001/Desktop/SN/Content/LocalUserInfo.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body ontouchstart>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty">
+<!--            <span id="stations"></span>-->
+        </div>
+        <div class="item header_title">
+            <a href="javascript:;">SN码替换</a>
+        </div>
+        <div class="item item2">
+            <div class="set">
+                <span><img style="width:50px" src="/JG/Content/images/early.png" alt=""></span>
+            </div>
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+            <div class="clean"></div>
+        </div>
+    </header>
+
+    <div id="MainPage" class="MainPage" v-cloak>
+        <div class="input-group" style="text-align:center;font-size:18px;">
+            <label class="input-group-addon" for="oldBarCode">SN码</label>
+            <input type="text" class="form-control" maxlength="50" v-model="oldBarCode" placeholder="扫描或输入SN码回车"
+                id="oldBarCode" />
+        </div>
+    </div>
+
+    <script src="C:/Users/JG001/Desktop/SN/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="C:/Users/JG001/Desktop/SN/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="C:/Users/JG001/Desktop/SN/Content/bootstrap.min.js"></script>
+    <script src="C:/Users/JG001/Desktop/SN/Content/Common.js"></script>
+    <script src="C:/Users/JG001/Desktop/SN/Content/Utils.js?v=1"></script>
+    <script src="C:/Users/JG001/Desktop/SN/Content/Station.js"></script>
+    <script src="C:/Users/JG001/Desktop/SN/Content/AudioUtils.js"></script>
+    <script src="C:/Users/JG001/Desktop/SN/Content/jquery/jquery-weui/js/swiper.min.js"></script>
+    <script src="C:/Users/JG001/Desktop/SN/Content/jquery/fastclick.js"></script>
+    <script src="C:/Users/JG001/Desktop/SN/Content/bootstrap/bootbox/bootbox.min.js"></script>
+    <script src="C:/Users/JG001/Desktop/SN/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+    <script src="C:/Users/JG001/Desktop/SN/Content/vue-v2.34.js"></script>
+    <script type="text/javascript">
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                oldBarCode:"",//旧SN码
+                newBarCode:"",//新SN码
+                FormData: {
+                    TaskCode:"",//生产任务单号
+                    InvName:"",//产品名称
+                    InvCode:"",//产品编码
+                    InvStd:"",//型号
+                    OrderCode:"",//订单号
+                    ProcessCode:"",//内部订单号
+                    OrderNum:"",//订单数量
+                    TaskQty:"",//任务数量
+                },
+                StationRecord: [],//过站记录
+                OperateRecord: [],//操作记录
+                MaxOperatingRecordNum: ""//操作记录显示最大条数
+            },
+            mounted: function () {
+                var currSelf = this;
+                $("#oldBarCode").bind("keypress", currSelf.printBarcode);
+            },
+            methods: {
+                printBarcode:function (event) {
+                    var currSelf = this;
+                    var barCode = currSelf.oldBarCode;
+                    if (event.which == 13) {
+                        console.log(barCode)
+                        $.showLoading("打印中...");
+                        var printer = "http://192.168.101.105:5868/Print/";
+                        var res = '{"FilePath":"C:/Users/JG001/Desktop/SN/waixiang.frx","ColQty":"1","Copies":"1","BatchTmList":"","Tm1":"'+barCode+'","TmList":""';
+                        //调用打印
+                        $.ajax({
+                            async:false,
+                            type: "POST",
+                            url: printer,
+                            data:res,
+                            datatype:"json",
+                            success: function(res){
+                                console.log("打印成功")
+                            },
+                            error:function(r){
+                                console.log("数据初始化失败"+r);
+                            },
+                        });
+
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

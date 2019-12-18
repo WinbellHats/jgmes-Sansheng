@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap-select.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/AntennaeTaskDetail.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+
+    <title>生产待确认列表-天线</title>
+    <style>
+        .weui-toptips {
+            z-index: 1051;
+            font-size: 3.0em !important;
+            height: 70px !important;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            line-height: 50px;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="empty"></div>
+        <div class="header_title">
+            <a href="javascript:;">生产待确认列表</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+    <div id="MainPage" class="MainPage" v-cloak>
+        <div>
+            <table class="table">
+                <tbody>
+                    <tr style="text-align: right;">
+                        <td style="text-align: right;"><button class="btn btn-success selecttask"
+                                style="margin-right: 2.5%;" @click="GetTaskList">选择任务单</button>
+                            <button class="btn btn-success" id="btn_add">新增</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="sectiontwo">
+            <div class="container" style="max-width:100%">
+                <div class="row visible-on divbody" style="background-color:#fff">
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 nobo">
+                        <span class="nobr"> <strong>任务单：</strong> {{FormData.TaskCode}}</span>
+                    </div>
+                    <div class="col-xs-12 col-sm-6  col-md-6  col-lg-4 nobo">
+                        <span class="nobr"> <strong>产品名称：</strong>{{FormData.ProductName}}</span>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-6  col-md-6  col-lg-2 ">
+                        <span class="nobr"> <strong>任务数量：</strong>{{FormData.TaskNum}}</span>
+                    </div>
+                    <div class="col-xs-12 col-sm-6  col-md-6  col-lg-2">
+                        <span class="nobr"> <strong>已完数量：</strong>{{FormData.FinishNum}}</span>
+                    </div>
+                </div>
+                <div class="row visible-on divbody" style="background-color:#fff">
+                    <div class="col-xs-12 col-sm-12  col-md-12"
+                        style="border-bottom:1px solid #ddd;padding-right: 0px;padding-left:0px">
+                        <div class="col-xs-12 col-sm-6 col-md-4" style="margin: 1% 0;">
+                            <span class="nobr">
+                                <strong>产品SN码：</strong>
+                                <input type="text" placeholder="扫码或录入SN码" v-model="FilterData.BarCode"
+                                    style="padding: .5% 0px;border: 1px solid #ccc;border-radius: 3px;">
+                            </span>
+                        </div>
+
+                        <div class="col-xs-10 col-sm-4  col-md-6" style="margin: 1% 0;">
+                            <span class="statu">
+                                <strong>生产状态(多选):</strong>
+                                <label for="id_select"></label>
+                                <select id="id_select" class="selectpicker bla bla bli" v-model="FilterData.StatusCode"
+                                    multiple data-live-search="true">
+                                    <option v-for="(item,index) in TaskStateData" :value="item.DICTIONARYITEM_ITEMCODE">
+                                        {{item.DICTIONARYITEM_ITEMNAME}}</option>
+                                    </optgroup>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 checkbtn" >
+                            <span>
+                                <button class="btn btn-success check " @click="SearchData">查询</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="comfirm">
+            <div class="container" style="max-width:100%">
+                <div class="row visible-on comcontent" style="background-color:#fff"
+                    v-for="(item,index) in ProduceTaskSNListData">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-3 nobr">
+                        <span>SN码：{{item.SCJP_TM}} </span>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-3 nobr nob">
+                        <span v-if="item.SCJP_RWZT_CODE!='RWZT01'">当前工序：{{item.SCJP_GXMC}}</span>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-2 nobr">
+                        <span v-if="item.SCJP_RWZT_CODE!='RWZT01'">生产员：{{item.SCJP_SCY}}</span>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-3 nobr ">
+                        <span>生产状态：<label v-if="item.SCJP_RWZT_CODE=='RWZT01'">待生产</label>
+                            <label v-if="item.SCJP_RWZT_CODE=='RWZT02'">生产中</label>
+                            <label v-if="item.SCJP_RWZT_CODE=='RWZT05'">待确认</label>
+                            <label v-if="item.SCJP_RWZT_CODE=='RWZT03'">完成生产</label>
+                            <label v-if="item.SCJP_RWZT_CODE=='RWZT04'">暂停</label>
+                        </span>
+                    </div>
+                    <div class="col-xs-12 col-sm-12  col-md-12 col-lg-1 butt">
+                        <button class="btn btn-success" v-if="item.SCJP_RWZT_CODE==='RWZT05'"
+                            @click="ConfirmFinish(item)">确认完成</button>
+                        <span v-if="item.SCJP_RWZT_CODE==='RWZT03'"></span>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <tbody>
+                    <tr v-if="TotalNum>0">
+                        <td colspan=5 style="text-align: center;">
+                            <button class="btn btn-success" :disabled="CurrPage==1" @click="UpPageData">上一页</button>
+                            <span>第{{CurrPage}}页/总{{Math.ceil(TotalNum/PageSize)}}页</span>
+                            <button class="btn btn-success" @click="NextPageData"
+                                :disabled="CurrPage==(Math.ceil(TotalNum/PageSize))">下一页</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!--<div class="shade2" v-show="TaskShow">-->
+            <!--<div class="popup  ">-->
+                <!--<table class="table table1" style="margin-bottom: 0px;">-->
+                    <!--<caption>任务单信息</caption>-->
+                    <!--<thead>-->
+                        <!--<tr>-->
+                            <!--<th>操作</th>-->
+                            <!--<th>计划日期</th>-->
+                            <!--<th>任务单号/订单号</th>-->
+                            <!--<th>产品编码/名称/规格</th>-->
+                            <!--<th>订单数量</th>-->
+                            <!--<th>计划数量</th>-->
+                            <!--<th>完成数量</th>-->
+                            <!--<th>生产状态</th>-->
+                        <!--</tr>-->
+                    <!--</thead>-->
+                    <!--<tbody class="tbody1">-->
+                        <!--<tr v-for="item in ProduceTaskListData">-->
+                            <!--<td><button class="btn btn-success " @click="ChangeTaskStatus(item)">选择</button></td>-->
+                            <!--<td>{{item.ProductionDate}}</td>-->
+                            <!--<td>{{item.TaskCode}}<br />{{item.OrderCode}}</td>-->
+                            <!--<td>{{item.ProductCode}}<br />{{item.ProductName}}<br />{{item.ProductStd}}</td>-->
+                            <!--<td>{{item.OrderNum}}</td>-->
+                            <!--<td>{{item.PlanNum}}</td>-->
+                            <!--<td>{{item.FinishNum}}</td>-->
+                            <!--<td>{{item.StatusName}}</td>-->
+                        <!--</tr>-->
+                    <!--</tbody>-->
+                <!--</table>-->
+
+            <!--</div>-->
+            <!--<div class="closebtn">-->
+                <!--<button class="btn btn-warning" @click="CloseWindows">关闭</button>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <!-- 选择任务单弹窗 -->
+        <div class="modal fade text-center" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" style="width:auto" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" ref="element">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h1 class="modal-title" style="font-weight: bold;">任务单信息</h1>
+                    </div>
+
+                    <div class="modal-body pop" style="overflow-y: auto">
+                        <table class="table table3" style="word-break:break-all; word-wrap:break-all;margin-bottom: 0px;">
+                            <thead>
+                                <tr>
+                                    <th>操作</th>
+                                    <th>计划日期</th>
+                                    <th>任务单号/订单号</th>
+                                    <th>产品编码/名称/规格</th>
+                                    <th>订单数量</th>
+                                    <th>计划数量</th>
+                                    <th>完成数量</th>
+                                    <th>生产状态</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tbody1">
+                                <tr v-for="item in ProduceTaskListData">
+                                    <td><button class="btn btn-success " @click="ChangeTaskStatus(item)">选择</button></td>
+                                    <td>{{item.ProductionDate}}</td>
+                                    <td>{{item.TaskCode}}<br />{{item.OrderCode}}</td>
+                                    <td>{{item.ProductCode}}<br />{{item.ProductName}}<br />{{item.ProductStd}}</td>
+                                    <td>{{item.OrderNum}}</td>
+                                    <td>{{item.PlanNum}}</td>
+                                    <td>{{item.FinishNum}}</td>
+                                    <td>{{item.StatusName}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" @click="CloseWindows">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--新增按钮弹窗部分-->
+        <div class="modal fade text-center" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" style="width:auto" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" ref="element">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h1 class="modal-title" id="myModalLabel" style="font-weight: bold;">生产确认</h1>
+                    </div>
+
+                    <div class="modal-body pop" style="overflow-y: auto">
+                        <table class="table table3" style="word-break:break-all; word-wrap:break-all;margin-bottom: 0px;">
+                            <tbody class="tbody3">
+                                <tr>
+                                    <td style="text-align:right;border-right:1px solid #ddd"> <strong> 产品SN码</strong>
+                                    </td>
+                                    <td style="border-right:1px solid #ddd">{{FormsData.SCJP_TM}}</td>
+                                    <td style="text-align:right;border-right:1px solid #ddd"><strong>产品编码</strong></td>
+                                    <td style="border-right:1px solid #ddd">{{FormsData.SCJP_CPBH}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:right;border-right:1px solid #ddd"><strong>产品名称</strong></td>
+                                    <td style="border-right:1px solid #ddd">{{FormsData.SCJP_CPMC}}</td>
+                                    <td style="text-align:right;border-right:1px solid #ddd"><strong>生产状态</strong></td>
+                                    <td style="border-right:1px solid #ddd">{{FormsData.SCJP_RWZT_NAME}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:right;border-right:1px solid #ddd"><strong>开工时间</strong></td>
+                                    <td style="border-right:1px solid #ddd">{{FormsData.SCJP_KSSJ}}</td>
+                                    <td style="text-align:right;border-right:1px solid #ddd"><strong>完工时间</strong></td>
+                                    <td style="border-right:1px solid #ddd">{{FormsData.SCJP_JSSJ}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:right;border-right:1px solid #ddd"><strong>生产工序</strong></td>
+                                    <td style="border-right:1px solid #ddd">{{FormsData.SCJP_GXMC}}</td>
+                                    <td style="text-align:right;border-right:1px solid #ddd"><strong>生产员</strong></td>
+                                    <td style="border-right:1px solid #ddd">{{FormsData.SCJP_SCY}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="text-align:center;"><strong>确认说明</strong></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="text-align:center;">
+                                        <textarea name="" v-model="FormsData.SCJP_QRSM" id="SCJP_QRSM" cols="15"
+                                            rows="5" style="width: 100%;"></textarea></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <div class="weui-gallery" id="gallery">
+                                            <span class="weui-gallery__img" id="galleryImg"></span>
+                                            <div class="weui-gallery__opr">
+                                                <a href="javascript:" class="weui-gallery__del">
+                                                    <i class="weui-icon-delete weui-icon_gallery-delete"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="weui-cells weui-cells_form">
+                                            <div class="weui-cell">
+                                                <div class="weui-cell__bd">
+                                                    <div class="weui-uploader">
+                                                        <div class="weui-uploader__hd">
+                                                            <p class="weui-uploader__title">上传图片</p>
+                                                            <div class="weui-uploader__info"></div>
+                                                        </div>
+                                                        <div class="weui-uploader__bd">
+                                                            <ul class="weui-uploader__files" id="uploaderFiles"></ul>
+                                                            <div class="weui-uploader__input-box"
+                                                                v-if="CurrImgNum<MaxImgNum">
+                                                                <input type="hidden" name="StudentImg"
+                                                                    v-model="FormsData.StudentImg" />
+                                                                <input type="hidden" name="StudentImg"
+                                                                    v-model="FormsData.ImgID" />
+                                                                <input id="uploaderInput" class="weui-uploader__input"
+                                                                    type="file" accept="image/*" multiple=""
+                                                                    v-on:change="ImgUploader">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" id="btn_submit" class="btn btn-primary" data-dismiss="modal">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="shade3" v-show="ComfirmShow">
+            <div class="pop">
+                <table class="table table3" style="word-break:break-all; word-wrap:break-all;margin-bottom: 0px;">
+                    <caption style="background-color: #DDEED8;color: #4C8652;font-weight: bold;font-size: 2em;">生产确认
+                    </caption>
+                    <tbody class="tbody3">
+                        <tr>
+                            <td style="text-align:right;border-right:1px solid #ddd"> <strong> 产品SN码</strong></td>
+                            <td style="border-right:1px solid #ddd">{{FormsData.SCJP_TM}}</td>
+                            <td style="text-align:right;border-right:1px solid #ddd"><strong>产品编码</strong></td>
+                            <td style="border-right:1px solid #ddd">{{FormsData.SCJP_CPBH}}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right;border-right:1px solid #ddd"><strong>产品名称</strong></td>
+                            <td style="border-right:1px solid #ddd">{{FormsData.SCJP_CPMC}}</td>
+                            <td style="text-align:right;border-right:1px solid #ddd"><strong>生产状态</strong></td>
+                            <td style="border-right:1px solid #ddd">{{FormsData.SCJP_RWZT_NAME}}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right;border-right:1px solid #ddd"><strong>开工时间</strong></td>
+                            <td style="border-right:1px solid #ddd">{{FormsData.SCJP_KSSJ}}</td>
+                            <td style="text-align:right;border-right:1px solid #ddd"><strong>完工时间</strong></td>
+                            <td style="border-right:1px solid #ddd">{{FormsData.SCJP_JSSJ}}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right;border-right:1px solid #ddd"><strong>生产工序</strong></td>
+                            <td style="border-right:1px solid #ddd">{{FormsData.SCJP_GXMC}}</td>
+                            <td style="text-align:right;border-right:1px solid #ddd"><strong>生产员</strong></td>
+                            <td style="border-right:1px solid #ddd">{{FormsData.SCJP_SCY}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="text-align:center;"><strong>确认说明</strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="text-align:center;">
+                                <textarea name="" v-model="FormsData.SCJP_QRSM" id="SCJP_QRSM" cols="15" rows="5"
+                                    style="width: 100%;"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <div class="weui-gallery" id="gallery">
+                                    <span class="weui-gallery__img" id="galleryImg"></span>
+                                    <div class="weui-gallery__opr">
+                                        <a href="javascript:" class="weui-gallery__del">
+                                            <i class="weui-icon-delete weui-icon_gallery-delete"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="weui-cells weui-cells_form">
+                                    <div class="weui-cell">
+                                        <div class="weui-cell__bd">
+                                            <div class="weui-uploader">
+                                                <div class="weui-uploader__hd">
+                                                    <p class="weui-uploader__title">上传图片</p>
+                                                    <div class="weui-uploader__info"></div>
+                                                </div>
+                                                <div class="weui-uploader__bd">
+                                                    <ul class="weui-uploader__files" id="uploaderFiles"></ul>
+                                                    <div class="weui-uploader__input-box" v-if="CurrImgNum<MaxImgNum">
+                                                        <input type="hidden" name="StudentImg"
+                                                            v-model="FormsData.StudentImg" />
+                                                        <input type="hidden" name="StudentImg"
+                                                            v-model="FormsData.ImgID" />
+                                                        <input id="uploaderInput" class="weui-uploader__input"
+                                                            type="file" accept="image/*" multiple=""
+                                                            v-on:change="ImgUploader">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align: center"><button class="btn btn-success"
+                                    @click="ConfirmedCancel">取消</button> </td>
+                            <td colspan="2" style="text-align: center"><button class="btn btn-success"
+                                    @click="ConfirmedFinish">确认完成</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div> -->
+    </div>
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/bootstrap.min.js"></script>
+    <script src="/JG/Content/bootstrap-select.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+    <script src="/JG/Content/Utils.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script type="text/javascript">
+        //body赋值滚动条
+        var SelImgIndex; //第几张图片
+        window.onload = function () {
+            var BodyWidth = $(window).width();
+            var BodyHeight = $(window).height();
+            //新增按钮弹窗部分
+            var ModalBodyHeight = BodyHeight-75-110-60;
+            $(".modal-body").height(ModalBodyHeight);
+        }
+
+        $(function () {
+            $gallery = $("#gallery");
+            $galleryImg = $("#galleryImg");
+            $uploaderInput = $("#uploaderInput");
+            $uploaderFiles = $("#uploaderFiles");
+            $gallery__del = $(".weui-gallery__del");
+
+            $uploaderFiles.on("click", "li", function () {
+                SelImgIndex = $(this).index();
+                $galleryImg.attr("style", this.getAttribute("style"));
+                $gallery.fadeIn(100);
+            });
+            $gallery.on("click", function () {
+                $uploaderFiles.find("li")
+                $gallery.fadeOut(100);
+            });
+
+            $gallery__del.click(function () { //这部分刚才放错地方了，放到$(function(){})外面去了
+                event.stopPropagation();
+                $.confirm("确认要删除该图片吗？", "删除提示", function () {
+                    var li = $uploaderFiles.find("li").eq(SelImgIndex);
+                    if (vmPage.ImagePaths && vmPage.ImagePaths.length > 0)
+                        delete vmPage.ImagePaths[SelImgIndex];
+                    li.remove();
+                    var num = $('.weui-uploader__file').length;
+                    vmPage.CurrImgNum = num;
+                    $gallery.fadeOut(100);
+                });
+            });
+
+            //注册新增按钮的事件
+            $("#btn_add").click(function () {
+                //$("#myModalLabel").text("新增");
+                $('#myModal').modal();
+                
+            });
+        });
+
+    </script>
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            $('.selectpicker').selectpicker({
+                'selectedText': 'cat'
+            });
+        });
+
+    </script>
+    <script type="text/javascript">
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                TaskShow: false,
+                PageSize: 10,
+                CurrPage: 1,
+                TotalNum: 0,
+                FilterData: {
+                    BarCode: "",
+                    StatusCode: [],
+                },
+                FormData: {
+                    TaskID: "",
+                    OrderCode: "",
+                    TaskCode: "",
+                    ProductCode: "",
+                    ProductName: "",
+                    ProductStd: "",
+                    OrderNum: "",
+                    TaskNum: "",
+                    FinishNum: "",
+                },
+                ImagePaths: [], //图片文件集合
+                TaskStateData: [],
+                ProduceTaskListData: [], //当前产线生产任务
+                ProduceTaskSNListData: [], //生产单产品SN码
+                CurrImgNum: "",
+                MaxImgNum: "5",
+                FormsData: {
+                    ImgID: "",
+                    StudentImg: ""
+                },
+                ComfirmShow: false
+            },
+            mounted: function () {
+                var currSelf = this;
+                currSelf.intiData();
+                $(".weui-uploader__input-box").show();
+                $("#uploaderFiles").empty();
+
+               
+            },
+            methods: {
+                intiData: function () {
+                    var currSelf = this;
+                    var data = GetDictionary("JGMES_DIC_RWZT");  //传任务状态字典编码
+                    if (data && data.IsSuccess) {
+                        currSelf.TaskStateData = data.Data;
+                    }
+                    currSelf.FilterData.StatusCode.push("RWZT05");
+
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByCxCp.action",
+                        data: { userCode: LocalUserInfo.GetUserInfo().UserCode, mac: LocalUserInfo.GetUserInfo().Mac, cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess && retData.Data) {
+                                currSelf.FormData.TaskID = retData.Data.JGMES_PLAN_SCRW_ID;
+                                currSelf.FormData.TaskCode = retData.Data.SCRW_RWDH;
+                                currSelf.FormData.ProductName = retData.Data.SCRW_NAME;
+                                currSelf.FormData.TaskNum = retData.Data.SCRW_PCSL;
+                                currSelf.FormData.FinishNum = retData.Data.SCRW_WCSL;
+                                currSelf.GetProductData();
+                            }
+                        },
+                        error: function (xhr, status, thr) {
+                            console.error(status);
+                            $.alert("请求数据失败!");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+                GetTaskList: function () {
+                    var currSelf = this;
+                    currSelf.ProduceTaskListData = [];
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrw.action",
+                        data: {
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            "cxCode": LocalUserInfo.GetUserInfo().ProductionLineCode,
+                            "zt": "RWZT01,RWZT02"
+                        },
+                        datatype: "json",
+                        success: function (result) {
+                            var data = JSON.parse(result);
+                            var ret = ReturnData(data);
+                            if (ret.IsSuccess) {
+                                currSelf.TaskShow = true;
+                                if (ret.Data.length > 0) {
+                                    for (var i in data.Data) {
+                                        var item = data.Data[i];
+                                        currSelf.ProduceTaskListData.push({
+                                            ProductionDate: item.SCRW_PCRQ,
+                                            OrderCode: item.SCRW_DDHM,
+                                            TaskCode: item.SCRW_RWDH,
+                                            ProductCode: item.SCRW_CPBH,
+                                            ProductName: item.SCRW_NAME,
+                                            ProductStd: item.SCRW_CPGG,
+                                            OrderNum: item.SCRW_DDSL,
+                                            FinishNum: item.SCRW_WCSL,
+                                            PlanNum: item.SCRW_PCSL,
+                                            StatusName: item.SCRW_RWZT_NAME,
+                                            VouchCode: item.SCRW_GDHM,
+                                            TaskID: item.JGMES_PLAN_SCRW_ID,
+                                        });
+                                    }
+                                } else {
+                                    var showMsg = "未能找到生产任务单信息";
+                                    $.toptip(showMsg, "warning");
+                                }
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            $.alert("请求生产任务状态失败!" + errorThrown);
+                        }, complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+                SearchData: function () {
+                    var currSelf = this;
+                    currSelf.CurrPage = 1;
+                    if (currSelf.FormData.TaskCode) {
+                        currSelf.GetProductData();
+                    } else
+                        $.toptip("请选择生产任务单", "warning");
+                },
+                UpPageData: function () {
+                    var currSelf = this;
+                    currSelf.CurrPage--;
+                    currSelf.GetProductData();
+                },
+                NextPageData: function () {
+                    var currSelf = this;
+                    currSelf.CurrPage++;
+                    currSelf.GetProductData();
+                },
+                GetProductData: function () { //获取产品数据
+                    var currSelf = this;
+                    $.showLoading();
+
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesScrwAction!getScjpforQrr.action",
+                        data: {
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            "prodLineCode": LocalUserInfo.GetUserInfo().ProductionLineCode,
+                            "SCRWCode": currSelf.FormData.TaskCode,
+                            "barCode": currSelf.FilterData.BarCode,
+                            "SCStatus": currSelf.FilterData.StatusCode.join(','),
+                            "PageSize": currSelf.PageSize,
+                            "CurrPage": currSelf.CurrPage,
+                        },
+                        datatype: "json",
+                        success: function (result) {
+                            var data = JSON.parse(result);
+                            var ret = ReturnData(data);
+                            if (ret.IsSuccess) {
+                                currSelf.ProduceTaskSNListData = ret.Data;
+                                currSelf.TotalNum = ret.TotalCount;
+                                if (!ret.Data || ret.Data.length == 0) {
+                                    var showMsg = "未能查找到相关的数据";
+                                    $.toptip(showMsg, "warning");
+                                }
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            $.alert("发生异常," + errorThrown);
+                        }, complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+                ChangeTaskStatus: function (item) {
+                    var currSelf = this;
+                    currSelf.TaskShow = false;
+                    currSelf.FormData.TaskID = item.TaskID;
+                    currSelf.FormData.TaskCode = item.TaskCode;
+                    currSelf.FormData.ProductName = item.ProductName;
+                    currSelf.FormData.TaskNum = item.PlanNum;
+                    currSelf.FormData.FinishNum = item.FinishNum;
+                    currSelf.SearchData();
+                },
+                ConfirmFinish: function (item) {
+                    var currSelf = this;
+                    currSelf.ComfirmShow = true;
+                    currSelf.FormsData = item;
+                },
+                CloseWindows: function () {
+                    var currSelf = this;
+                    currSelf.TaskShow = false;
+                },
+                ConfirmedFinish: function () {
+                    var currSelf = this;
+                    bootbox.confirm({
+                        message: "是否确认完成么？", buttons: {
+                            confirm: {
+                                label: '是',
+                                className: 'btn-success',
+                            },
+                            cancel: {
+                                label: '否',
+                                className: 'btn-danger'
+                            }
+                        }, callback: function (result) {
+                            if (result) {
+                                $.showLoading();
+
+                                $.ajax({
+                                    type: "post",
+                                    url: LocalConfig.SrvPath + "/jgmes/jgmesScrwAction!doConfirmSN.action",
+                                    data: {
+                                        "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                        "mac": LocalUserInfo.GetUserInfo().Mac,
+                                        "prodLineCode": LocalUserInfo.GetUserInfo().ProductionLineCode,
+                                        "JGMES_PB_SCJP_ID": currSelf.FormsData.JGMES_PB_SCJP_ID,
+                                        "SCRWID": currSelf.FormData.TaskID,
+                                        "qrr": LocalUserInfo.GetUserInfo().UserName,
+                                        "Remark": currSelf.FormsData.SCJP_QRSM,
+                                        "file": JSON.stringify(currSelf.ImagePaths)
+                                    },
+                                    dataType: "json",
+                                    success: function (ret) {
+                                        var retData = ReturnData(ret);
+                                        if (retData.IsSuccess) {
+                                            currSelf.GetProductData();
+                                            currSelf.ComfirmShow = false;
+                                        } else {
+                                            $.toptip(ret.message, "warning");
+                                        }
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error(status);
+                                        $.alert("请求失败!");
+                                    }, complete: function () {
+                                        $.hideLoading();
+                                    }
+                                });
+                            }
+                        }
+                    });
+                },
+                ConfirmedCancel: function () {
+                    var currSelf = this;
+                    currSelf.ComfirmShow = false;
+                },
+                ImgUploader: function (event) {
+                    var currSelf = this;
+                    var allowTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
+                    // 1024KB，也就是 1MB
+                    var maxSize = 1024 * 1024;
+                    // 图片最大宽度
+                    var maxWidth = 300;
+
+                    var files = event.target.files;
+                    // 如果没有选中文件，直接返回
+                    if (files.length === 0) {
+                        return;
+                    }
+                    if (currSelf.CurrImgNum + files.length > currSelf.MaxImgNum) {
+                        $.alert('最多只能上传' + currSelf.MaxImgNum + '张图片');
+                        $("#uploaderInput").val();
+                        return;
+                    }
+
+                    for (var i = 0, len = files.length; i < len; i++) {
+                        var file = files[i];
+                        var reader = new FileReader();
+
+                        // 如果类型不在允许的类型范围内
+                        if (allowTypes.indexOf(file.type) === -1) {
+                            $.toast('该类型不允许上传', "forbidden");
+                            continue;
+                        }
+
+                        // if (file.size > maxSize) {
+                        //     $.toast('图片太大，不允许上传', "forbidden");
+                        //     continue;
+                        // }
+
+                        //if ($('.weui-uploader__file').length >= currSelf.fileMaxCount) {
+                        //    $.alert('最多只能上传' + currSelf.fileMaxCount + '张图片');
+                        //    return;
+                        //}
+
+                        reader.readAsDataURL(file);
+                        reader.onload = function (e) {
+                            var img = new Image();
+                            img.src = e.target.result;
+                            img.onload = function () {
+                                var w = Math.min(maxWidth, img.width);
+                                var h = img.height * (w / img.width);
+                                var canvas = document.createElement('canvas');
+                                var ctx = canvas.getContext("2d");
+                                canvas.width = w;
+                                canvas.height = h;
+                                ctx.drawImage(img, 0, 0, w, h);
+                                //var base64 = canvas.toDataURL(file.type, 0.8);
+                                var $preview = $('<li class="weui-uploader__file weui-uploader__file_status" style="background-image:url(' + img.src + ')"><div class="weui-uploader__file-content">0%</div></li>');
+                                $('#uploaderFiles').append($preview);
+                                var num = $('.weui-uploader__file').length;
+                                currSelf.CurrImgNum = num;
+                                //$('.weui-uploader__info').text(num + '/' + currSelf.fileMaxCount);
+                                var formData = new FormData();
+                                formData.append("filetype", file.type);
+                                formData.append("filename", file.name);
+                                formData.append("files", file);
+                                $.ajax({
+                                    url: "/jgmes/jgmesScrwAction!doFileUplod.action",
+                                    type: "post",
+                                    data: formData,
+                                    contentType: false,
+                                    processData: false,
+                                    success: function (result) {
+                                        var data = JSON.parse(result);
+                                        if (data.IsSuccess) {
+                                            var imgData = JSON.parse(data.Data);
+                                            $($preview)[0].setAttribute('data-value', imgData.id);
+                                            $($preview)[0].setAttribute('data-url', imgData.path);
+                                            $preview.removeClass('weui-uploader__file_status');
+                                            currSelf.ImagePaths.push(imgData);
+                                            $.toast("上传成功", function () {
+                                                //console.log('close');
+                                            });
+                                            //$(".weui-uploader__input-box").hide();
+                                        }
+                                    },
+                                    error: function (xhr, type) {
+                                        alert('Ajax error!')
+                                    }
+                                });
+                            }
+                        }
+                        reader.onprogress = function (e) {
+                            var percentComplete = ((e.loaded / e.total) || 0) * 100;
+                            console.log(percentComplete);
+                        }
+                    }
+                    $("#uploaderInput").val("");
+                }
+            }
+        });
+    </script>
+
+</html>

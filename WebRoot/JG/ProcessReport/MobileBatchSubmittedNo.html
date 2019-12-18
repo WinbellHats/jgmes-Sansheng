@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>工序报工(非扫码)-精工云MES系统移动端</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/MobileBatchSubmittedNo.css?v=1">
+    <link href="/JG/Content/jquery/jquery-weui/css/icon.css" rel="stylesheet" />
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="empty">
+            <span id="stations"></span>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-flex__item" style="position:absolute;">
+                <span style="font-size:16px" class="icon icon-109 f-white"
+                    onclick="javascript:location.href='/JG/Home/MobileIndex.html'">返回</span>
+            </div>
+            <div class="weui-flex__item" style="text-align: center;">工序报工</div>
+        </div>
+    </header>
+
+    <div id="MainPage" v-cloak>
+        <div class="sec_content">
+            <div class="textbox">
+                <div class="centerdiv">
+                    <ul class="pro_ul list-group">
+                        <li class="list-group-item proline">
+                            <div class="weui-cell weui-cell_select ">
+                                <div class="weui-cell__hd protitle">
+                                    <label class="weui-form-preview__label">生产线</label>
+                                </div>
+                                <div class="weui-cell__bd">
+                                    <select class="weui-select" name="select2" placeholder="请选择生产产线"
+                                        v-model="FormData.BgsjCxbm" @change="ProductionLineChange()">
+                                        <option disabled selected value>请选择生产产线</option>
+                                        <option v-for="(item,index) in ProLineData" v-bind:value="item.CXSJ_CXBM">
+                                            {{item.CXSJ_CXMC}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item bor">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label processleft">订单号码</label>
+                                <span class="weui-form-preview__value">{{FormData.OrderCode}}</span>
+                            </div>
+                        </li>
+                        <li class="list-group-item bor">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label processleft">任务单号</label>
+                                <span class="weui-form-preview__value">{{FormData.TaskCode}}</span>
+                                <button class="btn btn-success select">选择</button>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label processleft">产品编号</label>
+                                <span class="weui-form-preview__value">{{FormData.InvCode}}</span>
+                            </div>
+                        </li>
+                        <li class="list-group-item bor">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label processleft">产品名称</label>
+                                <span class="weui-form-preview__value"> {{FormData.InvName}}</span>
+                            </div>
+                        </li>
+                        <li class="list-group-item bor">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label processleft">产品规格</label>
+                                <span class="weui-form-preview__value"> {{FormData.ProduSize}}</span>
+                            </div>
+                        </li>
+                        
+                        <li class="list-group-item">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label processleft">订单数量</label>
+                                <span class="weui-form-preview__value"> 
+                                    <input v-bind:value="FormData.OrderSum" readonly="readonly" type="text" style="border:none;width: 50%">
+                                </span>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label processleft">任务数量</label>
+                                <span class="weui-form-preview__value"> 
+                                    <input v-bind:value="FormData.TaskSum" readonly="readonly" type="text" style="border:none;width: 50%">
+                                </span>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label processleft">完成数量</label>
+                                <span class="weui-form-preview__value"> 
+                                        <input v-bind:value="FormData.OverSum" readonly="readonly" type="text" style="border:none;width: 50%">
+                                </span>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="weui-form-preview__item pro_li">
+                                <label class="weui-form-preview__label processleft">报工工序</label>
+                                <span class="weui-form-preview__value proitem" > 
+                                    <button v-bind:class="{'clickBgColor':CurrSelectGx.GxSerial==item.GxSerial}" type="button" v-for="(item,index) in InvProcess" :key="index" @click="clickAddBgColor(index)">{{item.GxSerial}}.{{item.InvProcessItem}}</button>
+                                </span>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label processleft">已报数量</label>
+                                <span class="weui-form-preview__value"> 
+                                        <input v-bind:value="FormData.PlanNum" readonly="readonly" type="text" style="border:none;width: 50%">
+                                </span>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <span class="sum_title protitle">合格数量</span>
+                            <span class="sum_list">
+                                <label class="sum-img" for="Hgs"></label>
+                                <input id="Hgs" v-model="Hgs" maxlength="8" class="prosum" type="number"
+                                    placeholder="请输入数字"
+                                    onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                    onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}">
+                            </span>
+                        </li>
+                        <li class="list-group-item">
+                            <span class="sum_title protitle">不良数量</span>
+                            <span class="sum_list">
+                                <label class="sum-img" for="Nhgs"></label>
+                                <input id="Nhgs" v-model="Nhgs" maxlength="8" class="prosum" type="number"
+                                    placeholder="请输入数字"
+                                    onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                    onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}">
+                            </span>
+                        </li>
+                        <li class="list-group-item">
+                            <!--报工按钮部分-->
+                            <div style="text-align: -moz-center;text-align: -webkit-center;text-align: center;">
+                                <button v-on:click="SaveData()" style="width:190px;font-size: 1.5em" type="button"
+                                    class="btn btn-success">报工</button>
+                            </div>
+                        </li>
+                    </ul>
+                    
+                    <div class="clear"></div>
+                </div>
+                <!--不良项部分-->
+                <div class="record">
+                    <div class="weui-flex workrecord">
+                        <div class="weui-flex__item buliang">不良项明细</div>
+                    </div>
+                    <ul>
+                        <li class="bad_li" v-for="(item,index) in DefectiveItemData" :key="index">
+                            <span>{{item.ItemName}}</span>
+                            <span class="badinput">
+                                <input type="text" placeholder="请输入不良项数量" v-model="item.Qty" @click.stop
+                                    onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                    onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" />
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!--任务列表弹窗选项部分-->
+            <div class="shade">
+                <div class="shade_box">
+                    <div class="weui-flex work">
+                        <div class="weui-flex__item buliang">任务单信息</div>
+                    </div>
+                    <div class="info">
+                        <div style="height:45px"></div>
+                        <div class="recordtable" v-for="(item,index) in TaskCodeGat">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">订单号码</label>
+                                <span class="weui-form-preview__value"> {{item.OrderCode}}</span>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">任务单号</label>
+                                <span class="weui-form-preview__value"> {{item.TaskCode}}</span>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">产品编码</label>
+                                <span class="weui-form-preview__value"> {{item.InvCode}}</span>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">产品名称</label>
+                                <span class="weui-form-preview__value"> {{item.InvName}}</span>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">产品规格</label>
+                                <span class="weui-form-preview__value"> {{item.ProduSize}}</span>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">任务状态</label>
+                                <span class="weui-form-preview__value"> {{item.Status}}</span>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">订单数量</label>
+                                <span class="weui-form-preview__value"> {{item.OrderSum}}</span>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">任务数量</label>
+                                <span class="weui-form-preview__value"> {{item.TaskSum}}</span>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">完成数量</label>
+                                <span class="weui-form-preview__value">{{item.OverSum}}</span>
+                            </div>
+                            <div class="weui-flex sub_btn">
+                                <input class="radio_input" type="button" name="inputs" value="选择"
+                                    v-on:click="SubData(item)" />
+                            </div>
+                        </div>
+                        <div style="height:45px"></div>
+                    </div>
+                    <div class="task_btn">
+                        <button id="close" class="btn btn-warning ">关闭</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="record">
+                <div class="weui-flex workrecord">
+                    <div class="weui-flex__item buliang">报工记录</div>
+                </div>
+                <div class="recordtable" v-for="(item,index) in PlanGather">
+                    <div class="weui-form-preview__item">
+                        <label class="weui-form-preview__label">时间</label>
+                        <span class="weui-form-preview__value"> {{item.SubTime}}</span>
+                    </div>
+                    <div class="weui-form-preview__item">
+                        <label class="weui-form-preview__label">任务单号</label>
+                        <span class="weui-form-preview__value"> {{item.TaskCode}}</span>
+                    </div>
+                    <div class="weui-form-preview__item">
+                        <label class="weui-form-preview__label">产品名称</label>
+                        <span class="weui-form-preview__value"> {{item.InvName }}</span>
+                    </div>
+                    <div class="weui-form-preview__item">
+                        <label class="weui-form-preview__label">工单号码</label>
+                        <span class="weui-form-preview__value"> {{item.WordCode}}</span>
+                    </div>
+                    <div class="weui-form-preview__item">
+                        <label class="weui-form-preview__label">工序</label>
+                        <span class="weui-form-preview__value">{{item.InvProcessItem}}</span>
+                    </div>
+                    <div class="weui-form-preview__item">
+                        <label class="weui-form-preview__label">合格数量</label>
+                        <span class="weui-form-preview__value">{{item.Hgs}}</span>
+                    </div>
+                    <div class="weui-form-preview__item">
+                        <label class="weui-form-preview__label">不良数量</label>
+                        <span class="weui-form-preview__value">{{item.Nhgs}}</span>
+                    </div>                 
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/bootstrap.min.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+    <script src="/JG/Content/Common.js"></script>
+    <script type="text/javascript" src="/JG/Content/AudioUtils.js"></script>
+    <script src="/JG/Content/Numkeyboard.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script src="/JG/Content/jquery/fastclick.js"></script>
+
+    <script type="text/javascript">
+        //body赋值滚动条
+        window.onload = function () {
+            var BodyWidth = $(window).width();
+            if (BodyWidth > 1281) {
+                var BodyHeight = $(window).height();
+                var MainPageHeight = BodyHeight - 90;
+                //赋值给div
+                $(".sec_content").height(MainPageHeight);
+            } else if (BodyWidth < 1281 && BodyWidth > 1023) {
+                var BodyHeight = $(window).height();
+                var MainPageHeight = BodyHeight - 80;
+                //赋值给div
+                $(".sec_content").height(MainPageHeight);
+            } else if (BodyWidth < 1024 && BodyWidth > 767) {
+                var BodyHeight = $(window).height();
+                var MainPageHeight = BodyHeight - 85;
+                //赋值给div
+                $(".sec_content").height(MainPageHeight);
+            } else {
+                var BodyHeight = $(window).height();
+                var MainPageHeight = BodyHeight - 60;
+                //赋值给div
+                $(".sec_content").height(MainPageHeight);
+            }
+        }
+
+        $(function () {
+            //这是关闭任务列表弹窗部分
+            $("#close").click(function () {
+                $(".shade").hide();
+            });
+            //操作指导部分点击图片弹出当前图片
+            function popup(e) {
+                $("#ShowImg")[0].src = e.src;     //点击当前图片弹出大图片
+                $(".dialog").addClass("dialog_show");
+                //点击关闭按钮，图片弹窗关闭
+                $(".dialog>span").click(function () {
+                    $(".dialog").removeClass("dialog_show");
+                })
+            }
+        });
+    </script>
+
+    <script type="text/javascript">
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                Hgs: "",  //合格数
+                Nhgs: "",  //不良数
+                curDate: "",   //当前时间的产线
+                SubTime: "",    //保存当前时间
+                ItemName: "",   //不良项名称
+                Qty: "",   //不良项数量
+                Status: "",   //该任务单号的状态
+                Pictures: "",    ///保存操作指导部分请求回来的图片
+                FormData: {
+                    ProdLine: "",   //产线名称
+                    BgsjCxbm: "",    //产线编码
+                    InvStd: "",   //工位名
+                    TaskCode: "",  //任务单号
+                    InvCode: "",     //产品编码
+                    InvName: "",   //产品名称
+                    WordCode: "",   //工单号
+                    OrderCode: "",    //订单号
+                    InvProcessItem: "",   //工序名称
+                    GylxgsGxnum: "",    //工序编号
+                    GxSerial: "",  //工序序号
+                    GxID: "",  //工艺路线工序ID
+                    SubType: "0",     //报工类型
+                    OrderSum: "",   //订单数量
+                    TaskSum: "",     //任务数量
+                    OverSum: "",    //完成数量
+                    ScrwID: "",    //生产任务ID
+                    PlanNum: "",     //当前工序已报工数量
+                    ProduSize: "",  //产品规格
+                },
+                ProcessesWorkID: $.getUrlParam("ProcessesWorkID"),//接收地址栏产品任务参数
+                ProcessesWorkindex: $.getUrlParam("index"),//接收地址栏报工工序
+                TaskCodeGat: [],  //任务单号信息集合
+                InvProcess: [],   //工序与工艺工序路线ID集合
+                DefectiveItemData: [],   //不良集合
+                ScanCodeResult: "",    //保存获取数据失败弹窗变量
+                OperateRecord: [],   //操作记录集合
+                PlanGather: [],    //报工记录集合
+                ImgSOPs: [],
+                ProLineData: [],    // 产线集合
+                CurrSelectGx: { GxSerial: "" } //当前选择的工序
+            },
+            mounted: function () {
+                var currSelf = this;
+                currSelf.ProLineStation();
+                currSelf.ProdLineMethod();
+                if (currSelf.ProcessesWorkID) {
+                    currSelf.GetProcessesWork();
+                }
+            },
+            methods: {
+                //操作记录方法
+                SetOperateRecord: function (content, status) {
+                    var currSelf = this;
+                    var content = (new Date().Format("hh:mm:sss")) + ' ' + content;
+                    currSelf.OperateRecord.splice(0, 0, { Content: content, Status: status });
+                },
+
+                //   工序部分点击选择显示样式方法
+                clickAddBgColor: function (index) {
+                    var currSelf = this;
+                    currSelf.CurrSelectGx = currSelf.InvProcess[index];
+                    currSelf.ImgSOPs = [];
+                    if (currSelf.CurrSelectGx && currSelf.CurrSelectGx.Pictures.length > 0) {
+                        var imgSOPs = JSON.parse(currSelf.CurrSelectGx.Pictures);
+                        for (var index in imgSOPs) {
+                            var itemPic = imgSOPs[index];
+                            currSelf.ImgSOPs.push({ fileName: itemPic.name.split('.')[0], src: LocalConfig.SrvPath + itemPic.path });
+                        }
+                    }
+
+                    currSelf.DefectiveItemData = [];  //再点击选中工序前先把之前选中的清空
+                    $.showLoading();
+                    //选择当前工序带出不良项接口
+                    $.ajax({
+                        type: "post",
+                        async: true,
+                        cache: true,
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesQmsAction!getBlList.action",
+                        data: {
+                            "gxId": currSelf.CurrSelectGx.GxID,
+                        },
+                        dataType: "json",
+                        success: function (result) {
+                            var retData = ReturnData(result);
+                            if (retData.IsSuccess) {
+                                if (retData.Data) {
+                                    for (var i in retData.Data) {
+                                        var element = retData.Data[i];
+                                        currSelf.DefectiveItemData.push({
+                                            ItemName: element.values.BLLX_BLLXMC,   //不良名称
+                                            ItemID: element.values.BLLX_BLLXBM
+                                        });
+                                    }
+                                    //不良项数量部分的数字键盘绑定
+                                    currSelf.$nextTick(function () {     //$nextTick方法是进行获取数据后，对更新后的hmtl做操作
+                                        $.each(currSelf.DefectiveItemData, function (i, item) {
+                                            $("#" + item.ItemID).mynumkb();
+                                        });
+                                    });
+                                }
+                            }
+                        },
+                        error: function (xhr, status, errorThrow) {
+                            console.error(status);
+                            $.alert("获取不良项失败！");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+
+                    $.showLoading();
+                    //获取当前工序对应的已报工数接口
+                    $.ajax({
+                        type: "post",
+                        async: true,
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesBgBatchAction!getAlreadyReportedNum.action",
+                        data: {
+                            "scrwId": currSelf.FormData.ScrwID,
+                            "gxbh": currSelf.CurrSelectGx.GylxgsGxnum,
+                        },
+                        dataType: "json",
+                        success: function (result) {
+                            var retData = ReturnData(result);
+                            if (retData.IsSuccess) {
+                                currSelf.FormData.PlanNum = retData.Data;
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            $.alert("已报工数量请求失败!");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+                //点击弹窗选择按钮方法
+                SubData: function (val) {
+                    var currSelf = this;
+                    $(".shade").hide();
+                    currSelf.FormData.TaskCode = val.TaskCode;
+                    currSelf.FormData.InvCode = val.InvCode;
+                    currSelf.FormData.InvName = val.InvName;
+                    currSelf.FormData.WordCode = val.WordCode;
+                    currSelf.FormData.OrderCode = val.OrderCode;
+                    currSelf.FormData.OrderSum = val.OrderSum;
+                    currSelf.FormData.TaskSum = val.TaskSum;
+                    currSelf.FormData.OverSum = val.OverSum;
+                    currSelf.FormData.BgsjCxbm = val.BgsjCxbm;
+                    currSelf.FormData.ScrwID = val.ScrwID;
+                    currSelf.FormData.ProduSize = val.ProduSize;
+                    currSelf.InvProcess = [];
+                    $.showLoading();
+                    //根据产品获取工序列表接口
+                    $.ajax({
+                        type: "post",
+                        async: true,
+                        cache: true,
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getGXList.action",
+                        data: {
+                            "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                            "mac": LocalUserInfo.GetUserInfo().Mac,
+                            "cpCode": currSelf.FormData.InvCode,
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess && retData.Data) {
+                                for (var i in retData.Data) {
+                                    var element = retData.Data[i];
+                                    currSelf.InvProcess.push({
+                                        InvProcessItem: element.GYLXGX_GXNAME,
+                                        GxID: element.GYLXGX_ID,
+                                        GylxgsGxnum: element.GYLXGX_GXNUM,  // 工序编号
+                                        GxSerial: element.SY_ORDERINDEX,
+                                        Pictures: element.GYLXGX_SOP,   //操作指导图片集合
+                                    })
+                                }
+                            } else if (!retData.Data) {
+                                $.toptip("此任务单没有绑定工序!", "warning");
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            // console.error(status);
+                            $.toptip(status, "error");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+                //获取产线任务全部信息方法
+                ProdLineMethod: function () {
+                    var currSelf = this;
+                    $(".select").click(function () {
+                        if (!currSelf.FormData.BgsjCxbm) {                      
+                            $.toptip('产线不能为空,请选择', "warning");                      
+                        }else{                        
+                        //清空原有加载数据
+                        currSelf.TaskCodeGat = [];
+                        currSelf.j = "";   //清空之前选中当前下标的任务列表数据
+                        // $(".shade").addClass("shade_show");
+                        $(".shade").show();
+                        //$.showLoading();
+                        //任务单号接口
+                        $.ajax({
+                            type: "post",
+                            async: true,
+                            url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrw.action",
+                            data: {
+                                "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                "mac": LocalUserInfo.GetUserInfo().Mac,
+                                "cxCode": currSelf.FormData.BgsjCxbm,
+                                "curDate": currSelf.curDate,
+                                "zt": "RWZT01,RWZT02,RWZT04"
+                            },
+                            dataType: "json",
+                            success: function (result) {                  
+                                var ret = ReturnData(result);
+                                if (ret.IsSuccess) {
+                                    if (ret.Data.length > 0) {
+                                        for (var i in ret.Data) {
+                                            var item = ret.Data[i];
+                                            currSelf.TaskCodeGat.push({
+                                                TaskCode: item.SCRW_RWDH,    //任务单号
+                                                InvCode: item.SCRW_CPBH,     //产品编号
+                                                WordCode: item.SCRW_GDHM,  //工单号
+                                                OrderCode: item.SCRW_DDHM,  //订单号
+                                                InvName: item.SCRW_NAME,  //产品名称
+                                                OrderSum: item.SCRW_DDSL, //订单数
+                                                TaskSum: item.SCRW_PCSL,  //任务数
+                                                OverSum: item.SCRW_WCSL,  //完成数
+                                                ScrwID: item.JGMES_PLAN_SCRW_ID,  //生产任务ID
+                                                BgsjCxbm: item.SCRW_CXBM,  //产线编码
+                                                Status: item.SCRW_RWZT_NAME,  //状态
+                                                ProduSize: item.SCRW_CPGG,
+                                            });
+                                        }
+                                    }
+                                }else if(!ret.Data){
+                                    $.toptip("该生产产线没有任务信息!", "warning");
+                                }
+                            },
+                            error: function (xhr, status, errorThrown) {
+                                $.toptip(status, "error");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+                    }
+                    });                   
+                },
+
+                //获取产线信息方法
+                ProLineStation: function () {
+                    var currSelf = this;
+                    //获取产线和工位接口
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        async: true,   //异步
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getCxGwList.action",
+                        data: {},
+                        dataType: "json",
+                        success: function (result) {
+                            var retData = ReturnData(result);
+                            if (retData.IsSuccess) {
+                                if (retData.Data) {
+                                    currSelf.ProLineData = retData.Data;
+                                    // currSelf.FormData.BgsjCxbm = LocalUserInfo.GetUserInfo().ProductionLineCode;
+                                }
+                            } else if (!retData.Data) {
+                                var showMsg = "未能找到产线信息";
+                                $.toptip(showMsg, "warning");
+                            }
+                        },
+                        error: function (xhr, status, errorThrow) {
+                            console.error(status);
+                            $.alert("获取产线失败!");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        },
+                    });
+                },
+                ProductionLineChange: function () {    //产线更改
+                    var currSelf = this;
+                    //清空原有数据
+                    currSelf.CurrSelectGx = { GxSerial: "" };
+                    currSelf.DefectiveItemData = [];
+                    currSelf.FormData.InvStd = "";   //工位名
+                    currSelf.FormData.TaskCode = "";  //任务单号
+                    currSelf.FormData.InvCode = "";     //产品编码
+                    currSelf.FormData.InvName = "";   //产品名称
+                    currSelf.FormData.WordCode = "";   //工单号
+                    currSelf.FormData.OrderCode = "";    //订单号
+                    currSelf.FormData.InvProcessItem = "";   //工序名称
+                    currSelf.FormData.GylxgsGxnum = "";    //工序编号
+                    currSelf.FormData.GxSerial = "";  //工序序号
+                    currSelf.FormData.GxID = "";  //工艺路线工序ID
+                    currSelf.FormData.SubType = "0";     //报工类型
+                    currSelf.FormData.OrderSum = "";   //订单数量
+                    currSelf.FormData.TaskSum = "";     //任务数量
+                    currSelf.FormData.OverSum = "";    //完成数量
+                    currSelf.FormData.ScrwID = "";    //生产任务ID
+                    currSelf.FormData.PlanNum = "";     //当前工序已报工数量
+                    currSelf.FormData.ProduSize = " ";
+                    currSelf.InvProcess = [];
+                },
+                //批量保存方法
+                SaveData: function () {
+                    var currSelf = this;
+                    var msg;
+                    if (!currSelf.FormData.BgsjCxbm) {
+                        msg = '请选择需要报工的产线';
+                        $.toptip(msg, "warning");
+                        currSelf.SetOperateRecord(msg, false);
+                    } else if (!currSelf.FormData.InvName) {
+                        msg = '请选择需要报工的产品';
+                        $.toptip(msg, "warning");
+                        currSelf.SetOperateRecord(msg, false);
+                    }
+                    else if (!currSelf.CurrSelectGx.GxSerial) {
+                        msg = '请选择需要报工的工序';
+                        $.toptip(msg, "warning");
+                        currSelf.SetOperateRecord(msg, false);
+                    } else if (Number(currSelf.Hgs) <= 0 && Number(currSelf.Nhgs) <= 0) {
+                        msg = '合格数量或不良数量不能为空或不小于等于零';
+                        $.toptip(msg, "warning");
+                        currSelf.SetOperateRecord(msg, false);
+                    } else {
+                        if (((Number(currSelf.Hgs) + Number(currSelf.Nhgs) + Number(currSelf.FormData.PlanNum)) > Number(currSelf.FormData.TaskSum))) {
+                            msg = '合格数量+不良数量+已报数量大于实际计划数量';
+                            $.toptip(msg, "warning");
+                            currSelf.SetOperateRecord(msg, false);
+                        }
+                        $.confirm("确定要报工吗？", "操作提示", function () {
+                            var jsonStr = JSON.stringify({
+                                "BGSJ_BGLX": currSelf.FormData.SubType,
+                                "BGSJ_CPMC": currSelf.FormData.InvName,
+                                "BGSJ_GWMC": currSelf.FormData.InvStd,
+                                "BGSJ_GXMC": currSelf.CurrSelectGx.InvProcessItem,
+                                "BGSJ_SL": Number(currSelf.Hgs),
+                                "BGSJ_BLSL": currSelf.Nhgs,
+                                "BGSJ_CPBH": currSelf.FormData.InvCode,
+                                "BGSJ_CXBM": currSelf.FormData.BgsjCxbm,
+                                "BGSJ_SCRWID": currSelf.FormData.ScrwID,
+                                "BGSJ_GXBH": currSelf.CurrSelectGx.GylxgsGxnum,
+                                "BGSJ_GWBH": LocalUserInfo.GetUserInfo().StationID,
+                            });
+                            //不良项子表数据
+                            var jsonStrDetail = [];
+                            for (var i in currSelf.DefectiveItemData) {
+                                var element = currSelf.DefectiveItemData[i];
+                                jsonStrDetail.push({
+                                    "BGSJZB_BLMC": element.ItemName,
+                                    "BGSJZB_BLBM": element.ItemID,
+                                    "BGSJZB_SL": element.Qty
+                                })
+                            }
+
+                            //报工记录保存对象
+                            var record = {    //splice方法是从数组最前面插入一条新信息
+                                SubTime: (new Date()).Format("hh:mm:sss"),
+                                InvStd: currSelf.FormData.InvStd,
+                                TaskCode: currSelf.FormData.TaskCode,
+                                InvName: currSelf.FormData.InvName,
+                                WordCode: currSelf.FormData.WordCode,
+                                InvProcessItem: currSelf.CurrSelectGx.InvProcessItem,
+                                Hgs: currSelf.Hgs,
+                                Nhgs: currSelf.Nhgs,
+                            };
+
+                            //批量保存数据接口
+                            $.showLoading();
+                            $.ajax({
+                                type: "post",
+                                async: false,
+                                cache: true,
+                                url: LocalConfig.SrvPath + "/jgmes/jgmesBgBatchAction!doJsonSave.action",
+                                data: {
+                                    "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                    "jsonStr": jsonStr,
+                                    "jsonStrDetail": JSON.stringify(jsonStrDetail),
+                                    "wordcode": currSelf.FormData.WordCode,
+                                },
+                                dataType: "json",
+                                success: function (result) {
+                                    var retData = ReturnData(result);
+                                    if (retData.IsSuccess) {
+                                        msg = "报工成功";
+                                        $.toptip(msg, "success");
+                                        currSelf.SetOperateRecord(msg, true);
+                                        //清空原有数据
+                                        currSelf.CurrSelectGx = { GxSerial: "" };
+                                        currSelf.DefectiveItemData = [];
+                                        currSelf.Hgs = "";
+                                        currSelf.Nhgs = "";
+                                        currSelf.FormData.PlanNum = "";
+                                        //报工完后添加一条报工记录
+                                        currSelf.PlanGather.splice(0, 0, record);
+                                    }
+                                    else {
+                                        msg = "报工失败，失败原因:" + retData.message;
+                                        currSelf.SetOperateRecord(msg, false);
+                                    }
+                                },
+                                error: function (xhr, status, errorThrow) {
+                                    console.error(status);
+                                    $.alert("批量保存数据失败！");
+                                },
+                                complete: function () {
+                                    $.hideLoading();
+                                }
+                            });
+                        });
+                    }
+                },
+                GetProcessesWork: function () {
+                    var currSelf = this;
+                    $.ajax({
+                        type: "post",
+                        async: "true",
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByScrwId.action",
+                        data: {
+                            "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                            "mac": LocalUserInfo.GetUserInfo().Mac,
+                            "scrwId": currSelf.ProcessesWorkID, //任务生产ID
+                        },
+                        dataType: "json",
+                        success: function (ret) {                  
+                            if (ret.IsSuccess) {
+                                var val = ret.Data;
+
+                                currSelf.FormData.TaskCode = val.SCRW_RWDH;
+                                currSelf.FormData.InvCode = val.SCRW_CPBH;
+                                currSelf.FormData.InvName = val.SCRW_NAME;
+                                currSelf.FormData.WordCode = val.SCRW_GDHM;
+                                currSelf.FormData.OrderSum = val.SCRW_DDSL;
+                                currSelf.FormData.TaskSum = val.SCRW_PCSL;
+                                currSelf.FormData.OverSum = val.SCRW_WCSL;
+                                currSelf.FormData.ScrwID = val.JGMES_PLAN_SCRW_ID;
+                                currSelf.InvProcess = [];
+                                $.showLoading();
+                                //根据产品获取工序列表接口
+                                $.ajax({
+                                    type: "post",
+                                    async: false,
+                                    cache: true,
+                                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getGXList.action",
+                                    data: {
+                                        "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                        "mac": LocalUserInfo.GetUserInfo().Mac,
+                                        "cpCode": currSelf.FormData.InvCode,
+                                    },
+                                    dataType: "json",
+                                    success: function (ret) {
+                                        var retData = ReturnData(ret);
+                                        if (retData.IsSuccess && retData.Data) {
+                                            for (var i in retData.Data) {
+                                                var element = retData.Data[i];
+                                                currSelf.InvProcess.push({
+                                                    InvProcessItem: element.GYLXGX_GXNAME,
+                                                    GxID: element.GYLXGX_ID,
+                                                    GylxgsGxnum: element.GYLXGX_GXNUM,  // 工序编号
+                                                    GxSerial: element.SY_ORDERINDEX,
+                                                    Pictures: element.GYLXGX_SOP,   //操作指导图片集合
+                                                })
+                                            }
+
+                                            currSelf.$nextTick(function () {     //$nextTick方法是进行获取数据后，对更新后的hmtl做操作
+                                                currSelf.clickAddBgColor(currSelf.ProcessesWorkindex);
+                                            });
+                                        } else if (!retData.Data) {
+                                            var showMsg = "未能找到选择产品的工序信息";
+                                            currSelf.SetOperateRecord(showMsg, false);
+                                            $.toptip(showMsg, "warning");
+                                        }
+                                    },
+                                    error: function (xhr, status, errorThrown) {
+                                        console.error(status);
+                                        $.alert("获取产品工序信息失败！");
+                                    },
+                                    complete: function () {
+                                        $.hideLoading();
+                                    }
+                                });
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            $.alert("任务单号请求失败!");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    })
+
+
+                },
+            }
+        })
+    </script>
+</body>
+
+</html>

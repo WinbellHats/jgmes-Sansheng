@@ -1,0 +1,121 @@
+/*header部分*/
+body{
+    background-color: #E6EFEE;
+}
+.header {
+    background-color: #231A15;
+    line-height: 50px;
+    font-size: 1.2em;
+    z-index: 100;
+    position: fixed;
+    width: 100%;
+    color: #FFFFFF;
+    top: 0px;
+}
+/*清除浮动*/
+.empty_div{
+    content: "";
+    height:60px;
+}
+#MainPage {
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow-y: auto;
+    background-color: #ffff;
+}
+
+
+/*列表部分*/
+.polling{
+    width:100%;
+}
+.client_name{
+    width:100%;
+    display: flex;
+    justify-content: space-between;
+}
+.client_name>span{
+    display: inline-block;
+    width:50%;
+}
+.client_name>span:last-child{
+    text-align: right;
+}
+/*任务信息弹窗部分*/
+.shade_show{
+    display: block;
+}
+.modal-dialog {
+    padding: 0px;
+}
+.modal-title {
+    text-align:center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+    font-weight: bold;
+}
+.modal-header {
+    height: 165px;
+    padding: 10px;
+}
+.modal-header .close {
+    margin-top: -4px;
+    font-size: 2em;
+}
+.modal-body {
+    padding: 0px;
+}
+.search_item,.shut_btn{
+    margin-bottom: 8px;
+    margin-top: 5px;
+}
+.search_item>input{
+    width: 77%;
+    line-height: 30px;
+    border-radius: 3px;
+    border:1px solid #CBCACB;
+}
+.shut_btn{
+    text-align:center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.div_group{
+    margin-bottom: 0px;
+}
+.radio_input{
+    margin: 0 auto;
+    width:50px;
+    line-height: 33px;
+    color:#FFFFFF;
+    border: none;
+    background-color: #4BA250;
+    border-radius: 5px;
+}
+.btn {
+    padding: 6px 25px;
+    font-size: 1em;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,247 @@
+/*header部分*/
+body{
+    background-color: #E6EFEE;
+}
+.header {
+    background-color: #231A15;
+    line-height: 50px;
+    font-size: 1.2em;
+    z-index: 100;
+    position: fixed;
+    width: 100%;
+    color: #FFFFFF;
+    top: 0px;
+}
+/*清除浮动*/
+.empty_div{
+    content: "";
+    height:60px;
+}
+#MainPage {
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow-y: auto;
+}
+
+
+/*******无级树形部分*********/
+.tree_form{
+    width:100%;
+    background-color: #FFFFFF;
+    padding: 5px 5px;
+}
+.menuTree{
+    width:100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.big_title{
+    width:100%;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+.big_title>span{
+    display: inline-block;
+}
+.big_title>span:nth-child(n+2){
+    margin-left: 30px;
+}
+/*#detail_list>div{*/
+    /*display: none;*/
+/*}*/
+/*.div_show{*/
+    /*display: block;*/
+/*}*/
+/*改变颜色*/
+.active_span{
+    color:#3BAEA3;
+}
+.all_detail{
+    border: 1px solid #D5D5D5;
+    border-radius: 5px;
+    padding: 5px 8px;
+    margin-top: 15px;
+}
+.detail_list,.detail_item{
+    margin-top: 5px;
+}
+.title_div:nth-child(n+2){
+    margin-top: 50px;
+}
+.radio_div{
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #D5D5D5;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.radio_div>div{
+    border-bottom: 1px solid #D5D5D5;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.p_checkout>p:first-child>span:first-child,.p_checkout2>p:first-child>span:first-child{
+    display: inline-block;
+    width:55%;
+}
+.p_checkout>p:first-child>span:last-child,.p_checkout2>p:first-child>span:last-child{
+   margin-left: 10px;
+}
+.radio_div>div>span:first-child{
+    display: inline-block;
+    width:55%;
+}
+.radio_div>div>span:last-child{
+    margin-left: 10px;
+}
+.p_value>span>input{
+    width:40px;
+    border-bottom: 1px solid #000000;
+    border-right: none;
+    border-left: none;
+    border-top: none;
+    outline-style: none;
+}
+.p_checkout>p,.p_checkout2>p{
+    border-bottom: 1px solid #D5D5D5;
+    padding-bottom: 10px;
+}
+.p_checkout>p:nth-child(3)>span,.p_checkout>p:nth-child(4)>span{
+    display: inline-block;
+    width:60px;
+}
+.p_checkout>p:nth-child(3)>input,.p_checkout>p:nth-child(4)>input{
+    border:none;
+}
+.p_checkout2>p:nth-child(3)>span,.p_checkout2>p:nth-child(4)>span{
+    width:60px;
+    display: inline-block;
+}
+.p_checkout2>p:nth-child(3)>input,.p_checkout2>p:nth-child(4)>input{
+    border:none;
+}
+.p_checkout2>p:nth-child(3)>input{
+    width:38%;
+}
+button{
+    width: 48px;
+    line-height: 17px;
+    font-size: 0.8em;
+}
+button:last-child{
+    margin-left: 8px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*树形结构下拉框部分*/
+/*.menuTree{*/
+    /*width: 100%;*/
+    /*padding-top: 5px;*/
+    /*padding-left: 10px;*/
+    /*padding-right: 10px;*/
+    /*background-color: #ffff;*/
+/*}*/
+/*.menuTree div ul{*/
+    /*overflow:hidden;*/
+    /*display:none;*/
+    /*height:auto;*/
+/*}*/
+/*.menuTree span{*/
+    /*display:block;*/
+    /*height:25px;*/
+    /*line-height:25px;*/
+    /*padding-top: 10px;*/
+    /*padding-bottom: 35px;*/
+    /*cursor:pointer;*/
+    /*border-bottom:1px solid #CCC;*/
+/*}*/
+/*.menuTree a{*/
+    /*color:#333;*/
+    /*text-decoration:none;*/
+/*}*/
+/*.radio_div>p{*/
+    /*margin: 0px 0px 10px;*/
+    /*padding-bottom: 8px;*/
+    /*border-bottom: 1px solid #CBCACB;*/
+/*}*/
+/*!*.checkout{*!*/
+/*!*margin-left: 20px;*!*/
+/*!*}*!*/
+/*.btn_box{*/
+    /*width: 75px;*/
+    /*line-height: 35px;*/
+    /*border: none;*/
+    /*border-radius: 3px;*/
+    /*background-color: #4EA057;*/
+    /*color: #ffff;*/
+/*}*/
+
+
+/*!*合格按钮与不合格按钮*!*/
+/*.qualified_disqualification{*/
+    /*padding-top: 10px;*/
+    /*padding-bottom: 10px;*/
+/*}*/
+/*.qualified_disqualification,.judge_btn{*/
+    /*width:100%;*/
+    /*text-align: -webkit-center;*/
+    /*text-align: -moz-center;*/
+    /*text-align: center;*/
+/*}*/
+/*.judge_btn>button{*/
+    /*width:80px;*/
+    /*line-height: 38px;*/
+    /*border:none;*/
+    /*color: #FFFFFF;*/
+    /*font-size: 1.2em;*/
+    /*border-radius: 3px;*/
+/*}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

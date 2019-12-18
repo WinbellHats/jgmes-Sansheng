@@ -1,0 +1,170 @@
+/*header部分*/
+body{
+    background-color: #E6EFEE;
+}
+.header {
+    background-color: #231A15;
+    line-height: 50px;
+    font-size: 1.2em;
+    z-index: 100;
+    position: fixed;
+    width: 100%;
+    color: #FFFFFF;
+    top: 0px;
+}
+/*清除浮动*/
+.empty_div{
+    content: "";
+    height:60px;
+}
+#MainPage {
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow-y: auto;
+}
+
+
+/*下拉框部分*/
+.vessel,.vessel_top{
+    width:100%;
+}
+.list-group-item-heading{
+    display: inline-block;
+    width:75px;
+}
+.list-group-item{
+    display: flex;
+    justify-content: space-between;
+}
+.list-group-item>div{
+    width:100%;
+}
+.form-control {
+    display: inline-block;
+    width:70%;
+}
+.div_input1{
+    border:1px solid #CBCACB !important;
+    border-radius: 3px;
+}
+.div_input{
+    width: 70%;
+    line-height: 32px;
+    border:none;
+    outline-style: none;
+}
+.popup_input {
+    width: 53%;
+    position: relative;
+    line-height: 32px;
+    border: none;
+    outline-style: none;
+}
+.div_span{
+    width:70%;
+    line-height: 32px;
+    border:none;
+    outline-style: none;
+    background-color: #FFFFFF;
+}
+.i_img{
+    position: absolute;
+    top:15px;
+    right: 26px;
+}
+
+/*任务信息弹窗部分*/
+.shade_show{
+    display: block;
+}
+.modal-dialog {
+    padding: 0px;
+}
+.modal-title {
+    text-align:center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+    font-weight: bold;
+}
+.modal-header {
+    height: 165px;
+    padding: 10px;
+}
+.modal-header .close {
+    margin-top: -4px;
+    font-size: 2em;
+}
+.modal-body {
+     padding: 0px;
+}
+.search_item,.shut_btn{
+    margin-bottom: 8px;
+    margin-top: 5px;
+}
+.search_item>input{
+    width: 77%;
+    line-height: 30px;
+    border-radius: 3px;
+    border:1px solid #CBCACB;
+}
+.shut_btn{
+    text-align:center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.div_group{
+     margin-bottom: 0px;
+}
+.radio_input{
+    margin: 0 auto;
+    width:50px;
+    line-height: 33px;
+    color:#FFFFFF;
+    border: none;
+    background-color: #4BA250;
+    border-radius: 5px;
+}
+.btn {
+    padding: 6px 25px;
+    font-size: 1em;
+}
+
+/*********图片上传部分*********/
+.weui-uploader__input-box {
+    width: 50px;
+    height: 50px;
+}
+.weui-cells {
+     margin-top: 0em;
+}
+.weui-cell {
+    padding: 0px 0px;
+}
+.weui-uploader__file {
+    width: 50px;
+    height: 50px;
+}
+
+/*保存按钮部分*/
+.save_btn{
+    text-align: center;
+    padding-bottom: 20px;
+}
+.save_btn>button{
+    background-color: rgb(78, 160, 87);
+    border: none;
+    color: #FFFF;
+    width: 60px;
+    line-height: 35px;
+    border-radius: 3px;
+}
+
+
+
+
+
+
+
+
+
+

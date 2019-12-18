@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/CheckProcess.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <title>工序报工</title>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <header class="header">
+        <div class="empty"></div>
+        <div class="header_title">
+            <a href="javascript:;">工序报工</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header> -->
+    <div id="MainPage" class="MainPage">
+        <div class="container">
+            <div  class="row visible-on divbody" style="background-color:#fff">
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 processbtn" style="text-align:center;vertical-align: middle;">
+                    <button class="btn btn-success" v-if="GXIndex>0" @click="SwitchUpProcess()">上工序</button>
+                </div>
+                <div class="col-xs-8 col-sm-8col-md-8 col-lg-8 proreport" style="text-align:center;font-weight: bold;white-space: nowrap;">
+                        <span>{ </span>
+                        <span>{{FormData.GXMC}}</span>
+                        <span> }</span>
+                        <span>报工</span>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 processbtn" style="text-align:center;vertical-align: middle;">
+                    <button class="btn btn-success" v-if="GXIndex!=ProcessFlowList.length-1" @click="SwitchDownProcess()">下工序</button>
+                </div>
+            </div>
+            <div  class="row visible-on divbody" style="background-color:#fff;">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 sncode" style="text-align:center;font-weight: bold;">
+                        当前SN码：{{FormData.BarCode}}
+                </div>          
+            </div>
+            <div  class="row visible-on content" style="background-color:#fff;">
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 sncode">
+                    <strong> 任务单号</strong>{{FormData.TaskCode}}
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 sncode">
+                    <strong>订单号</strong>{{FormData.OrderCode}}
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 sncode">
+                    <strong> 产品编码</strong>{{FormData.ProductCode}}
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 sncode">
+                    <strong> 产品名称</strong>{{FormData.ProductName}}
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 sncode">
+                    <strong> 工序序号</strong>{{FormData.GXSX}}
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 sncode">
+                    <strong> 工序名称</strong>{{FormData.GXMC}}
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 sncode">
+                    <strong> 开工时间</strong>{{FormData.StartTime}}
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 sncode">
+                    <strong> 完工时间</strong>{{FormData.EndTime}}
+                </div>
+                
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 sncode snno">
+                    <strong> 生产员</strong>
+                    <label> {{FormData.Producer}}</label>
+                   
+                </div>
+                
+
+                
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 sncode snno">
+                    <strong> 生产状态</strong>
+                    <label v-if="FormData.TaskStatusCode=='RWZT01'">待生产</label>
+                    <label v-if="FormData.TaskStatusCode=='RWZT02'">生产中</label>
+                    <label v-if="FormData.TaskStatusCode=='RWZT05'">待确认</label>
+                    <label v-if="FormData.TaskStatusCode=='RWZT03'">完成生产</label>
+                    <label v-if="FormData.TaskStatusCode=='RWZT04'">暂停</label>
+                </div>
+                
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 sncode">
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
+                        <button class=" btn btn-success" @click="StartProcess" v-if="FormData.TaskStatusCode=='RWZT01'">开始生产</button>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
+                        <button class="btn btn-success" v-if="FormData.TaskStatusCode=='RWZT02'" @click="FinishProcess">确认完成</button>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 sncode">
+                    <strong> 确认人</strong>{{FormData.Confirmor}}
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 sncode">
+                    <strong> 确认时间</strong>{{FormData.ConfirmTime}}
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 sncode">
+                    <strong> 确认说明</strong>{{FormData.Confirmation}}
+                </div>
+            </div>
+        </div>
+        <!-- <table class="table">
+            <tr>
+                <td style="text-align:center;vertical-align: middle;"><button class="btn btn-success" v-if="GXIndex>0"
+                        @click="SwitchUpProcess()">上工序</button></td>
+                <td colspan="2" class="proreport" style="text-align:center;font-weight: bold;white-space: nowrap;">
+                    <span>{ </span><span>{{FormData.GXMC}}</span> <span> }</span>
+                    &nbsp; <span>报工</span> </td>
+                <td style="text-align:center;vertical-align: middle;"><button class="btn btn-success"
+                        v-if="GXIndex!=ProcessFlowList.length-1" @click="SwitchDownProcess()">下工序</button></td>
+            </tr>
+
+            <tr>
+                <td colspan="4" style="text-align:center;font-weight: bold;">当前SN码：{{FormData.BarCode}}</td>
+            </tr>
+            <tr>
+                <td style="text-align:right;border-right:1px solid #ddd;white-space: nowrap;"><strong> 任务单号</strong></td>
+                <td style="text-align:center;border-right:1px solid #ddd;">{{FormData.TaskCode}}</td>
+                <td style="text-align:right;border-right:1px solid #ddd;"><strong>订单号</strong></td>
+                <td style="text-align:center;">{{FormData.OrderCode}}</td>
+            </tr>
+            <tr>
+                <td style="text-align:right;border-right:1px solid #ddd;"><strong>产品编码</strong></td>
+                <td style="text-align:center;border-right:1px solid #ddd;">{{FormData.ProductCode}}</td>
+                <td style="text-align:right;border-right:1px solid #ddd;white-space: nowrap;"><strong>产品名称</strong></td>
+                <td style="text-align:center;">{{FormData.ProductName}}</td>
+            </tr>
+            <tr>
+                <td style="text-align:right;border-right:1px solid #ddd;"><strong>工序序号</strong></td>
+                <td style="text-align:center;border-right:1px solid #ddd;">{{FormData.GXSX}}</td>
+                <td style="text-align:right;border-right:1px solid #ddd;"><strong>工序名称</strong></td>
+                <td style="text-align:center;">{{FormData.GXMC}}</td>
+            </tr>
+            <tr>
+                <td style="text-align:right;border-right:1px solid #ddd;"><strong>开工时间</strong></td>
+                <td style="text-align:center;border-right:1px solid #ddd;">{{FormData.StartTime}}</td>
+                <td style="text-align:right;border-right:1px solid #ddd;"><strong>完工时间</strong></td>
+                <td style="text-align:center;">{{FormData.EndTime}}</td>
+            </tr>
+            <tr>
+                <td style="text-align:right;border-right:1px solid #ddd;"><strong>生产员</strong></td>
+                <td style="text-align:center;border-right:1px solid #ddd;">{{FormData.Producer}}</td>
+                <td style="text-align:right;border-right:1px solid #ddd;"><strong>生产状态</strong></td>
+                <td style="text-align:center;"><label v-if="FormData.TaskStatusCode=='RWZT01'">待生产</label>
+                    <label v-if="FormData.TaskStatusCode=='RWZT02'">生产中</label>
+                    <label v-if="FormData.TaskStatusCode=='RWZT05'">待确认</label>
+                    <label v-if="FormData.TaskStatusCode=='RWZT03'">完成生产</label>
+                    <label v-if="FormData.TaskStatusCode=='RWZT04'">暂停</label></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align:center;"><button class="btn btn-success" @click="StartProcess"
+                        v-if="FormData.TaskStatusCode=='RWZT01'">开始生产</button></td>
+                <td colspan="2" style="text-align:center;"><button class="btn btn-success"
+                        v-if="FormData.TaskStatusCode=='RWZT02'" @click="FinishProcess">确认完成</button></td>
+            </tr>
+            <tr>
+                <td style="text-align:right;border-right:1px solid #ddd;"><strong>确认人</strong></td>
+                <td style="text-align:center;border-right:1px solid #ddd;">{{FormData.Confirmor}}</td>
+                <td style="text-align:right;border-right:1px solid #ddd;"><strong>确认时间</strong></td>
+                <td style="text-align:center;">{{FormData.ConfirmTime}}</td>
+            </tr>
+            <tr>
+                <td style="text-align:right;border-right:1px solid #ddd;"><strong>确认说明</strong></td>
+                <td colspan="3">{{FormData.Confirmation}}</td>
+            </tr>
+        </table> -->
+    </div>
+</body>
+
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+<script src="/JG/Content/Utils.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script type="text/javascript">
+    //body赋值滚动条
+    window.onload = function () {
+        var BodyWidth = $(window).width();
+        var BodyHeight = $(window).height();
+        var MaxWidth = (BodyWidth/2)-18;
+        $(".proreport>span:nth-child(2)").css({
+            "max-width":MaxWidth
+        })
+        
+    }
+</script>
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el: "#MainPage",
+        data: {
+            BarCode: "",
+            GXIndex: 0, //工序下标
+            Paramter: {
+                TaskID: $.getUrlParam("TaskID"),
+                BarCode: $.getUrlParam("BarCode"),
+                GXBH: $.getUrlParam("GXBH")
+            },
+            FormData: {
+                TaskID: "",
+                TaskCode: "",
+                OrderCode: "",
+                BarCode: "",
+                GXSX: "",
+                GXBH: "",
+                GXMC: "",
+                ProductCode: "",
+                ProductName: "",
+                ProductStd: "",
+                StartTime: "",
+                EndTime: "",
+                Producer: LocalUserInfo.GetUserInfo().UserName, //生产员
+                TaskStatusCode: "RWZT01", //任务状态
+                Confirmor: "", //确认人
+                ConfirmTime: "", //确认时间
+                Confirmation: "", //确认说明
+            },
+            ProcessFlowList: [], //工艺流程
+        },
+        mounted: function () {
+            var currSelf = this;
+            currSelf.FormData.BarCode = currSelf.Paramter.BarCode;
+            $.showLoading();
+            $.ajax({
+                type: "post",
+                url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByScrwId.action",
+                data: {
+                    mac: LocalUserInfo.GetUserInfo().Mac,
+                    userCode: LocalUserInfo.GetUserInfo().UserCode,
+                    scrwId: currSelf.Paramter.TaskID,
+                },
+                datatype: "json",
+                success: function (ret) {
+                    var data = JSON.parse(ret);
+                    var retData = ReturnData(data);
+                    if (retData.IsSuccess) {
+                        currSelf.FormData.ProductCode = retData.Data.SCRW_CPBH;
+                        currSelf.FormData.ProductName = retData.Data.SCRW_NAME;
+                        currSelf.FormData.ProductStd = retData.Data.SCRW_CPGG;
+                        currSelf.FormData.TaskCode = retData.Data.SCRW_RWDH;
+                        currSelf.FormData.OrderCode = retData.Data.SCRW_DDHM;
+                        currSelf.FormData.TaskID = retData.Data.JGMES_PLAN_SCRW_ID;
+                        $.ajax({
+                            type: "post",
+                            async: true,
+                            cache: true,
+                            url: LocalConfig.SrvPath + "/jgmes/commonAction!getGXList.action",
+                            data: {
+                                "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                "mac": LocalUserInfo.GetUserInfo().Mac,
+                                "cpCode": currSelf.FormData.ProductCode,
+                            },
+                            dataType: "json",
+                            success: function (ret) {
+                                var retData = ReturnData(ret);
+                                if (retData.IsSuccess && retData.Data) {
+                                    currSelf.ProcessFlowList = retData.Data;
+                                    if (currSelf.Paramter.GXBH) {
+                                        for (var i in currSelf.ProcessFlowList) {
+                                            var item = currSelf.ProcessFlowList[i];
+                                            if (item.GYLXGX_GXNUM == currSelf.Paramter.GXBH) {
+                                                currSelf.GXIndex = i;
+                                                currItem = item;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    currSelf.SwitchProcess(currSelf.Paramter.GXBH);
+                                } else if (!retData.Data) {
+                                    var showMsg = "未能找到选择产品的工序信息";
+                                    currSelf.SetOperateRecord(showMsg, false);
+                                    $.toptip(showMsg, "warning");
+                                }
+                            },
+                            error: function (xhr, status, errorThrown) {
+                                console.error(status);
+                                $.alert("获取产品工序信息失败！");
+                            }
+                        });
+                    } else
+                        $.toptip("未能找到相关生产任务单信息", "warning");
+                },
+                error: function (xhr, status, error) {
+                    console.error(status);
+                    $.alert("请求失败!");
+                }, complete: function () {
+                    $.hideLoading();
+                }
+            });
+        },
+        methods: {
+            SwitchUpProcess: function () {
+                var currSelf = this;
+                currSelf.GXIndex--;
+                currSelf.SwitchProcess();
+            },
+            SwitchDownProcess: function () {
+                var currSelf = this;
+                currSelf.GXIndex++;
+                currSelf.SwitchProcess();
+            },
+            SwitchProcess: function () {
+                var currSelf = this;
+                var currItem = currSelf.ProcessFlowList[currSelf.GXIndex];
+                currSelf.FormData.GXSX = currItem.SY_ORDERINDEX;
+                currSelf.FormData.GXBH = currItem.GYLXGX_GXNUM;
+                currSelf.FormData.GXMC = currItem.GYLXGX_GXNAME;
+                $.showLoading();
+
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesScrwAction!getScjpByGX.action",
+                    data: {
+                        "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                        "mac": LocalUserInfo.GetUserInfo().Mac,
+                        "prodLineCode": LocalUserInfo.GetUserInfo().ProductionLineCode,
+                        "SCRWID": currSelf.FormData.TaskID,
+                        "barCode": currSelf.FormData.BarCode,
+                        "gxbm": currSelf.FormData.GXBH
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        if (retData.IsSuccess && retData.Data) {
+                            currSelf.FormData.TaskStatusCode = retData.Data.SCJP_RWZT_CODE;
+                            currSelf.FormData.StartTime = retData.Data.SCJP_KSSJ;
+                            currSelf.FormData.EndTime = retData.Data.SCJP_JSSJ;
+                            currSelf.FormData.Producer = retData.Data.SCJP_SCY;
+                            currSelf.FormData.Confirmor = retData.Data.SCJP_QRR;
+                            currSelf.FormData.ConfirmTime = retData.Data.SCJP_QRSJ;
+                            currSelf.FormData.Confirmation = retData.Data.SCJP_QRSM;
+                        } else if (!retData.Data) {
+                            currSelf.FormData.TaskStatusCode = "RWZT01";
+                            currSelf.FormData.StartTime = "";
+                            currSelf.FormData.EndTime = "";
+                            currSelf.FormData.Producer = LocalUserInfo.GetUserInfo().UserName;
+                            currSelf.FormData.Confirmor = "";
+                            currSelf.FormData.ConfirmTime = "";
+                            currSelf.FormData.Confirmation = "";
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(status);
+                        $.alert("请求失败!");
+                    }, complete: function () {
+                        $.hideLoading();
+                    }
+                });
+            },
+            StartProcess: function () {
+                var currSelf = this;
+                bootbox.confirm({
+                    message: "是否要对工序【" + currSelf.FormData.GXMC + "】开始生产么？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success',
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            $.showLoading();
+
+                            $.ajax({
+                                type: "post",
+                                url: LocalConfig.SrvPath + "/jgmes/jgmesScrwAction!doSaveScjbStart.action",
+                                data: {
+                                    "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                    "mac": LocalUserInfo.GetUserInfo().Mac,
+                                    "prodLineCode": LocalUserInfo.GetUserInfo().ProductionLineCode,
+                                    "BarCode": currSelf.FormData.BarCode,
+                                    "SCRWID": currSelf.FormData.TaskID,
+                                    "SCRWNO": currSelf.FormData.TaskCode,
+                                    "gxbh": currSelf.FormData.GXBH,
+                                    "gxmc": currSelf.FormData.GXMC,
+                                    "cpbm": currSelf.FormData.ProductCode,
+                                    "scy": currSelf.FormData.Producer,
+                                },
+                                dataType: "json",
+                                success: function (ret) {
+                                    var retData = ReturnData(ret);
+                                    if (retData.IsSuccess)
+                                        currSelf.SwitchProcess();
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error(status);
+                                    $.alert("请求失败!");
+                                }, complete: function () {
+                                    $.hideLoading();
+                                }
+                            });
+                        }
+                    }
+                });
+            },
+            FinishProcess: function () {
+                var currSelf = this;
+                bootbox.confirm({
+                    message: "是否要对工序【" + currSelf.FormData.GXMC + "】完成生产么？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success',
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            $.showLoading();
+                            $.ajax({
+                                type: "post",
+                                url: LocalConfig.SrvPath + "/jgmes/jgmesScrwAction!doSaveScjbEnd.action",
+                                data: {
+                                    "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                    "mac": LocalUserInfo.GetUserInfo().Mac,
+                                    "prodLineCode": LocalUserInfo.GetUserInfo().ProductionLineCode,
+                                    "BarCode": currSelf.FormData.BarCode,
+                                    "SCRWID": currSelf.FormData.TaskID,
+                                    "SCRWNO": currSelf.FormData.TaskCode,
+                                    "gxbm": currSelf.FormData.GXBH,
+                                    // "gxmc": currSelf.FormData.GXMC,
+                                    // "cpbm": currSelf.FormData.ProductCode,
+                                    "scy": LocalUserInfo.GetUserInfo().UserName
+                                },
+                                dataType: "json",
+                                success: function (ret) {
+                                    var retData = ReturnData(ret);
+                                    if (retData.IsSuccess)
+                                        currSelf.SwitchProcess();
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error(status);
+                                    $.alert("请求失败!");
+                                }, complete: function () {
+                                    $.hideLoading();
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    })
+</script>
+
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/css/Global.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/JG/Content/css/AntennaeTaskList.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/bootstrap.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+    <script src="/JG/Content/Utils.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+
+    <title>天线</title>
+    <style>
+         [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="empty"></div>
+        <div class="header_title">
+            <a href="javascript:;">天线-生产任务单</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+    <div id="MainPage" class="MainPage" v-cloak>            
+        <table class="table table1">
+        <caption>任务单信息</caption>
+            <thead>
+                <tr>
+                    <th>计划日期</th>
+                    <th>工单号</th>
+                    <th>产品名称</th>
+                    <th>订单数量</th>
+                    <th>计划数量</th>
+                    <th>完成数量</th>
+                    <th>生产状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody class="tbody1" >
+                <tr v-for="item in productTaskList">
+                    <td>{{item.date}}</td>
+                    <td>{{item.workcode}}</td>
+                    <td>{{item.productname}}</td>
+                    <td>{{item.ordersum}}</td>
+                    <td>{{item.plansum}}</td>
+                    <td>{{item.finishsum}}</td>
+                    <td>{{item.productstatu}}</td>
+                    
+                    <td><button class="btn btn-success " @click="ChangeStatus(item)">进入开工</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script type="text/javascript">
+        //body赋值滚动条
+        window.onload = function () {
+            var BodyWidth = $(window).width();
+            var BodyHeight = $(window).height();
+        }
+    </script>
+    <script type="text/javascript">
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                productTaskList:[
+                    {
+                        "date":"2019-1-1",
+                        "workcode":"17488489452445",
+                        "productname":"产品1",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"待生产",
+                    },
+                    {
+                        "date":"2019-2-1",
+                        "workcode":"1738448489452445",
+                        "productname":"产品2",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"生产中",
+                    },
+                    {
+                        "date":"2019-3-1",
+                        "workcode":"1748974578452445",
+                        "productname":"产品3",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"暂停生产",
+                    },
+                    {
+                        "date":"2019-4-1",
+                        "workcode":"1748945257567445",
+                        "productname":"产品4",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"待生产",
+                    },
+                    {
+                        "date":"2019-5-1",
+                        "workcode":"174867489452445",
+                        "productname":"产品5",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"待生产",
+                    },
+                    {
+                        "date":"2019-6-1",
+                        "workcode":"17548489452445",
+                        "productname":"产品6",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"暂停生产",
+                    },
+                    {
+                        "date":"2019-1-1",
+                        "workcode":"17488489452445",
+                        "productname":"产品1",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"待生产",
+                    },
+                    {
+                        "date":"2019-2-1",
+                        "workcode":"1738448489452445",
+                        "productname":"产品2",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"生产中",
+                    },
+                    {
+                        "date":"2019-3-1",
+                        "workcode":"1748974578452445",
+                        "productname":"产品3",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"暂停生产",
+                    },
+                    {
+                        "date":"2019-4-1",
+                        "workcode":"1748945257567445",
+                        "productname":"产品4",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"待生产",
+                    },
+                    {
+                        "date":"2019-5-1",
+                        "workcode":"1748674895444645645376534747452445",
+                        "productname":"产品5",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"待生产",
+                    },
+                    {
+                        "date":"2019-6-1",
+                        "workcode":"17548489452445",
+                        "productname":"产品6",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"暂停生产",
+                    },
+                    {
+                        "date":"2019-1-1",
+                        "workcode":"17488485436453634564569452445",
+                        "productname":"产品1",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"待生产",
+                    },
+                    {
+                        "date":"2019-2-1",
+                        "workcode":"1738448489452445",
+                        "productname":"产品2",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"生产中",
+                    },
+                    {
+                        "date":"2019-3-1",
+                        "workcode":"17489745463364333333333333578452445",
+                        "productname":"产品3",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"暂停生产",
+                    },
+                    {
+                        "date":"2019-4-1",
+                        "workcode":"1748945257567445",
+                        "productname":"产品4",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"待生产",
+                    },
+                    {
+                        "date":"2019-5-1",
+                        "workcode":"174867489452445",
+                        "productname":"产品5",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"待生产",
+                    },
+                    {
+                        "date":"2019-6-1",
+                        "workcode":"17548489452445",
+                        "productname":"产品6",
+                        "ordersum":"100",
+                        "plansum":"50",
+                        "finishsum":"10",
+                        "productstatu":"暂停生产",
+                    },
+                ],
+                wordproductList:[
+                    {
+                        
+                        "SNcode":"xxxxx1",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"已完工",
+                    },
+                    {
+                        "SNcode":"xxxxx2",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"待生产",
+                    },
+                    {
+                        "SNcode":"xxxxx3",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"已完工",
+                    },
+                    {
+                        "SNcode":"xxxxx4",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"已完工",
+                    },
+                    {
+                        "SNcode":"xxxxx5",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"待生产",
+                    },
+                    {
+                        "SNcode":"xxxxx6",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"生产中",
+                    },
+                    {
+                        "SNcode":"xxxxx7",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"生产中",
+                    },
+                    {
+                        "SNcode":"xxxxx8",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"生产中",
+                    },
+                    {
+                        "SNcode":"xxxxx9",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"生产中",
+                    },
+                    {
+                        "SNcode":"xxxxx10",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"生产中",
+                    },
+                    {
+                        "SNcode":"xxxxx11",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"待生产",
+                    },
+                ],
+                List:[
+                    {
+                        "SNcode":"xxxxx1",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"已完工",
+                    },
+                    {
+                        "SNcode":"xxxxx2",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"待确认",
+                    },
+                    {
+                        "SNcode":"xxxxx3",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"已完工",
+                    },
+                    {
+                        "SNcode":"xxxxx4",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"已完工",
+                    },
+                    {
+                        "SNcode":"xxxxx5",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"待确认",
+                    },
+                    {
+                        "SNcode":"xxxxx6",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"待确认",
+                    },
+                    {
+                        "SNcode":"xxxxx7",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"待确认",
+                    },
+                    {
+                        "SNcode":"xxxxx8",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"待确认",
+                    },
+                    {
+                        "SNcode":"xxxxx9",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"待确认",
+                    },
+                    {
+                        "SNcode":"xxxxx10",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"待确认",
+                    },
+                    {
+                        "SNcode":"xxxxx11",
+                        "process":"检测工序",
+                        "producer":"张xx",
+                        "productstatu":"待确认",
+                    },
+                ],
+                TaskShow:false,
+                SNTaskShow:false,
+            },
+            methods: {
+                GetTaskList:function(){
+                    var currSelf = this;
+                    currSelf.TaskShow = true;
+
+                },
+                ChangeStatus:function(item){
+                    var currself = this;
+                    bootbox.confirm({
+                        message: "是否进入开工", buttons: {
+                            confirm: {
+                                label: '是',
+                                className: 'btn-success',
+                                
+                            },
+                            cancel: {
+                                label: '否',
+                                className: 'btn-danger'
+                            }
+                            
+                        }, callback: function (result) {
+                            if (result) {
+                                currself.TaskShow=false;
+                                window.location.href = "/JG/SingleStation/AntennaeTaskDetail.html";
+                               
+                            }
+                        }
+                    });
+                },
+                GetSNTaskList:function(){
+                    var currSelf = this;
+                    currSelf.SNTaskShow = true;
+                },             
+            }
+            
+        })
+    </script>
+</html>

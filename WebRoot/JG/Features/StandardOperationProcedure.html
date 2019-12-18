@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>作业SOP-精工云MES系统移动端</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/StandardOperationProcedure.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+
+    <link type="text/css" href="/JG/Content/css/style.css" rel="stylesheet" />
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        .weui-toptips {
+            z-index: 1051;
+            font-size: 2.8em !important;
+            height: 90px !important;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            line-height: 50px;
+            border-radius: 0.1em;
+            width: 75%;
+            margin: auto 12.5%
+        }
+    </style>
+</head>
+
+<body>
+    <!--header部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="header_title">
+            <a href="javascript:;">作业SOP</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+    <div id="MainPage" class="MainPage" v-cloak>
+        <div class="nav">
+            <div class="weui-flex ">
+                <div class="weui-flex__item ">
+                    任务单号：
+                    <span>{{Products.TaskCode}}</span>
+                </div>
+
+                <div class="weui-flex__item" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                    客户编码：
+                    <span>{{Products.CustomerCode}}</span>
+                </div>
+                <div class="weui-flex__item">
+                    客户名称：
+                    <span>{{Products.CustomerName}}</span>
+                </div>
+            </div>
+            <div class="weui-flex ">
+                <div class="weui-flex__item ">
+                    产品编号：
+                    <span>{{Products.ProductCode}}</span>
+                </div>
+                <div class="weui-flex__item" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                    产品名称：
+                    <span>{{Products.ProductName}}</span>
+                </div>
+                <div class="weui-flex__item" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                    规格型号：
+                    <span>{{Products.ProductSpe}}</span>
+                </div>
+
+            </div>
+            <div class="weui-flex">
+                <div class="weui-flex__item ">
+                    工序编号：
+                    <span>{{CurrGongXun.GXGL_GXNUM}}</span>
+                </div>
+                <div class="weui-flex__item" style="    white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                    工序名称：
+                    <span>{{CurrGongXun.GXGL_GXNAME}}</span>
+                </div>
+                <div class="weui-flex__item">
+                    工序顺序号：
+                    <span>{{CurrGongXun.GXGL_GXSXH}}</span>
+                </div>
+
+            </div>
+            <!-- <div class="weui-flex">
+                <div class="weui-flex__item ">
+                    工序编号：
+                    <span>{{CurrGongXun.GYLXGX_GXNUM}}</span>
+                </div>
+                <div class="weui-flex__item" style="    white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                    工序名称：
+                    <span>{{CurrGongXun.GYLXGX_GXNAME}}</span>
+                </div>
+                <div class="weui-flex__item">
+                    工序顺序号：
+                    <span>{{CurrGongXun.SY_ORDERINDEX}}</span>
+                </div>
+                <div class="weui-flex__item">
+                    客户名称：
+                    <span>{{Products.CustomerName}}</span>
+                </div>
+            </div> -->
+        </div>
+        <div class="content">
+
+            <div class="img_gallery">
+                <div class="point">
+                    <a v-for="(item,index) in CurrGongXun.Pictures" href="javascript:;"></a>
+                </div>
+                <div class="main_img">
+                    <ul>
+                        <li v-for="(item,index) in CurrGongXun.Pictures" :key="index"><img :src="item.path" alt=""></li>
+                    </ul>
+                    <a href="javascript:;" id="btn_prev"></a>
+                    <a href="javascript:;" id="btn_next"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <div class="weui-flex ">
+                <div class="weui-flex__item " v-if="showPre">
+                    <span class="process" v-on:click="OnProcess()">上一任务</span>
+                </div>
+
+                <div class="weui-flex__item " v-if="Products.Status!='RWZT02' && HasCurrentTask">
+                    <span class="process" v-on:click="GetinitData">当前任务</span>
+                </div>
+
+                <div class="weui-flex__item" v-if="showTail">
+                    <span class="process" v-on:click="UnderProcess()">下一任务</span>
+                </div>
+                <div class="weui-flex__item">
+                    <span class="process" id="FullScreen">全屏</span>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- 图片双击全屏 -->
+    <div class="dbImg">
+        <span class="timg"><img src="/JG/Content/images/timg.jpg" alt="关闭"></span>
+        <img id="bgImg" src="" alt="">
+    </div>
+    <script src="/JG/Content/jquery.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js"></script>
+    <script type="text/javascript" src="/JG/Content/jquery.event.drag.js"></script>
+    <script type="text/javascript" src="/JG/Content/jquery.touchSlider.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/swiper.min.js"></script>
+    <script src="/JG/Content/reconnecting-websocket.js"></script>
+    <script src="/JG/Content/reconnecting-websocket.min.js"></script>
+    <script type="text/javascript">
+
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                //获取生产任务详情的参数
+                Products: {                    //生产任务单集合
+                    ProductCode: "",              //产品编号
+                    ProductName: "",             //产品名称
+                    ProductSpe: "",              //产品规格
+                    //TaskNo: "",                   //任务单号
+                    CustomerCode: "",            //客户编码
+                    CustomerName: "",                //客户名称
+                    Status: '',
+                    TaskCode: ''
+                },
+                ProcessIndex: 0, //初始显示点击查看的链接数据
+                currentPage: "1",    //当前页码
+                total: "6",          //当前工序数
+                display: "1",        //页面要显示的条数
+                showTail: false,      //最后一页显示下工序按钮
+                showPre: false,      //初始隐藏上工序
+                ProcessList: [],       //工序集合
+                InvProcess: [],   //sop集合
+                ImgSOPs: [],
+                CurrGongXun: {},
+                TouchSlider: "",
+                WorkOrderData: [],   //任务单列表
+                RWIndex: 0,
+                showWord: false,
+                websocket: null,
+                HasCurrentTask: false,//是否显示当前任务
+
+            },
+            computed: {
+
+            },
+            mounted: function () {
+                var currSelf = this;
+                //获取
+                currSelf.GetinitData();
+                currSelf.initWebpack();
+            },
+            methods: {
+                initWebpack() {//初始化websocket
+                    //判断当前浏览器是否支持WebSocket
+                    var url = window.location.href;
+                    var arrUrl = url.split("/");
+                    var relUrl = arrUrl[2];//stop省略，截取从start开始到结尾的所有字符
+                    console.log(relUrl)
+                    if ('WebSocket' in window) {
+                        const wsuri = "ws://" + relUrl + "/sopwebsocket";
+                        this.websocket = new ReconnectingWebSocket(wsuri);//这里面的this都指向vue
+                        this.websocket.onopen = this.websocketopen;
+                        this.websocket.onmessage = this.websocketonmessage;
+                        this.websocket.onclose = this.websocketclose;
+                        this.websocket.onerror = this.websocketerror;
+                    }
+                    else {
+                        alert('当前浏览器 Not support websocket')
+                    }
+                },
+                websocketopen() {//打开
+                    console.log("WebSocket连接成功");
+                },
+                websocketonmessage(e) { //数据接收 
+                	
+                	var currSelf = this;
+                	if(e.data){
+                		currSelf.GetinitData();
+                	}
+                	
+                    /*var currSelf = this;
+                    var productinfos = [];
+                    productinfos = JSON.parse(e.data);
+                    console.log(productinfos)
+                    if (productinfos.Data) {
+                        for (var elemen in productinfos.Data.scrwInfo) {
+                            currSelf.Products.TaskCode = productinfos.Data.scrwInfo.SCRW_RWDH;
+                            currSelf.Products.ProductCode = productinfos.Data.scrwInfo.SCRW_CPBH;
+                            currSelf.Products.ProductName = productinfos.Data.scrwInfo.SCRW_NAME;
+                            currSelf.Products.ProductSpe = productinfos.Data.scrwInfo.SCRW_CPGG;
+                            currSelf.Products.CustomerCode = productinfos.Data.scrwInfo.SCRW_KHBM;
+                            currSelf.Products.CustomerName = productinfos.Data.scrwInfo.SCRW_KHMC;
+                            currSelf.Products.Status = productinfos.Data.scrwInfo.SCRW_RWZT_CODE;
+
+                            //获取当前用户当前产品的工序
+                            var data = GetCurrentProcess(productinfos.Data.scrwInfo.SCRW_CPBH);
+                            if (data.IsSuccess && data.Data) {
+                                currSelf.CurrGongXun = data.Data;
+
+                                var obj = data.Data;
+                                for (var key in obj) {
+                                    // currSelf.GetProductTask()
+                                    if (data.Data.GXGL_SOP) {
+                                        var imgSOPs = JSON.parse(data.Data.GXGL_SOP);
+                                        currSelf.CurrGongXun.Pictures = imgSOPs;
+                                    }
+                                    if (data.Data.GXGL_SOP) {
+                                        currSelf.$nextTick(function () {     //$nextTick方法是进行获取数据后，对更新后的hmtl做操作                          
+                                            $(".main_img").touchSlider({
+                                                flexible: true,
+                                                auto: false,
+                                                speed: 200,
+                                                btn_prev: $("#btn_prev"),
+                                                btn_next: $("#btn_next"),
+                                                paging: $(".point a"),
+                                                counter: function (e) {
+                                                    $(".point a").removeClass("on").eq(e.current - 1).addClass("on");//图片顺序点切换
+                                                    $(".img_font span").hide().eq(e.current - 1).show();//图片文字切换
+                                                }
+                                            });
+                                            var touchtime = new Date().getTime();
+                                            //双击显示
+                                            $(".main_img>ul>li").each(function (index) {
+                                                $(this).on("click", function () {
+                                                    if (new Date().getTime() - touchtime < 500) {
+                                                        //获取双击图片的路径
+                                                        var imgSrc = $(".main_img>ul>li").eq(index).children("img").attr("src");
+                                                        //赋值图片路径
+                                                        $(".dbImg").children("img").attr("src", imgSrc)
+                                                        $(".dbImg").show()
+                                                    } else {
+                                                        touchtime = new Date().getTime();
+                                                    }
+                                                })
+                                            })
+                                        });
+                                    }
+
+                                    return false;//返回false，不为空对象
+                                }
+                                //currSelf.GetProductTask()
+                                //$.toptip("当前任务单未绑工序信息", "success");
+                                return true;//返回true，为空对象
+                            }
+                            // else{
+                            //     currSelf.HasCurrentTask = false;
+                            // }
+                            currSelf.HasCurrentTask = true;
+                            return false;
+                        }
+                        currSelf.HasCurrentTask = false;
+                        return true;
+                    }*/
+                },
+                websocketclose() {  //关闭
+                    console.log("WebSocket关闭");
+                },
+                websocketerror() {  //失败
+                    console.log("WebSocket连接失败");
+                },
+                GetinitData: function () {
+                    var currSelf = this;
+                    $.ajax({
+                        type: "post",
+                        async: false,
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByCxCp.action",
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess && retData.Data) {
+                                
+                                currSelf.TaskID = retData.Data.JGMES_PLAN_SCRW_ID;
+                                currSelf.GetProductProcess();
+                                //获取当前用户当前产品的工序
+                                var data = GetCurrentProcess(retData.Data.SCRW_CPBH);
+                                if (data.IsSuccess && data.Data) {
+                                    currSelf.CurrGongXun = data.Data;
+
+                                    var obj = data.Data;
+                                    for (var key in obj) {
+                                        currSelf.GetProductTask()
+                                        if (data.Data.GXGL_SOP) {
+                                            var imgSOPs = JSON.parse(data.Data.GXGL_SOP);
+                                            currSelf.CurrGongXun.Pictures = imgSOPs;
+                                        }
+                                        if (data.Data.GXGL_SOP) {
+                                            currSelf.$nextTick(function () {     //$nextTick方法是进行获取数据后，对更新后的hmtl做操作                          
+                                                $(".main_img").touchSlider({
+                                                    flexible: true,
+                                                    auto: false,
+                                                    speed: 200,
+                                                    btn_prev: $("#btn_prev"),
+                                                    btn_next: $("#btn_next"),
+                                                    paging: $(".point a"),
+                                                    counter: function (e) {
+                                                        $(".point a").removeClass("on").eq(e.current - 1).addClass("on");//图片顺序点切换
+                                                        $(".img_font span").hide().eq(e.current - 1).show();//图片文字切换
+                                                    }
+                                                });
+                                                var touchtime = new Date().getTime();
+                                                //双击显示
+                                                $(".main_img>ul>li").each(function (index) {
+                                                    $(this).on("click", function () {
+                                                        if (new Date().getTime() - touchtime < 500) {
+                                                            //获取双击图片的路径
+                                                            var imgSrc = $(".main_img>ul>li").eq(index).children("img").attr("src");
+                                                            //赋值图片路径
+                                                            $(".dbImg").children("img").attr("src", imgSrc)
+                                                            $(".dbImg").show()
+                                                        } else {
+                                                            touchtime = new Date().getTime();
+                                                        }
+                                                    })
+                                                })
+                                            });
+                                        }
+
+                                        return false;//返回false，不为空对象
+                                    }
+                                    currSelf.GetProductTask()
+                                    $.toptip("当前任务单未绑工序信息", "success");
+                                    return true;//返回true，为空对象
+                                }
+                                // else{
+                                //     currSelf.HasCurrentTask = false;
+                                // }
+                                var obj = retData.Data;                               
+                                for (var key in obj) {                                   
+                                    currSelf.HasCurrentTask = true;
+                                    return false;//返回false，不为空对象
+                                }
+                                currSelf.HasCurrentTask = false;
+                                return true;//返回false，为空对象
+                            }
+                            else {
+                                currSelf.HasCurrentTask = false;
+                                $.toptip("当前产线没有生产中的生产任务!", "error");
+                            }
+
+                        },
+                        error: function (xhr, status, thr) {
+                            //console.error(status);
+                            $.alert("请求数据失败!");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+
+                },
+                OnProcess: function () {
+                    var currSelf = this;
+                    if (currSelf.RWIndex !== 0) {
+                        currSelf.RWIndex--;
+                    }
+                    if (currSelf.RWIndex === 0) {
+                        currSelf.showPre = false;
+                    } else {
+                        currSelf.showPre = true;
+                    }
+                    if (currSelf.RWIndex === currSelf.WorkOrderData.length - 1) {
+                        currSelf.showTail = false;
+                    } else {
+                        currSelf.showTail = true;
+                    }
+                    var currItem = currSelf.WorkOrderData[currSelf.RWIndex];
+                    currSelf.Products.TaskCode = currItem.SCRW_RWDH
+                    currSelf.Products.ProductCode = currItem.SCRW_CPBH;
+                    currSelf.Products.ProductName = currItem.SCRW_NAME;
+                    currSelf.Products.ProductSpe = currItem.SCRW_CPGG;
+                    //currSelf.Products.TaskNo = currItem.SCRW_RWDH;
+                    currSelf.Products.CustomerCode = currItem.SCRW_KHBM;
+                    currSelf.Products.CustomerName = currItem.SCRW_KHMC;
+                    currSelf.Products.Status = currItem.SCRW_RWZT_CODE;
+                    var data = GetCurrentProcess(currSelf.Products.ProductCode);
+                    if (data.IsSuccess && data.Data) {
+                        currSelf.CurrGongXun = data.Data;
+
+                        var obj = data.Data;
+                        for (var key in obj) {
+                            if (data.Data.GXGL_SOP) {
+                                var imgSOPs = JSON.parse(data.Data.GXGL_SOP);
+                                currSelf.CurrGongXun.Pictures = imgSOPs;
+                            }
+                            if (data.Data.GXGL_SOP) {
+
+                                currSelf.$nextTick(function () {     //$nextTick方法是进行获取数据后，对更新后的hmtl做操作                          
+                                    $(".main_img").touchSlider({
+                                        flexible: true,
+                                        auto: false,
+                                        speed: 200,
+                                        btn_prev: $("#btn_prev"),
+                                        btn_next: $("#btn_next"),
+                                        paging: $(".point a"),
+                                        counter: function (e) {
+                                            $(".point a").removeClass("on").eq(e.current - 1).addClass("on");//图片顺序点切换
+                                            $(".img_font span").hide().eq(e.current - 1).show();//图片文字切换
+                                        }
+                                    });
+
+                                    var touchtime = new Date().getTime();
+                                    //双击显示
+                                    $(".main_img>ul>li").each(function (index) {
+                                        $(this).on("click", function () {
+                                            if (new Date().getTime() - touchtime < 500) {
+                                                //获取双击图片的路径
+                                                var imgSrc = $(".main_img>ul>li").eq(index).children("img").attr("src");
+                                                //赋值图片路径
+                                                $(".dbImg").children("img").attr("src", imgSrc)
+                                                $(".dbImg").show()
+
+                                            } else {
+                                                touchtime = new Date().getTime();
+                                            }
+                                        })
+                                    })
+                                });
+
+                            }
+
+                            return false;//返回false，不为空对象
+                        }
+                        $.toptip("当前任务单未绑工序信息", "success");
+                        return true;//返回true，为空对象
+                    }
+                    // else{
+                    //     currSelf.HasCurrentTask = false;
+                    // }
+
+                },
+                //下工序点击切换数据
+                UnderProcess: function () {
+                    var currSelf = this;
+                    if (currSelf.RWIndex < currSelf.WorkOrderData.length - 1) {
+                        currSelf.RWIndex++;
+                    }
+
+                    if (currSelf.RWIndex === 0) {
+                        currSelf.showPre = false;
+                    } else {
+                        currSelf.showPre = true;
+                    }
+                    if (currSelf.RWIndex === currSelf.WorkOrderData.length - 1) {
+                        currSelf.showTail = false;
+                    } else {
+                        currSelf.showTail = true;
+                    }
+                    var currItem = currSelf.WorkOrderData[currSelf.RWIndex];
+                    currSelf.Products.TaskCode = currItem.SCRW_RWDH
+                    currSelf.Products.ProductCode = currItem.SCRW_CPBH;
+                    currSelf.Products.ProductName = currItem.SCRW_NAME;
+                    currSelf.Products.ProductSpe = currItem.SCRW_CPGG;
+                    //currSelf.Products.TaskNo = currItem.SCRW_RWDH;
+                    currSelf.Products.CustomerCode = currItem.SCRW_KHBM;
+                    currSelf.Products.CustomerName = currItem.SCRW_KHMC;
+                    currSelf.Products.Status = currItem.SCRW_RWZT_CODE;
+                    var data = GetCurrentProcess(currSelf.Products.ProductCode);
+                    if (data.IsSuccess && data.Data) {
+                        currSelf.CurrGongXun = data.Data;
+
+                        var obj = data.Data;
+                        for (var key in obj) {
+                            if (data.Data.GXGL_SOP) {
+                                var imgSOPs = JSON.parse(data.Data.GXGL_SOP);
+                                currSelf.CurrGongXun.Pictures = imgSOPs;
+                            }
+                            if (data.Data.GXGL_SOP) {
+
+                                currSelf.$nextTick(function () {     //$nextTick方法是进行获取数据后，对更新后的hmtl做操作                          
+                                    $(".main_img").touchSlider({
+                                        flexible: true,
+                                        auto: false,
+                                        speed: 200,
+                                        btn_prev: $("#btn_prev"),
+                                        btn_next: $("#btn_next"),
+                                        paging: $(".point a"),
+                                        counter: function (e) {
+                                            $(".point a").removeClass("on").eq(e.current - 1).addClass("on");//图片顺序点切换
+                                            $(".img_font span").hide().eq(e.current - 1).show();//图片文字切换
+                                        }
+                                    });
+
+                                    var touchtime = new Date().getTime();
+                                    //双击显示
+                                    $(".main_img>ul>li").each(function (index) {
+                                        $(this).on("click", function () {
+                                            if (new Date().getTime() - touchtime < 500) {
+                                                //获取双击图片的路径
+                                                var imgSrc = $(".main_img>ul>li").eq(index).children("img").attr("src");
+                                                //赋值图片路径
+                                                $(".dbImg").children("img").attr("src", imgSrc)
+                                                $(".dbImg").show()
+
+                                            } else {
+                                                touchtime = new Date().getTime();
+                                            }
+                                        })
+                                    })
+
+                                });
+                            }
+
+                            return false;//返回false，不为空对象
+                        }
+                        $.toptip("当前任务单未绑工序信息", "success");
+                        return true;//返回true，为空对象
+                    }
+                    // else{
+                    //     currSelf.HasCurrentTask = false;
+                    // }
+                },
+                //     //获取生产任务单信息
+                GetProductProcess: function () {
+                    var currSelf = this;
+                    //获取点击查看链接的下标                   
+                    $.ajax({
+                        type: "post",
+                        // url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByScrwId.action",
+                        // data: {
+                        //     mac: LocalUserInfo.GetUserInfo().Mac,
+                        //     userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        //     scrwId: currSelf.TaskID,
+                        //     ProcessId: "", //工序传参
+                        // },
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getCurrentProductByCxCp.action",
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode
+                        },
+                        datatype: "json",
+                        success: function (ret) {
+                            var data = JSON.parse(ret);
+                            var retData = ReturnData(data);
+                            if (retData.IsSuccess) {
+                                var obj = retData.Data;
+                                
+                                for (var key in obj) {
+                                    currSelf.Products.TaskCode = retData.Data.SCRW_RWDH
+                                    currSelf.Products.ProductCode = retData.Data.SCRW_CPBH;
+                                    currSelf.Products.ProductName = retData.Data.SCRW_NAME;
+                                    currSelf.Products.ProductSpe = retData.Data.SCRW_CPGG;
+                                    //currSelf.Products.TaskNo = retData.Data.SCRW_RWDH;
+                                    currSelf.Products.CustomerCode = retData.Data.SCRW_KHBM;
+                                    currSelf.Products.CustomerName = retData.Data.SCRW_KHMC;
+                                    currSelf.Products.Status = retData.Data.SCRW_RWZT_CODE;
+                                    currSelf.HasCurrentTask = true;
+                                    return false;//返回false，不为空对象
+                                }
+                                $.ajax({
+                                    type: "post",
+                                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrwByGX.action",
+                                    data: {
+                                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                        mac: LocalUserInfo.GetUserInfo().Mac,
+                                        cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode,
+                                        // curDate:year+'-'+month+'-'+data,
+                                        curDate: '',
+                                        zt: "RWZT02,RWZT01,RWZT04",
+                                        noLike: "",
+                                        cpLike: "",
+                                        PageSize: "",   //每页条数
+                                        CurrPage: ""    //当前页
+                                    },
+                                    datatype: "json",
+                                    success: function (ret) {
+                                        var data = JSON.parse(ret);
+                                        var retData = ReturnData(data);
+                                        if (retData.IsSuccess) {
+                                            currSelf.WorkOrderData = retData.Data;
+                                            currSelf.Products.TaskCode = retData.Data[0].SCRW_RWDH
+                                            currSelf.Products.ProductCode = retData.Data[0].SCRW_CPBH;
+                                            currSelf.Products.ProductName = retData.Data[0].SCRW_NAME;
+                                            currSelf.Products.ProductSpe = retData.Data[0].SCRW_CPGG;
+                                            //currSelf.Products.TaskNo = retData.Data[0].SCRW_RWDH;
+                                            currSelf.Products.CustomerCode = retData.Data[0].SCRW_KHBM;
+                                            currSelf.Products.CustomerName = retData.Data[0].SCRW_KHMC;
+                                            currSelf.Products.Status = retData.Data[0].SCRW_RWZT_CODE;
+                                        } else {
+                                            $.toptip("当前产线无任务单信息", "success");
+                                        }
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error(status);
+                                        $.alert("请求失败!");
+                                    }, complete: function () {
+                                    }
+                                });
+                                currSelf.showTail = true;
+                                currSelf.showPre = false;
+                                currSelf.HasCurrentTask = false;
+                                return true;//返回true，为空对象
+                            } else {
+                                currSelf.showTail = false;
+                                currSelf.showPre = false;
+                                currSelf.HasCurrentTask = false;
+                            }
+                            currSelf.GetProductTask();
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(status);
+                            $.alert("请求失败!");
+                        }, complete: function () {
+                        }
+                    });
+                },
+                GetProductTask: function () {
+                    var currSelf = this;
+                    // $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrwByGX.action",
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode,
+                            // curDate:year+'-'+month+'-'+data,
+                            curDate: '',
+                            zt: "RWZT02,RWZT01,RWZT04",
+                            noLike: "",
+                            cpLike: "",
+                            PageSize: "",   //每页条数
+                            CurrPage: ""    //当前页
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess) {
+                                if (retData.Data.length > 0) {
+                                    currSelf.WorkOrderData = retData.Data;
+                                    $.each(currSelf.WorkOrderData, function (index, item) {
+                                        if (item.JGMES_PLAN_SCRW_ID === currSelf.TaskID) {
+                                            currSelf.RWIndex = index;
+                                            currSelf.Products.TaskCode = item.SCRW_RWDH
+                                            currSelf.Products.ProductCode = item.SCRW_CPBH;
+                                            currSelf.Products.ProductName = item.SCRW_NAME;
+                                            currSelf.Products.ProductSpe = item.SCRW_CPGG;
+                                            //currSelf.Products.TaskNo = item.SCRW_RWDH;
+                                            currSelf.Products.CustomerCode = item.SCRW_KHBM;
+                                            currSelf.Products.CustomerName = item.SCRW_KHMC;
+                                            currSelf.Products.Status = item.SCRW_RWZT_CODE;
+                                        }
+                                    });
+                                    if (currSelf.RWIndex === 0) {
+                                        currSelf.showPre = false;
+                                    } else {
+                                        currSelf.showPre = true;
+                                    }
+
+                                    if (currSelf.RWIndex === currSelf.WorkOrderData.length - 1) {
+                                        currSelf.showTail = false;
+                                    } else {
+                                        currSelf.showTail = true;
+                                    }
+                                }
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                            console.error(status);
+                            $.alert("请求失败");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+            },
+            destroyed() {
+                this.websocket.close() //离开路由之后断开websocket连接
+            },
+        })
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".img_gallery").hover(function () {
+                $("#btn_prev,#btn_next").fadeIn()
+            }, function () {
+                $("#btn_prev,#btn_next").fadeOut()
+            });
+
+            $dragBln = false;
+            $(".main_img").bind("mousedown", function () {
+                $dragBln = false;
+            });
+
+            $(".main_img").bind("dragstart", function () {
+                $dragBln = true;
+            });
+
+            $(".main_img a").click(function () {
+                if ($dragBln) {
+                    return false;
+                }
+            });
+
+            timer = setInterval(function () {
+                $("#btn_next").click();
+            }, 50000);
+
+            $(".img_gallery").hover(function () {
+                clearInterval(timer);
+            }, function () {
+                timer = setInterval(function () {
+                    $("#btn_next").click();
+                }, 50000);
+            });
+
+            $(".main_img").bind("touchstart", function () {
+                clearInterval(timer);
+            }).bind("touchend", function () {
+                timer = setInterval(function () {
+                    $("#btn_next").click();
+                }, 50000);
+            });
+
+        });
+
+    </script>
+    <script type="text/javascript">
+        var touchtime = new Date().getTime();
+
+
+        // $(".main_img>ul>li").on("click", function () {
+        // })
+        //双击隐藏
+        $("#bgImg").on("click", function () {
+            if (new Date().getTime() - touchtime < 500) {
+                $(this).parent(".dbImg").hide();
+            } else {
+                touchtime = new Date().getTime();
+            }
+
+        })
+
+        //点击关闭退出全屏
+        $(".timg").on("click", function () {
+            $(this).parent(".dbImg").hide();
+        })
+
+        //点击全屏按钮显示全屏          
+        $("#FullScreen").on("click", function () {
+            //获取a标签文本序号
+            var imgNum = $(".point").find("a[class=on]").index();
+            //获取当前轮播图图片路径
+            var imgSrc = $(".main_img>ul>li").eq(imgNum).children("img").attr("src");
+            //赋值全屏图片路径
+            $(".dbImg").children("img").attr("src", imgSrc)
+            $(".dbImg").show();
+        })                                 
+    </script>
+</body>
+
+</html>

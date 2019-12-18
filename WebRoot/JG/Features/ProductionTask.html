@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <title>生产任务-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/bootstrap/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/TabletsGlobal.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/ProductionTask.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+
+<body>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="header_title">
+            <a href="javascript:;">生产任务</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+    <div id="MainPage" class="MainPage">
+        <div class="search">
+            <!--生产任务单-->
+            <!-- <div class="navbar-form navbar-left">
+                计划日期
+                <div class="form-group">
+                    <div class="input-group date form_date col-md-5" data-date="" data-date-format="dd MM yyyy"
+                        data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                        <input class="form-control" size="16" type="text" value="" readonly>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                    </div>
+                    <input type="hidden" id="dtp_input2" value="" /><br />
+                </div>
+            </div> -->
+            <div class="navbar-form navbar-left">
+                单据信息
+                <div class="form-group">
+                    <input id="ProTaskCode" class="form-control" v-model="FormData.ProTaskCode" type="text"
+                        placeholder="输入订单/工单/任务单号模糊搜索">
+                </div>
+            </div>
+            <!--产品名称-->
+            <div class="navbar-form navbar-left">
+                产品信息
+                <div class="form-group">
+                    <input v-model="FormData.KeyWord" class="form-control" type="text" placeholder="输入产品编码/名称/型号模糊搜索">
+                </div>
+            </div>
+            <!--任务状态-->
+            <div class="navbar-form navbar-left">
+                任务状态
+                <div class="form-group" style="height:44px;">
+                    <select id="TaskStateData" class="selectpicker form-group" multiple="multiple"
+                        data-live-search="true" v-model="FormData.TaskState" style="background-color: #FFFFFF">
+                        <option v-for="(item,index) in TaskStateData" v-if="item.DICTIONARYITEM_ITEMCODE!='RWZT03'"
+                            :value="item.DICTIONARYITEM_ITEMCODE">
+                            {{item.DICTIONARYITEM_ITEMNAME}}</option>
+                    </select>
+                </div>
+            </div>
+            <!--日期区间-->
+            <div class="navbar-form navbar-left">
+                日期区间
+                <div class="form-group">
+                        <input type="text" id="test6"  class="form-control" v-model="FormData.DateInterval" placeholder="日期区间搜索"/>
+                   
+                </div>
+
+            </div>
+            <button type="button" class="btn btn-success search_btn" style="width:70px" v-on:click="SearchData">搜
+                索</button>
+        </div>
+
+        <!--列表部分-->
+        <div>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>计划日期</td>
+                        <td class="second_th">订单/工单/任务单号</td>
+                        <td class="second_th">产品编码/名称/型号</td>
+                        <td>订单数量</td>
+                        <td>计划/完工数量</td>
+                        <td>生产状态</td>
+                        <td>操作</td>
+                    </tr>
+                    <tr v-for="(item,index) in TableListData" v-if="FormData.AllCount > 0">
+                        <td>{{item.SCRW_PCRQ}}</td>
+                        <td class="second_td">{{item.SCRW_DDHM}}<br />{{item.SCRW_GDHM}}<br />{{item.SCRW_RWDH}}</td>
+                        <td class="second_td"> {{item.SCRW_CPBH}}<br />
+                            {{item.SCRW_NAME}}<br />{{item.SCRW_CPGG}}</td>
+                        <td>{{item.SCRW_DDSL}}</td>
+                        <td>{{item.SCRW_PCSL}}<br />{{item.SCRW_WCSL}}</td>
+                        <td v-if="item.DICTIONARYITEM_ITEMCODE!='RWZT03'">{{item.SCRW_RWZT_NAME}}</td>
+                        <td>
+                            <button class="btns" v-on:click="StartProduction(item)">查看明细</button><br />
+                            <button style="margin-top: 5px;" class="btns"
+                                v-on:click="LookProduction(item)">查看进度</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!--页码部分 -->
+        <div class="page_num">
+            <button type="button" class="btn btn-success prev" :disabled="FormData.CurrPage==1"
+                @click="PrevFunction">上一页</button>
+            <span>第{{FormData.CurrPage}}页/总{{Math.ceil(FormData.AllCount/FormData.PageSize)}}页 每页{{FormData.PageSize}}条
+                总{{FormData.AllCount}}条</span>
+            <button type="button" class="btn btn-success next" :disabled="FormData.CurrPage==FormData.TotalCountPages"
+                @click="NextFunction">下一页</button>
+        </div>
+    </div>
+
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js"></script>
+    <script src="/JG/Content/bootstrap.min.js"></script>
+    <script src="/JG/Content/bootstrap-select.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootstrap-datetimepicker.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script src="/JG/Content/laydate/laydate.js"></script> <!-- 日期区间的路径 -->
+    <script>
+        //执行一个laydate实例
+        // laydate.render({
+        //     elem: '#test1' //指定元素
+        // });
+        //日期范围
+        laydate.render({
+            elem: '#test6'
+            , range: true
+        });
+    </script>
+
+    <script type="text/javascript">
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                FormData: {
+                    ProductionLineCode: LocalUserInfo.GetUserInfo().ProductionLineCode,   //产线编码
+                    //ProdLine: "",   //产线名称
+                    TaskState: [],    //任务状态
+                    ProTaskCode: "",    //任务单号
+                    KeyWord: "",     //关键字
+                    AllCount: 0,    //请求到前端的全部条数
+                    PageSize: 10,    //每页条数
+                    TotalCountPages: "",    //总页数
+                    CurrPage: 1,     //当前页
+                    DateInterval:"", //日期区间
+                },
+                TaskStateData: [],   // 任务状态集合
+                //ProLineData: [],   //产线集合
+                TableListData: [],   //列表集合
+                NowTaskStateData: [],   //当前选中的状态集合
+            },
+            mounted: function () {
+                var currSelf = this;
+                // currSelf.ProLineStation();
+                currSelf.initData();
+            },
+            methods: {
+                //初始化
+                initData: function () {
+                    var currSelf = this;
+
+                    var data = GetDictionary("JGMES_DIC_RWZT");
+                    if (data && data.IsSuccess) {
+                        currSelf.TaskStateData = data.Data;
+                        currSelf.FormData.TaskState.push("RWZT01");
+                        currSelf.FormData.TaskState.push("RWZT02");
+                        currSelf.FormData.TaskState.push("RWZT04");
+                    }
+                    currSelf.GetProductTask();
+                },
+
+                //点击搜索按钮方法
+                SearchData: function () {
+                    var currSelf = this;
+                    currSelf.FormData.CurrPage = 1;
+                    currSelf.GetProductTask();
+                },
+                GetProductTask: function () {
+                    var currSelf = this;
+                    currSelf.FormData.DateInterval = $("#test6").val();
+                    $.showLoading();
+                    currSelf.TableListData = [];
+                    if (currSelf.FormData.TaskState.length > 0) {
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrw.action",
+                            data: {
+                                userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                mac: LocalUserInfo.GetUserInfo().Mac,
+                                "cxCode": currSelf.FormData.ProductionLineCode,
+                                "zt": currSelf.FormData.TaskState.join(','),
+                                "noLike": currSelf.FormData.ProTaskCode,    //获取当前用户输入任务单号
+                                "cpLike": currSelf.FormData.KeyWord,     //获取当前用户输入产品关键字
+                                "PageSize": currSelf.FormData.PageSize,   //每页条数
+                                "CurrPage": currSelf.FormData.CurrPage,     //当前页
+                                "curDateSection":currSelf.FormData.DateInterval,//日期区间
+                            },
+                            dataType: "json",
+                            success: function (ret) {
+                                var retData = ReturnData(ret);
+
+                                if (retData.IsSuccess) {
+                                    //console.log(retData)
+                                    currSelf.FormData.AllCount = retData.TotalCount;    //获取当前选择产线的总条数
+                                    currSelf.FormData.TotalCountPages = Math.ceil(currSelf.FormData.AllCount / currSelf.FormData.PageSize);   //获取总页数,Math.ceil()函数为向上取整
+                                    if (retData.Data.length > 0) {
+                                        $(".page_num").addClass("page_num_show");   //当带点击搜索按钮是请求数据成功便显示分页部分
+                                        currSelf.TableListData = retData.Data;
+                                    } else {
+                                        currSelf.FormData.CurrPage = 0;
+                                        //currSelf.FormData.TotalCountPages = 1;
+                                        $(".page_num").removeClass("page_num_show");    //当带点击搜索按钮是请求数据成功便隐藏分页部分
+                                        $.toptip("未搜索到相关数据", "success");
+                                    }
+                                }
+                            },
+                            error: function (xhr, status, errorThrown) {
+                                console.error(status);
+                                $.alert("请求失败");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+                    } else {
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/commonAction!getScrw.action",
+                            data: {
+                                userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                mac: LocalUserInfo.GetUserInfo().Mac,
+                                "cxCode": currSelf.FormData.ProductionLineCode,
+                                "zt": "RWZT06,RWZT05,RWZT02,RWZT01,RWZT04",
+                                "noLike": currSelf.FormData.ProTaskCode,    //获取当前用户输入任务单号
+                                "cpLike": currSelf.FormData.KeyWord,     //获取当前用户输入产品关键字
+                                "PageSize": currSelf.FormData.PageSize,   //每页条数
+                                "CurrPage": currSelf.FormData.CurrPage     //当前页
+                            },
+                            dataType: "json",
+                            success: function (ret) {
+                                var retData = ReturnData(ret);
+
+                                if (retData.IsSuccess) {
+                                    //console.log(retData)
+                                    currSelf.FormData.AllCount = retData.TotalCount;    //获取当前选择产线的总条数
+                                    currSelf.FormData.TotalCountPages = Math.ceil(currSelf.FormData.AllCount / currSelf.FormData.PageSize);   //获取总页数,Math.ceil()函数为向上取整
+                                    if (retData.Data.length > 0) {
+                                        $(".page_num").addClass("page_num_show");   //当带点击搜索按钮是请求数据成功便显示分页部分
+                                        currSelf.TableListData = retData.Data;
+                                    } else {
+                                        currSelf.FormData.CurrPage = 0;
+                                        //currSelf.FormData.TotalCountPages = 1;
+                                        $(".page_num").removeClass("page_num_show");    //当带点击搜索按钮是请求数据成功便隐藏分页部分
+                                        $.toptip("未搜索到相关数据", "success");
+                                    }
+                                }
+                            },
+                            error: function (xhr, status, errorThrown) {
+                                console.error(status);
+                                $.alert("请求失败");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+                    }
+
+                },
+
+                //点击上一页按钮方法
+                PrevFunction: function () {
+                    var currSelf = this;
+                    currSelf.FormData.CurrPage--;    //当当前页大于1的时候就减减
+                    currSelf.GetProductTask();
+                },
+
+                //点击下一页按钮方法
+                NextFunction: function () {
+                    var currSelf = this;
+                    currSelf.FormData.CurrPage++;    //当当前页小于总页数的时候就加加
+                    currSelf.GetProductTask();
+                },
+
+                //点击查看明细按钮方法
+                StartProduction: function (item) {
+                    //console.log(item);
+                    window.location.href = "/JG/Features/ProductionTaskDetail.html?taskID=" + item.JGMES_PLAN_SCRW_ID;
+                },
+
+                //点击查看进度按钮方法
+                LookProduction: function (item) {
+                    //console.log(item);
+                    window.location.href = "/JG/Features/ProductionTaskProgress.html?taskID=" + item.JGMES_PLAN_SCRW_ID;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

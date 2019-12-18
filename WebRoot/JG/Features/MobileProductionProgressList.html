@@ -1,0 +1,465 @@
+﻿<html>
+
+<head>
+    <title>生产进度-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <link href="/JG/Content/css/bootstrap-select.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/MobileProductionProgressList.css?v=1">
+    <link href="/JG/Content/jquery/jquery-weui/css/icon.css" rel="stylesheet" />
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <style>
+        [v-cloak]{
+            display: none;
+        } 
+    </style>
+</head>
+
+<body ontouchstart>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="weui-flex">
+            <div class="weui-flex__item" style="position:absolute;">
+                <span style="font-size:16px" class="icon icon-109 f-white" onclick="javascript:location.href='/JG/Home/MobileIndex.html'">返回</span>
+                <!-- <img src="/JG/Content/images/return.png" alt="" onclick="javascript:location.href='/JG/Home/MobileIndex.html'"> -->
+            </div>
+            <div class="weui-flex__item" style="text-align: center;">生产进度</div>
+        </div>
+    </header>
+
+    <div id="MainPage" class="MainPage" v-cloak>
+        <div class=" search">
+            <div>
+                <div class="product-search">
+                    <span class="stitle">生产线</span>
+                    
+                    <div class="form-group" style="width:9em">
+                        <select class="form-control" id="ProductionLineCode"  v-model="FormData.ProductionLineCode">
+                            <option disabled selected value>请选择生产线</option>
+                            <option  v-for="(item,index) in ProLineData" v-bind:value="item.CXSJ_CXBM">
+                                    {{item.CXSJ_CXMC}}
+                            </option>                      
+                        </select>
+                    </div>
+                </div>
+               
+                <div class="status-search" >
+                    <span class="stitle">任务状态</span>
+                    
+                    <div class="form-group status-select" style="width:9em;height: 20px;">
+                        
+                        <select id="id_select" class="selectpicker bla bla bli" v-model="FormData.StatusCode"
+                            multiple data-live-search="true" >
+                            <option v-for="(item,index) in TaskStateData" :value="item.DICTIONARYITEM_ITEMCODE">
+                                {{item.DICTIONARYITEM_ITEMNAME}}</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+               
+            </div>
+            <button type="submit" class="btn btn-default search-btn" @click="SearchData">搜索</button>      
+        </div> 
+        <div class="weui-tab">
+            
+            <!--<div class="weui-navbar tabbar">
+                 <a class="weui-navbar__item weui-bar__item--on" href="#tab1" @click="ShowWorkTask">
+                    待开工({{TobeStartedTaskList.length}})
+                </a>
+                <a class="weui-navbar__item" href="#tab2" @click="ShowProductTask">
+                    生产中({{ProduceTaskList.length}})
+                </a>
+                <a class="weui-navbar__item" href="#tab3" @click="ShowFinishProductTask">
+                    已完成({{FinishProduceTaskList.length}})
+                </a> -->
+                <!-- <a class="weui-navbar__item" href="#tab3" v-on:click="ShowFinishProductTask()">
+                    已完成({{FinishProduceTaskList.length}})
+                </a>
+            </div> -->
+            <div class="weui-tab__bd">
+                <div id="tab1" class="weui-tab__bd-item weui-tab__bd-item--active">
+                    <div class="weui-form-preview" v-for="(item,idnex) in TobeStartedTaskList">
+                        <div class="weui-form-preview__hd">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">订单号码</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.WordCode}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">任务单号</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.TaskCode}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">产品编码</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.ProductCode}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">产品名称</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.ProductName}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">产品规格</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.ProductSize}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">计划生产日期</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.PlanDate}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">计划生产数量</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.PlanNum}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">实际开工时间</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.StartTime}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">实际完工时间</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.FinishTime}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">已完工数量</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.FinishNum}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                    <label class="weui-form-preview__label">任务状态</label>
+                                    <em class="weui-form-preview__value" style="font-size:14px">
+                                        {{item.StatusCode}}
+                                    </em>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div id="tab2" class="weui-tab__bd-item">
+                    <div class="weui-form-preview" v-for="(item,idnex) in ProduceTaskList">
+                        <div class="weui-form-preview__hd">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">订单号码</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.WordCode}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">任务单号</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.TaskCode}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">产品编号</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.ProductCode}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">产品名称</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.ProductName}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">产品规格</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.ProductSize}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">计划生产日期</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.PlanDate}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">计划生产数量</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.PlanNum}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">实际开工时间</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.StartTime}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">已完工数量</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.FinishNum}}
+                                </em>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab3" class="weui-tab__bd-item">
+                    <div class="weui-form-preview" v-for="(item,idnex) in FinishProduceTaskList">
+                        <div class="weui-form-preview__hd">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">订单号码</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.WordCode}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">任务单号</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.TaskCode}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">产品编号</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.ProductCode}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">产品名称</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.ProductName}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">产品规格</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.ProductSize}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">计划生产日期</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.PlanDate}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">计划生产数量</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.PlanNum}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">实际开工时间</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.StartTime}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">实际完工时间</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.FinishTime}}
+                                </em>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">实际完工数量</label>
+                                <em class="weui-form-preview__value" style="font-size:14px">
+                                    {{item.FinishNum}}
+                                </em>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+        <div class="paging" v-if="TotalNum>0">
+            <button   class="btn btn-success" :disabled="CurrPage==1" @click="PrevFunction">上一页</button>
+            <span>第{{CurrPage}}页/总共{{Math.ceil(TotalNum/PageSize)}}页</span>
+            <button  class="btn btn-success" :disabled="CurrPage==(Math.ceil(TotalNum/PageSize))" @click="NextFunction">下一页</button>
+        </div> 
+    </div>
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/bootstrap.min.js"></script>
+    <script src="/JG/Content/bootstrap-select.min.js"></script>
+    <script src="/JG/Content/Utils.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            $('.selectpicker').selectpicker({
+                'selectedText': 'cat'
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                TobeStartedTaskNum: 0,
+                TobeStartedTaskList: [], //待开工
+                ProduceTaskNum: 0,
+                ProduceTaskList: [], //生产中
+                FinishProduceTaskNum: 0,
+                FinishProduceTaskList: [],//完成生产
+                FormData: {
+                    ProductionLineCode: "",   //产线编码
+                    ProdLine: "",   //产线名称
+                    StatusCode: [],    //当前选择的状态任务状态
+                    NowCode: "",    //当前输入的任务单号
+                    KeyWord: "",     //关键字                  
+                },
+                TotalNum: 0,    //请求到前端的全部条数
+                PageSize:10,    //每页条数
+                CurrPage: 1,     //当前页
+                ProLineData: [],   //产线
+                TaskStateData: [],
+            },
+            mounted: function () {
+                var currSelf = this;            
+                //产线初始化
+                currSelf.initData();
+            },
+            
+             methods: {
+                 //初始化方法
+                initData: function () {
+                    var currSelf = this;
+                    var data = GetDictionary("JGMES_DIC_RWZT");  //传任务状态字典编码
+                    if (data && data.IsSuccess) {
+                        currSelf.TaskStateData = data.Data;
+                    }else{
+
+                    }
+                    
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        async: true,   //异步
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesBaseAction!getCxList.action",
+                        data: {},
+                        dataType: "json",
+                        success: function (result) {
+                            var retData = ReturnData(result);
+                            if (retData.IsSuccess) {
+                                if (retData.Data && retData.Data.length > 0) {
+                                    currSelf.ProLineData = retData.Data;
+                                }
+                            }else if(!retData.Data){
+                                var showMsg = "未能找到产线信息";
+                                $.toptip(showMsg, "warning");
+                            }
+                        },
+                        error: function (xhr, status, errorThrow) {
+                            $.toptip(status, "warning");
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        },
+                    });
+
+                },
+                SearchData:function (){
+                    var currSelf = this;
+                    currSelf.CurrPage = 1;
+                    currSelf.TobeStartedTaskList = [];
+                    // currSelf.ProduceTaskList = [];
+                    // currSelf.FinishProduceTaskList = [];
+                    if (!currSelf.FormData.ProductionLineCode) {
+                        $.toptip("请选择生产线!", "warning");
+                        $("#ProductionLineCode").focus();
+                    }else{
+                        currSelf.GetProductData();                       
+                    }                   
+                    
+                },
+                //点击上一页按钮方法
+                PrevFunction: function () {
+                    var currSelf = this;
+                    currSelf.CurrPage--;
+                    currSelf.TobeStartedTaskList = [];
+                    // currSelf.ProduceTaskList = [];
+                    // currSelf.FinishProduceTaskList = [];
+                    currSelf.GetProductData();                   
+                },
+
+                //点击下一页按钮方法
+                NextFunction: function () {
+                    var currSelf = this;
+                    currSelf.CurrPage++;
+                    currSelf.TobeStartedTaskList = [];
+                    // currSelf.ProduceTaskList = [];
+                    // currSelf.FinishProduceTaskList = [];
+                    currSelf.GetProductData();                   
+                },
+                GetProductData: function(){
+                    var currSelf = this;
+                    $.showLoading();
+                    $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/commonAction!getScJdList.action",
+                            data: {
+                                mac: LocalUserInfo.GetUserInfo().Mac,
+                                userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                "cxCode": currSelf.FormData.ProductionLineCode,
+                                "rwztCode": currSelf.FormData.StatusCode.join(','),
+                                "scrwNo": currSelf.FormData.NowCode,
+                                "cpLike": currSelf.FormData.KeyWord,
+                                "PageSize": currSelf.PageSize,   //每页条数
+                                "CurrPage": currSelf.CurrPage     //当前页
+                            },
+                            datatype: "json",
+                            success: function (result) {
+                                var data = JSON.parse(result);
+                                var retData = ReturnData(data);
+                                //console.log(retData)
+                                if (retData.IsSuccess) {  
+                                    $.each(retData.Data, function (i, element) {
+                                        currSelf.TobeStartedTaskList.push({ 
+                                            TaskCode: element.SCRW_RWDH, 
+                                            ProductName: element.SCRW_NAME,
+                                            PlanDate: element.SCRW_PCRQ, 
+                                            PlanNum: element.SCRW_PCSL,
+                                            WordCode: element.SCRW_DDHM,
+                                            ProductCode: element.SCRW_CPBH,
+                                            ProductSize: element.SCRW_CPGG,
+                                            StartTime: element.SCRW_SJKGSJ,
+                                            FinishTime: element.SCRW_SJWGSJ,
+                                            FinishNum: element.SCRW_WCSL,
+                                            StatusCode: element.SCRW_RWZT_NAME,
+                                        });
+                                    });   
+                                    currSelf.TotalNum = retData.TotalCount;                          
+                                   
+                                    if (!retData.Data || retData.Data.length == 0) {
+                                        var showMsg = "未能找到相关生产进度信息";
+                                        $.toptip(showMsg, "warning");                   
+                                    }                                                                                       
+                                }                                                            
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                //console.log(textStatus);
+                                $.alert("请求失败!" + errorThrown);
+                            }, complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+                }           
+            }
+        });
+    </script>
+</body>
+
+</html>

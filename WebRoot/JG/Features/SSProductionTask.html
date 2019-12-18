@@ -1,0 +1,794 @@
+﻿﻿<!DOCTYPE html>
+<html lang="zh_CN" xmlns:v-on="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta http-equiv="Access-Control-Allow-Origin" content="*"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/css/TabletsGlobal.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/JG/Content/css/SSProductionTask.css">
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/css/bootstrap-select.min.css" rel="stylesheet"/>
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <script src="/JG/Content/Numkeyboard.js"></script>
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+
+
+    <style>
+        .clearfix:after {
+            visibility: hidden;
+            display: block;
+            font-size: 0;
+            content: " ";
+            clear: both;
+            height: 0;
+        }
+
+        .mykb-box {
+            width: 390px;
+            height: 370px;
+            background: rgba(0, 0, 0, 0.6);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+            box-shadow: 0 0 10px rgb(43, 42, 42);
+            padding: 20px;
+            border-radius: 10px;
+            user-select: none;
+            -ms-user-select: none;
+            position: absolute;
+            display: none;
+            left: 50% !important;
+            z-index: 99999999;
+        }
+
+        .mykb-box ul, .mykb-box li {
+            list-style: none;
+        }
+
+        .mykb-box li {
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            background: #f5f5f5;
+            border-radius: 10px;
+            font-weight: bold;
+            margin: 10px;
+            float: left;
+            box-shadow: 0px 2px 1px #000;
+            color: #1b50a2;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .mykb-box li.active {
+            box-shadow: 0px -2px 1px #000;
+        }
+
+        .mykb-box .func {
+            color: #fff;
+            width: 90px;
+        }
+
+        .mykb-box .exit {
+            background: #F44336;
+        }
+
+        .mykb-box .del {
+            background: #ff9800
+        }
+
+        .mykb-box .clearall {
+            background: #2196F3
+        }
+
+        .mykb-box .sure {
+            background: #4CAF50;
+            width: 170px;
+        }
+
+
+    </style>
+    <title>计划排产列表</title>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        .btn {
+            margin-left: 3px;
+            width: 80px;
+            height: 35px;
+        }
+
+        .weui-toptips {
+            z-index: 1051;
+            font-size: 3.0em !important;
+            height: 70px !important;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            line-height: 50px;
+        }
+    </style>
+</head>
+
+<body>
+<header class="header">
+    <div class="empty">
+        <!--        <span id="Infrared"></span>-->
+    </div>
+    <div class="header_title">
+        <a href="javascript:;">计划排产列表</a>
+    </div>
+    <div class="item item2">
+        <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+            <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+        </div>
+    </div>
+</header>
+<div id="MainPage" class="MainPage" v-cloak>
+    <div class="navbar-form navbar-left">
+        排产日期&nbsp;
+        <div class="form-group" style="width:15em">
+            <input type="text" data-toggle='date' class="form-control" id="ProductionDate" bind-value=""/>
+        </div>
+    </div>
+    <!--产品名称-->
+    <div class="navbar-form navbar-left">
+        物料信息
+        <div class="form-group">
+            <input v-model="FormData.KeyWord" class="form-control" type="text" placeholder="输入产品编码/名称/型号模糊搜索">
+        </div>
+    </div>
+    <!--单据信息-->
+    <div class="navbar-form navbar-left">
+        单据信息
+        <div class="form-group">
+            <input v-model="FormData.DH" class="form-control" type="text" placeholder="输入订单号/生产任务单号模糊搜索">
+        </div>
+    </div>
+<!--    <div class="navbar-form navbar-left">-->
+<!--        需排产的产线-->
+<!--        <div class="form-group" style="width:15em">-->
+<!--            <select class="form-control" id="selectionCx" v-model="selectionCx">-->
+<!--                <option v-for="(item,index) in cxList" v-bind:value="item.CXSJ_CXBM">{{item.CXSJ_CXMC}}-->
+<!--                </option>-->
+<!--            </select>-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="navbar-form navbar-left">
+        <button type="submit" class="btn btn-default" v-on:click="getProductionTaskData" style="width: 80px;height: 50px;margin-top: -20px;">搜索</button>
+        <button type="button" class="btn btn-danger" v-on:click="showGDData" style="width: 80px;height: 50px;margin-top: -20px;">排产</button>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>排产日期</th>
+            <th class="second_th">订单/工单/国家</th>
+            <th class="second_th">产品编码/名称/国家</th>
+            <th>订单数量</th>
+            <th>上线数量</th>
+            <th>进线数量</th>
+            <th>欠产数量</th>
+            <th>排产数量</th>
+            <th>完工数量</th>
+            <th>任务单状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(item,index) in TaskList" id="itemsList">
+            <td>{{index+1}}</td>
+            <td>{{item.SCRW_PCRQ}}</td>
+            <td>{{item.SCRW_DDHM}}<br/>{{item.SCRW_GDHM}}<br/>{{item.SCRW_XSGJ}}</td>
+            <td>{{item.SCRW_CPBH}}<br/>{{item.SCRW_NAME}}<br/>{{item.SCRW_XSGJ}}</td>
+            <td>{{item.SCRW_DDSL}}</td>
+            <td>{{item.first}}</td>
+            <td>{{item.second}}</td>
+            <td>{{Number(item.SCRW_PCSL)-Number(item.first)}}</td>
+            <td>{{item.SCRW_PCSL}}</td>
+            <td>{{item.SCRW_WCSL}}</td>
+            <td v-if="item.SCRW_RWZT_CODE=='RWZT01'">待生产</td>
+            <td v-if="item.SCRW_RWZT_CODE=='RWZT02'">生产中</td>
+            <td v-if="item.SCRW_RWZT_CODE=='RWZT04'">暂停</td>
+            <td v-if="item.SCRW_RWZT_CODE=='RWZT03'">完成生产</td>
+            <td><button type="button" class="btn btn-success" @click="LookProduction(item)">查看</button>
+                <button type="button" class="btn btn-danger" @click="delScrw(item)">删除</button>
+                <button v-if="item.SCRW_RWZT_CODE!='RWZT02' && item.SCRW_RWZT_CODE!='RWZT03'" id="StartFull"
+                        class="btn btn-success" @click="StartFull(item)">开工</button>
+                <button v-if="item.SCRW_RWZT_CODE=='RWZT02'" class="btn btn-danger"
+                        @click="Completed(item)">生产完工</button>
+                <button v-if="item.SCRW_RWZT_CODE=='RWZT02'" class="btn btn-warning"
+                        @click="StopProduction(item)">暂停生产</button>
+
+            </td>
+            <td style="display:none" name="itemSingle">{{item}}</td>
+        </tr>
+        </tbody>
+    </table>
+    <!--页码部分 -->
+    <div class="page_num" style="text-align: center">
+        <button type="button" class="btn btn-success prev" :disabled="FormData.CurrPage==1"
+                @click="PrevFunction">上一页
+        </button>
+        <span>第{{FormData.CurrPage}}页/总{{Math.ceil(FormData.AllCount/FormData.PageSize)}}页 每页{{FormData.PageSize}}条
+                总{{FormData.AllCount}}条</span>
+        <button type="button" class="btn btn-success next" :disabled="FormData.CurrPage==FormData.TotalCountPages"
+                @click="NextFunction" :disabled="FormData.CurrPage==1">下一页
+        </button>
+    </div>
+
+    <!--订单列表弹窗选项部分-->
+    <div tabindex="-1" class="modal fade in" id="myModal" role="dialog" aria-hidden="true"
+         aria-labelledby="myModalLabel">
+        <div class="modal-dialog bad_dialog" style="width: 100%;">
+            <div class="modal-content">
+                <!--头部-->
+                <div class="modal-header bad_header">
+                    <div>
+                        <button class="close" aria-hidden="true" type="button" data-dismiss="modal">×</button>
+                        <h4 class="modal-title" id="myModalLabel">订单列表</h4>
+                    </div>
+                    <div class="task_btn row">
+                        <div class="search_list col-lg-12 col-md-12 col-sm-12" style="text-align: left">
+                            <div class="search_item">
+                                <span>单据信息</span>
+                                <input v-model="GDFormData.DH" type="text" class="form-control"
+                                       placeholder="订单号">
+                            </div>
+                            <div class="search_item">
+                                <span>产品信息</span>
+                                <input v-model="GDFormData.KeyWord" type="text" class="form-control"
+                                       placeholder="产品编号/产品名称/型号">
+                            </div>
+<!--                            默认为未完成排产的工单-->
+                            <div class="shut_btn">
+                                <button class="btn btn-success" v-on:click="getGdData" style="width: 100px;height: 60px;">搜索</button>
+                                <button type="button" class="btn btn-danger" v-on:click="SumitScheduling" style="width: 100px;height: 60px;">排产</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--内容部分-->
+                <div class="modal-body bad_body" id="tanchu" style="overflow-x: auto;overflow-y: auto;">
+                    <div class="bs-example" data-example-id="hoverable-table">
+                        <table class="table table-hover" id="btable">
+                            <thead>
+                            <tr class="row">
+                                <th>需排产数量</th>
+                                <th>剩余排产数</th>
+                                <th>订单数</th>
+                                <th>工单同步日期/交货日期</th>
+                                <th>工单号/订单号</th>
+                                <th>产品编码/名称/国家</th>
+                                <th>工单状态</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tableble" class="task_tbody">
+                            <tr class="row" v-for="(item,index) in TaskCodeGat" v-if="GDFormData.GdAllCount > 0">
+                                <td class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                                    <button type="button" class="dys_btn" @click="ItemFun(item)" style="height: 3em;width: 3em" :disabled="item.PCQty==0">-</button>
+                                    <input :id="item.JGMES_PLAN_GDLB_ID"  v-model="item.PCQty"
+                                           type="text" class=" forcon" placeholder="点击弹出输入数字键盘"
+                                           style=" outline-style: none;font-size:1em;font-weight: bold;width: 11em;text-align: center;height: 3em">
+                                    <button type="button" class="dys_btn" @click="ItemFun2(item)" style="height: 3em;width: 3em">+</button>
+                                </td>
+                                <td class="col-lg-1 col-md-1 col-sm-1 col-xs-1">{{item.GDLB_WPCSL}}</td>
+                                <td class="col-lg-1 col-md-1 col-sm-1 col-xs-1">{{item.GDLB_DDSL}}</td>
+                                <td class="col-lg-2 col-md-2 col-sm-2 col-xs-2">{{item.GDLB_RQ}}<br>{{item.GDLB_OTDRQ}}</td>
+                                <td class="col-lg-3 col-md-3 col-sm-3 col-xs-3">{{item.GDLB_GDHM}}<br>{{item.GDLB_DDHM}}</td>
+                                <td class="col-lg-3 col-md-3 col-sm-3 col-xs-3">{{item.GDLB_CPBH}}</br>{{item.GDLB_NAME}}</br>{{item.GDLB_CKGJ}}</td>
+                                <td class="col-lg-1 col-md-1 col-sm-1 col-xs-1" v-if="item.GDLB_GDZT_CODE==1">未完成</td>
+                                <td class="col-lg-1 col-md-1 col-sm-1 col-xs-1" v-if="item.GDLB_GDZT_CODE==2">完成</td>
+                                <td class="col-lg-1 col-md-1 col-sm-1 col-xs-1" v-if="item.GDLB_GDZT_CODE==3">逾期</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--底部分页部分-->
+                <div class="modal-footer page_footer" style="text-align: center">
+                    <div class="page_num">
+                        <button type="button" class="btn btn-success prev" :disabled="GDFormData.GdCurrPage==1"
+                                @click="GdPrevFunction">上一页</button>
+                        <span>第{{GDFormData.GdCurrPage}}页/总{{GDFormData.GdTotalCountPages}}页
+                                每页{{GDFormData.GdPageSize}}条 总{{GDFormData.GdAllCount}}条</span>
+                        <button type="button" class="btn btn-success next"
+                                :disabled="GDFormData.GdCurrPage==GDFormData.GdTotalCountPages||GDFormData.GdTotalCountPages==0"
+                                @click="GdNextFunction">下一页</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script src="/JG/Content/jquery/fastclick.js"></script>
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/Utils.js?v=1"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/bootstrap-select.min.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+<script src="/JG/Content/Common.js"></script>
+<script type="text/javascript" src="/JG/Content/AudioUtils.js"></script>
+<script src="/JG/Content/Numkeyboard.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        bootbox.setDefaults("locale", "zh_CN");
+        FastClick.attach(document.body);
+        var stations = LocalUserInfo.GetUserInfo();
+        $("#Infrared").html(stations.ProductionLineName + '-' + stations.StationName);
+    });
+</script>
+<script>
+    $(function () {
+        $("#iteamCheckboxAll").click(function () {
+            $('input[name="iteamCheckbox"]').prop("checked", this.checked);
+        });
+
+        // $("#ProductionLineNum").mynumkb();
+        $("#ProductionDate").calendar({inputReadOnly: false});
+
+    });
+
+</script>
+<script type="text/javascript">
+    $(".operation>span").each(function (index) {
+        $(this).on("click", function () {
+            $(".operation>span").eq(index).addClass("active").siblings(".operation>span").removeClass("active")
+        })
+
+    })
+</script>
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el: "#MainPage",
+        data: {
+            FormData: {
+                KeyWord: "",//产品搜索条件
+                DH: "",//单号搜索条件
+                AllCount: 0,    //请求到前端的全部条数
+                PageSize: 10,    //每页条数
+                TotalCountPages: 1,    //总页数
+                CurrPage: 1,     //当前页
+            },
+            TaskList: [],//生产任务单查询集合
+            // cxList:[],//产线集合
+            // selectionCx:"",//选中的产线
+            GDFormData:{
+                KeyWord: "",//产品搜索条件
+                DH: "",//单号搜索条件
+                GdAllCount: 0,    //请求到前端的全部条数
+                GdPageSize: 10,    //每页条数
+                GdTotalCountPages: 1,    //总页数
+                GdCurrPage: 1,     //当前页
+            },
+            TaskCodeGat:[],//工单搜索集合
+
+        },
+        computed: {
+            countNum: function (one, two) {
+                return Number(one) + Number(two);
+            },
+        },
+        mounted: function () {
+            var currSelf = this;
+            var today = new Date();
+            var day = today.getDate();
+            var month = today.getMonth() + 1;
+            var year = today.getFullYear();
+            var date = year + "/" + month + "/" + day;
+            $("#ProductionDate").val(date);
+            currSelf.InitData();
+        },
+        methods: {
+            countNum: function (one, two) {
+                return Number(one) + Number(two);
+            },
+            //初始化数据
+            InitData: function () {
+                var currSelf = this;
+                var data = GetDictionary("JGMES_DIC_RWZT");
+                if (data && data.IsSuccess) {
+                    currSelf.TaskStateData = data.Data;
+                }
+                //获取所有产线信息，by三胜
+                // $.ajax({
+                //     type: "post",
+                //     url: LocalConfig.SrvPath + "/jgmes/sanShengAction!getAllCxData.action",
+                //     data: {
+                //
+                //     },
+                //     dataType: "json",
+                //     success: function (ret) {
+                //         if (ret.IsSuccess) {
+                //             for (var i=0;i<ret.Data.length;i++){
+                //                 currSelf.cxList.push({
+                //                     CXSJ_CXBM:ret.Data[i].CXSJ_CXBM,
+                //                     CXSJ_CXMC:ret.Data[i].CXSJ_CXMC,
+                //                 })
+                //             }
+                //             currSelf.selectionCx=currSelf.cxList[0].CXSJ_CXBM;
+                //                 console.log()
+                //
+                //
+                //         }
+                //     },
+                //     error: function (xhr, status, errorThrown) {
+                //         $.alert("请求失败");
+                //     },
+                //     complete: function () {
+                //         $.hideLoading();
+                //     }
+                // });
+                currSelf.getProductionTaskData();
+            },
+
+
+
+            //获取生产任务单
+            getProductionTaskData: function () {
+                var currSelf = this;
+                //获取当前排产日期
+                var pcDate = $("#ProductionDate").val();
+                //后台获取任务单信息
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/sanShengAction!getProductionTaskData.action",
+                    data: {
+                        //此处不做工位机校验
+                        // userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        // mac: LocalUserInfo.GetUserInfo().Mac,
+                        "DH": currSelf.FormData.DH,
+                        "cpKeyWord": currSelf.FormData.KeyWord,
+                        "pcDate": pcDate,
+                        "pageSize": currSelf.FormData.PageSize,   //每页条数
+                        "currPage": currSelf.FormData.CurrPage,     //当前页
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        if (ret.IsSuccess) {
+                            currSelf.TaskList = ret.Data;
+                            currSelf.FormData.AllCount = ret.TotalCount;
+                            currSelf.FormData.TotalCountPages = Math.ceil(currSelf.FormData.AllCount/currSelf.FormData.PageSize);
+                        }
+                    },
+                    error: function (xhr, status, errorThrown) {
+                        $.alert("请求失败");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    }
+                });
+            },
+            //点击上一页按钮方法
+            PrevFunction: function () {
+                var currSelf = this;
+                currSelf.FormData.CurrPage--;    //当当前页大于1的时候就减减
+                currSelf.getProductionTaskData();
+            },
+
+            //点击下一页按钮方法
+            NextFunction: function () {
+                var currSelf = this;
+                currSelf.FormData.CurrPage++;    //当当前页小于总页数的时候就加加
+                currSelf.getProductionTaskData();
+            },
+
+            //工单弹窗功能
+            showGDData:function () {
+                var currSelf = this;
+                if (LocalUserInfo.GetUserInfo().ProductionLineCode==null||LocalUserInfo.GetUserInfo().ProductionLineCode==""){
+                    $.toptip("没获取到当前的产线信息！请重新登录")
+                    return;
+                }
+                $("#myModal").modal("show");
+                currSelf.getGdData();
+            },
+            getGdData:function(){
+                var currSelf = this;
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/sanShengAction!getGdData.action",
+                    data: {
+                        //此处不做工位机校验
+                        // userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        // mac: LocalUserInfo.GetUserInfo().Mac,
+                        "DH": currSelf.GDFormData.DH,
+                        "KeyWord": currSelf.GDFormData.KeyWord,
+                        "pageSize": currSelf.GDFormData.GdPageSize,   //每页条数
+                        "currPage": currSelf.GDFormData.GdCurrPage,     //当前页
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        if (ret.IsSuccess) {
+                            currSelf.TaskCodeGat=[];
+                            // currSelf.TaskCodeGat = ret.Data;
+                            for (var i =0;i<ret.Data.length;i++){
+                                currSelf.TaskCodeGat.push({
+                                    PCQty:"",
+                                    GDLB_WPCSL:ret.Data[i].GDLB_WPCSL,
+                                    GDLB_RQ:ret.Data[i].GDLB_RQ,
+                                    GDLB_GDHM:ret.Data[i].GDLB_GDHM,
+                                    GDLB_CPBH:ret.Data[i].GDLB_CPBH,
+                                    GDLB_CPGG:ret.Data[i].GDLB_CPGG,
+                                    GDLB_DDSL:ret.Data[i].GDLB_DDSL,
+                                    GDLB_GDZT_CODE:ret.Data[i].GDLB_GDZT_CODE,
+                                    JGMES_PLAN_GDLB_ID:ret.Data[i].JGMES_PLAN_GDLB_ID,
+                                    GDLB_DDHM:ret.Data[i].GDLB_DDHM,
+                                    GDLB_CKGJ:ret.Data[i].GDLB_CKGJ,
+                                    GDLB_NAME:ret.Data[i].GDLB_NAME,
+                                    GDLB_OTDRQ:ret.Data[i].GDLB_OTDRQ,
+                                })
+                            }
+                            currSelf.$nextTick(function () {     //$nextTick方法是进行获取数据后，对更新后的hmtl做操作
+                                $.each(currSelf.TaskCodeGat, function (i, item) {
+                                    $("#" + item.JGMES_PLAN_GDLB_ID).mynumkb();
+                                });
+                            });
+                            currSelf.GDFormData.GdAllCount = ret.TotalCount;
+                            currSelf.GDFormData.GdTotalCountPages = Math.ceil(currSelf.GDFormData.GdAllCount/currSelf.GDFormData.GdPageSize);
+                        }
+                    },
+                    error: function (xhr, status, errorThrown) {
+                        $.alert("请求失败");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    }
+                });
+
+            },
+            //点击上一页按钮方法
+            GdPrevFunction: function () {
+                var currSelf = this;
+                currSelf.GDFormData.GdCurrPage--;    //当当前页大于1的时候就减减
+                currSelf.getGdData();
+            },
+
+            //点击下一页按钮方法
+            GdNextFunction: function () {
+                var currSelf = this;
+                currSelf.GDFormData.GdCurrPage++;    //当当前页小于总页数的时候就加加
+                currSelf.getGdData();
+            },
+            //同步会写排产数量刀数据中
+            ChangeOrderPCSL:function (inputId) {
+                var currSelf = this;
+                var qty = $("#"+inputId).val();
+                for (var i = 0;i<currSelf.TaskCodeGat.length;i++){
+                    if (currSelf.TaskCodeGat[i].JGMES_PLAN_GDLB_ID==inputId){
+                        // $.toptip("排产数量大于可排产数量，已清空","warning");
+                        currSelf.TaskCodeGat[i].PCQty = qty;
+                        break;
+                    }
+                }
+            },
+            //排产数量减少方法
+            ItemFun:function (item) {
+                item.PCQty--;
+            },
+            //排产数量增加方法
+            ItemFun2:function (item) {
+                item.PCQty++;
+            },
+            //提交排产
+            SumitScheduling:function () {
+                var currSelf = this;
+                bootbox.confirm({
+                    message: "是否确定排产？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            //先进行遍历，取出排产数不为空且大于0的数据
+                            var sumitList = [];
+                            for (var i = 0;i<currSelf.TaskCodeGat.length;i++){
+                                if (currSelf.TaskCodeGat[i].PCQty!=""&&currSelf.TaskCodeGat[i].PCQty!=null&&currSelf.TaskCodeGat[i].PCQty>0){
+                                    sumitList.push(currSelf.TaskCodeGat[i]);
+                                }
+                            }
+                            //交验排产数量：排产数量不能大于未排产数量
+                            for (var i = 0;i<sumitList.length;i++){
+                                if (sumitList[i].PCQty>sumitList[i].GDLB_WPCSL){
+                                    $.toptip("需要排产的工单中含有排产数量大于未排产数量的数据！","danger");
+                                    return;
+                                }
+                            }
+                            //交验完成，进入后台处理生成任务单，更新工单，绑定条码等操作
+                            $.ajax({
+                                type: "post",
+                                url: LocalConfig.SrvPath + "/jgmes/sanShengAction!SumitScheduling.action",
+                                data: {
+                                    //此处不做工位机校验
+                                    // userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                    // mac: LocalUserInfo.GetUserInfo().Mac,
+                                    "sumitList":JSON.stringify(sumitList),
+                                    "cxCode":LocalUserInfo.GetUserInfo().ProductionLineCode,
+                                },
+                                dataType: "json",
+                                success: function (ret) {
+                                    $("#myModal").modal("hide");
+                                    if (ret.IsSuccess) {
+                                        $.toptip("排产成功","success");
+                                        currSelf.getProductionTaskData();
+                                    }else{
+                                        $.toptip(ret.message,"danger");
+                                    }
+                                },
+                                error: function (xhr, status, errorThrown) {
+                                    $.alert("排产请求失败");
+                                },
+                                complete: function () {
+                                    $.hideLoading();
+                                }
+                            });
+                        }
+                    }
+                });
+
+            },
+            //删除生产任务单
+            delScrw:function (item) {
+                var currSelf = this;
+                console.log(item);
+                bootbox.confirm({
+                    message: "警告！确认删除生产任务单？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                type: "post",
+                                url: LocalConfig.SrvPath + "/jgmes/sanShengAction!delScrw.action",
+                                data: {
+                                    //此处不做工位机校验
+                                    // userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                    // mac: LocalUserInfo.GetUserInfo().Mac,
+                                    "scrwId":item.JGMES_PLAN_SCRW_ID,
+                                },
+                                dataType: "json",
+                                success: function (ret) {
+                                    if (ret.IsSuccess) {
+                                        $.toptip("任务单删除成功","success");
+                                        currSelf.getProductionTaskData();
+                                    }else{
+                                        $.toptip(ret.message,"danger");
+                                    }
+                                },
+                                error: function (xhr, status, errorThrown) {
+                                    $.alert("删除请求失败");
+                                },
+                                complete: function () {
+                                    $.hideLoading();
+                                }
+                            });
+                        }
+                    }
+                });
+            },
+            //点击查看进度按钮方法
+            LookProduction: function (item) {
+                //console.log(item);
+                window.location.href = "/JG/Features/ProductionTaskProgress.html?taskID=" + item.JGMES_PLAN_SCRW_ID;
+            },
+            StartFull: function (item) {
+                var currself = this;
+                bootbox.confirm({
+                    message: "是否对当前任务单的进行开工吗？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            currself.ProductionOrderStatus(item, "RWZT02", "CXD01");
+                        }
+                    }
+                });
+            },
+            Completed: function (item) {
+                var currself = this;
+                bootbox.confirm({
+                    message: "<label style='font-size:25px'>是否要完工当前任务单吗？</label>", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            currself.ProductionOrderStatus(item, "RWZT03", "CXD01");
+                        }
+                    }
+                });
+            },
+            StopProduction: function (item) {
+                var currself = this;
+                bootbox.confirm({
+                    message: "是否要暂停生产当前任务单吗？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            currself.ProductionOrderStatus(item, "RWZT04", "CXD01");
+                        }
+                    }
+                });
+            },
+            //选择生产任务状态
+            ProductionOrderStatus: function (item, SCRW_RWZT_CODE, LineSegment) {
+                var currSelf = this;
+                    //修改任务单的生产状态
+                    $.showLoading();
+                    LineSegment = LineSegment ? LineSegment : item.SCRWZT_CXD;
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesInfraredAction!updateScrwZtB.action",
+                        async:false,
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            prodLineCode: item.SCRW_CXBM,
+                            taskCode: item.SCRW_RWDH,
+                            startSection: LineSegment,
+                            taskStatus: SCRW_RWZT_CODE,
+                            scrwId:item.JGMES_PLAN_SCRW_ID,//"生产任务单id"
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess) {
+                                $.toptip("操作成功！", "success");
+                                currSelf.getProductionTaskData();
+                            } else {
+                                $.toptip("操作失败:" + retData.message, "error");
+                            }
+                        }, error: function (xhr, status, errorThrown) {
+
+                            $.alert("请求失败");
+                        }, complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+            },
+
+
+        }
+    });
+</script>
+</html>

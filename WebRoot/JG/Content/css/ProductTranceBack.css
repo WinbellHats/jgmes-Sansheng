@@ -1,0 +1,229 @@
+body{
+    background-color:#E7F0EF;
+    min-width: 557px;
+}
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top:90px;
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index:50;
+}
+
+
+.item, .header_title,.empty {
+    width: 33.33%;
+    line-height: 50px;
+}
+.header_title {
+    padding-left: 15px;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title>a {
+    font-size: 3em;
+    color: #FFFFFF;
+}
+.user_img{
+    float: right;
+    padding-right: 15px;
+}
+
+
+#tab2 {
+    display: flex;
+    display: -webkit-flex;
+    flex-direction: row;
+    flex-flow: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.left {
+    flex: 0 0 49%;
+    height: 350px;
+}
+.right {
+    height: 350px;
+    flex: 0 0 49%;
+    margin-left: 2%;
+}
+
+.input-group-addon{
+    background-color: #DEEFD8;
+    color:#49874D;
+}
+.panel-default>.panel-heading {
+    background-color: #DEEFD8 !important;
+    color:#49874D !important;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.form-control {
+    height: 50px;
+    font-size: 1.5em;
+}
+.input-group-addon {
+    padding: 10px 12px;
+    font-size: 1.5em;
+}
+.list-group-item {
+    font-size: 1.5em;
+}
+
+.back{
+    width:85px;
+    height:30px;
+    display: inline-block;
+}
+.back>img{
+    width:60%;
+}
+.weui-toptips{z-index: 1051;font-size: 3.0em; height: 70px;padding-top: 10;padding-bottom: 10;}
+
+/**********************平板端的媒体查询*********************************/
+@media screen and (min-width:1280px) and (max-width:1920px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.8em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+}
+@media all and (min-height:1024px) and (max-height:1080px){}
+
+
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (min-width:1024px) and (max-width:1280px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.2em;
+    }
+    .back {
+        width: 70px;
+        height: 30px;
+    }
+    .input-group-addon {
+        font-size: 1.3em;
+    }
+    .form-control {
+        font-size: 1.3em;
+    }
+    .list-group-item {
+        font-size: 1.3em;
+    }
+    .panel-default>.panel-heading {
+        font-size: 1.3em;
+    }
+}
+@media all and (min-height:891px) and (max-height:1024px){}
+
+
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (min-width:768px) and (max-width:1024px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+    .input-group-addon {
+        font-size: 1.3em;
+    }
+    .form-control {
+        font-size: 1.3em;
+    }
+    .list-group-item {
+        font-size: 1.3em;
+    }
+    #tab2 {
+        display: block;
+    }
+    .right {
+        margin-left: 0%;
+    }
+    .panel-default>.panel-heading {
+        font-size: 1.3em;
+    }
+}
+@media screen and (min-width:557px) and (max-width:768px){
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 1.5em;
+    }
+    .back {
+        width: 60px;
+        height: 30px;
+    }
+    .item, .header_title {
+        line-height: 40px;
+    }
+    .form-control {
+        font-size: 1em;
+    }
+    .input-group-addon {
+        font-size: 1em;
+    }
+    .list-group-item {
+        font-size: 1em;
+    }
+    #tab2 {
+        display: block;
+    }
+    .right {
+        margin-left: 0%;
+    }
+    .panel-default>.panel-heading {
+        font-size: 1.2em;
+    }
+    .left {
+        height: 300px;
+    }
+}
+@media all and (min-height:768px) and (max-height:891px){}

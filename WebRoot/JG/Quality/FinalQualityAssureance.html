@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>巨大FQA-精工云MES系统移动端</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/JG/Content/css/Global.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/JG/Content/css/MobileBatchSubmittedNo.css?v=1">
+    <link href="/JG/Content/jquery/jquery-weui/css/icon.css" rel="stylesheet"/>
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+<header class="header">
+    <div class="empty">
+        <span id="stations"></span>
+    </div>
+    <div class="weui-flex">
+        <div class="weui-flex__item" style="position:absolute;">
+                <span style="font-size:16px" class="icon icon-109 f-white"
+                      onclick="javascript:location.href='/JG/Home/MobileIndex.html'"></span>
+        </div>
+        <div class="weui-flex__item" style="text-align: center;">FQA</div>
+    </div>
+</header>
+
+<div id="MainPage" v-cloak>
+    <div class="sec_content">
+        <div class="textbox">
+            <div class="weui-cells" style="border:1px solid #B9B9B9;">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <span>SN码<span style="color: red;font-weight:bold">*</span></span>
+                    </div>
+                    <div class="weui-cell__ft">
+                        <input @keyup="getSNFQAData(this)" type="text" name="Code" class="form-control" maxlength="50"
+                               v-model="BarCode" placeholder="扫描SN码" id="BarCode"
+                               style="width: 150px;border:none;border-radius:0;box-shadow: 0px 0px 0px 0px;"/>
+                    </div>
+                    <span @click="clearInputText('BarCode')" class="glyphicon glyphicon-remove"></span>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <span>外箱条码<span style="color: red;font-weight:bold">*</span></span>
+                    </div>
+                    <div class="weui-cell__ft">
+                        <input @keyup="enterData('OuterBarCode')" type="text" name="Code" class="form-control"
+                               maxlength="50"
+                               v-model="OuterBarCode" placeholder="请扫码" id="OuterBarCode"
+                               style="width: 150px;border:none;border-radius:0;box-shadow: 0px 0px 0px 0px;"/>
+                    </div>
+                    <span @click="clearInputText('BarCode')" class="glyphicon glyphicon-remove"></span>
+                </div>
+
+                <div class="weui-cell" v-for="(item, index) in BarCodeDataList">
+                    <div class="weui-cell__bd" style="width: 35%">
+                        <span style="width: 83%; display: inline-block; word-break: break-all;">{{item.BGSJZB_WLMC}}<span
+                                style="color: red;font-weight:bold">*</span></span>
+                    </div>
+                    <div class="weui-cell__ft">
+                        <input @keyup="enterData(item)" type="text" name="Code" class="form-control" maxlength="50"
+                               placeholder="请扫码" :id="item.JGMES_PB_BGSJZB_ID"
+                               style="width: 150px;border:none;border-radius:0;box-shadow: 0px 0px 0px 0px;"/>
+                    </div>
+                    <span @click="clearInputText(item.JGMES_PB_BGSJZB_ID)" class="glyphicon glyphicon-remove"
+                          style="float: right"></span>
+                </div>
+            </div>
+            <!--检测图-->
+            <div class="weui-cells" style="border:1px solid #B9B9B9;">
+                <div class="weui-cell" style="background-color: #DDEED8">
+                    <div class="weui-cell__bd" style="width: 35%;border-bottom:1px solid #ccc">
+                        <span style="width: 83%; display: inline-block; word-break: break-all;">外箱条码</span>
+                    </div>
+                    <div class="weui-cell__ft" style="border-bottom:1px solid #ccc">
+                        <i v-if="OuterBarCodeSame==1" class="weui-icon-success weui-icon_msg"
+                           style="font-size: 20px"></i>
+                        <i v-if="OuterBarCodeSame==0" class="weui-icon-warn weui-icon_msg" style="font-size: 20px"></i>
+                    </div>
+                </div>
+                <div class="weui-cell" v-for="(item, index) in BarCodeDataList" style="background-color: #DDEED8">
+                    <div class="weui-cell__bd" style="width: 35%;border-bottom:1px solid #ccc">
+                        <span style="width: 83%; display: inline-block; word-break: break-all;">{{item.BGSJZB_WLMC}}</span>
+                    </div>
+                    <div class="weui-cell__ft" style="border-bottom:1px solid #ccc">
+                        <i v-if="item.same==1" class="weui-icon-success weui-icon_msg" style="font-size: 20px"></i>
+                        <i v-if="item.same==0" class="weui-icon-warn weui-icon_msg" style="font-size: 20px"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!--检测结果-->
+            <div class="record">
+                <div class="weui-flex workrecord">
+                    <!--                        <div class="weui-flex__item buliang"></div>-->
+                    <div id="resultMsg" style="width: 320px;height: 60px;margin: 0px auto;font-size: 20px;"></div>
+                </div>
+            </div>
+            <div>
+                <div class="weui-cell__bd" style="font-size: 14px;margin: 30px 0 0 10px">
+                    <input type="checkbox" style="display: none;" id="autoSumit"/>
+                    <img id="autoSumitImg" @click="imgClick" src="/JG/Content/images/none2.png"/>&nbsp;&nbsp;&nbsp;<b>自动保存</b>
+                </div>
+                <div class="weui-cell__ft">
+                    <button @click="save" type="button" class="btn btn-success"
+                            style="height: 50px;width: 150px;margin: -40px 20px 10px 0">保存
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/Utils.js?v=1"></script>
+<script src="/JG/Content/Common.js"></script>
+<script type="text/javascript" src="/JG/Content/AudioUtils.js"></script>
+<script src="/JG/Content/Numkeyboard.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/jquery/fastclick.js"></script>
+
+<script>
+    function enterData(e, input) {
+        vmPage.enterData(e, input);
+    }
+</script>
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el: "#MainPage",
+        data: {
+            FormData: {},
+            BarCode: "",//SN码
+            OuterBarCode: "",//外箱码
+            // powerLineCode: "",//电源线条码
+            // BoxCode: "",//附件盒条码
+            BarCodeDataList: [],//由SN码读取出来的
+            OuterBarCodeSame: 0,
+            getDataSuccess: 0,
+
+        },
+        mounted: function () {
+            var currSelf = this;
+            $("#BarCode").focus();
+        },
+        methods: {
+            imgClick: function () {
+                //点击图片更换，并且触发checkbox是否被选中
+                if ($("#autoSumit").prop("checked")) {
+                    $("#autoSumit").prop("checked", false);
+                    $("#autoSumitImg").attr('src', "/JG/Content/images/none2.png");
+                } else {
+                    $("#autoSumit").prop("checked", true);
+                    $("#autoSumitImg").attr('src', "/JG/Content/images/none1.png");
+                }
+            },
+            getSNFQAData: function (input) {
+                var currSelf = this;
+                currSelf.BarCodeDataList = [];//清空
+                $("#resultMsg").html("");
+                if (event.keyCode == 13) {
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/finalQualityAssureanceAction!getSNBarCodeData.action",
+                        data: {
+                            "Barcode": currSelf.BarCode,//SN码
+                            "ssh": "14",                 //校验的工序顺序号
+                        },
+                        dataType: "json",
+                        success: function (result) {
+                            // var retData = ReturnData(result);
+                            if (result.IsSuccess) {
+                                currSelf.BarCodeDataList = result.Data;
+                                currSelf.getDataSuccess = 1;
+                                $("#OuterBarCode").focus();
+                            } else {
+                                $("#resultMsg").html(result.message);
+                                currSelf.getDataSuccess = 0;
+
+                            }
+                        },
+                        error: function (xhr, status, errorThrow) {
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                }
+            },
+            enterData: function (item) {
+                var currSelf = this;
+                //回车事件
+                if (event.keyCode == 13) {
+                    if (item == 'OuterBarCode') {
+                        if (currSelf.OuterBarCode == currSelf.BarCode) {
+                            currSelf.OuterBarCodeSame = 1;
+                            $("#resultMsg").html("");
+                        } else {
+                            currSelf.OuterBarCodeSame = 0;
+                            $("#resultMsg").html("不匹配！");
+                        }
+                        var id = 'OuterBarCode';
+                    } else {
+                        var id = item.JGMES_PB_BGSJZB_ID;
+                        var tm = $("#" + id).val();
+                        var count = 0;
+                        for (var i = 0; i < currSelf.BarCodeDataList.length; i++) {
+                            if (id == currSelf.BarCodeDataList[i].JGMES_PB_BGSJZB_ID && tm == currSelf.BarCodeDataList[i].BGSJZB_TMH) {
+                                currSelf.BarCodeDataList[i].same = 1;
+                                count++;
+                            }
+                        }
+                        if (count == 0) {
+                            // var msg = item.BGSJZB_WLMC+"条码号与该SN码不匹配";
+                            var msg = "不匹配！"
+                            for (var i = 0; i < currSelf.BarCodeDataList.length; i++) {
+                                if (id == currSelf.BarCodeDataList[i].JGMES_PB_BGSJZB_ID) {
+                                    currSelf.BarCodeDataList[i].same = 0;
+                                }
+                            }
+                            $("#resultMsg").html(msg);
+                        } else {
+                            $("#resultMsg").html("");
+                        }
+                    }
+                    currSelf.saveCheck();
+                    var inputs = $("input[name='Code']");
+                    for (var i = 0; i < inputs.length; i++) {
+                        if (i == (inputs.length - 1)) {
+                            break;
+                        } else if (id == inputs[i].id) {
+                            inputs[i + 1].focus();
+                            break;
+                        }
+                    }
+                }
+            },
+            isNotEmpty: function (obj) {
+                //判空
+                if (typeof obj == "undefined" || obj == null || obj == "") {
+                    return false;
+                } else {
+                    return true;
+                }
+            },
+            //判断并保存
+            saveCheck: function () {
+                var currSelf = this;
+                if ($("#autoSumit").prop("checked")) {
+                    // currSelf.saveFQAData();
+                    currSelf.save();
+                }
+                ;
+            },
+            save: function () {
+                var currSelf = this;
+                var continueNot = true;
+                if (currSelf.getDataSuccess == 0) {
+                    $("#resultMsg").html("未能正确获取SN码对应信息，不能保存");
+                    continueNot = false;
+                }
+
+                if (currSelf.OuterBarCode && currSelf.OuterBarCodeSame == 0) {
+                    continueNot = false;
+                    $("#resultMsg").html("外箱条码不匹配或为空");
+                }
+                if (continueNot) {
+                    //校验空值，若全不为空，则校验是否全部匹配，通过即保存
+                    var inputs = $("input[name='Code']");
+                    for (var i = 0; i < inputs.length; i++) {
+                        if (!currSelf.isNotEmpty(inputs[i].value)) {
+                            continueNot = false;
+                            $("#resultMsg").html("需扫码的项目不能含有空的项！");
+                            break;
+                        }
+                    }
+                }
+                if (continueNot) {
+                    for (var i = 0; i < currSelf.BarCodeDataList.length; i++) {
+                        if (currSelf.BarCodeDataList[i].same == 0) {
+                            continueNot = false;
+                            $("#resultMsg").html("含有不匹配的条码号！");
+                            break;
+                        }
+                    }
+                }
+                if (continueNot) {
+                    $("#resultMsg").html("PASS");
+                    console.log("保存");
+                    var jsonStr = {
+                        "FQAJLB_SNM": currSelf.BarCode,
+                    };
+                    var jsonStrDetail = [];
+                    jsonStrDetail.push({
+                        "FQAJLBZB_TMH": currSelf.OuterBarCode,
+                        "FQAJLBZB_WLMC": "外箱条码",
+                    });
+                    for (var i = 0; i < currSelf.BarCodeDataList.length; i++) {
+                        jsonStrDetail.push({
+                            "FQAJLBZB_TMH": currSelf.BarCodeDataList[i].BGSJZB_TMH,
+                            "FQAJLBZB_WLBH": currSelf.BarCodeDataList[i].BGSJZB_WLBH,
+                            "FQAJLBZB_WLMC": currSelf.BarCodeDataList[i].BGSJZB_WLMC,
+                        });
+                    }
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/finalQualityAssureanceAction!save.action",
+                        data: {
+                            "jsonStr": JSON.stringify(jsonStr),
+                            "jsonStrDetail": JSON.stringify(jsonStrDetail),
+                        },
+                        dataType: "json",
+                        success: function (result) {
+                            // var retData = ReturnData(result);
+                            if (result.IsSuccess) {
+                                $.toptip("保存数据成功", "success");
+                                //数据初始化
+                                currSelf.BarCode = "";//SN码
+                                currSelf.BarCodeDataList = [];
+                                currSelf.OuterBarCode = "";
+                                currSelf.OuterBarCodeSame = 0;
+                                $("#resultMsg").html("");
+                                $("#BarCode").focus();
+                            } else {
+                                $("#resultMsg").html(result.message);
+                            }
+                        },
+                        error: function (xhr, status, errorThrow) {
+
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                }
+            },
+            // getBarcodeData:function (thisId) {
+            //     //获取数据，并校验是否正确，若全部正确且勾选了自动保存，则进行保存
+            //     var currSelf = this;
+            //     $.ajax({
+            //         type: "post",
+            //         url: LocalConfig.SrvPath + "/jgmes/finalQualityAssureanceAction!getBarcodeData.action",
+            //         data: {
+            //             "Barcode": this.BarCode,//SN码
+            //             "OuterBarCode":this.OuterBarCode,//外箱码
+            //             "powerLineCode":this.powerLineCode,//电源线码
+            //             "BoxCode":this.BoxCode,//附件码
+            //             "ssh":"14",//校验的工序顺序号
+            //         },
+            //         dataType: "json",
+            //         success: function (result) {
+            //             // var retData = ReturnData(result);
+            //             if (result.IsSuccess) {
+            //                 $("#resultMsg").html("");
+            //                 if (currSelf.isNotEmpty(currSelf.BarCode)&&currSelf.isNotEmpty(currSelf.OuterBarCode)&&currSelf.isNotEmpty(currSelf.powerLineCode)&&currSelf.isNotEmpty(currSelf.BoxCode)) {
+            //                     $("#resultMsg").html("Pass");
+            //                     if($("#autoSumit").prop("checked")){
+            //                         currSelf.saveFQAData();
+            //                     }
+            //                 }
+            //             }else{
+            //                 $("#resultMsg").html(result.message);
+            //             }
+            //         },
+            //         error: function (xhr, status, errorThrow) {
+            //             console.error(status);
+            //         },
+            //         complete: function () {
+            //             $.hideLoading();
+            //         }
+            //     });
+            //
+            // },
+            // saveFQAData: function () {
+            //     //保存方法
+            //     var currSelf = this;
+            //     console.log("开始保存");
+            //     if (currSelf.isNotEmpty(currSelf.BarCode) && currSelf.isNotEmpty(currSelf.OuterBarCode) && currSelf.isNotEmpty(currSelf.powerLineCode) && currSelf.isNotEmpty(currSelf.BoxCode)) {
+            //         $.ajax({
+            //             type: "post",
+            //             url: LocalConfig.SrvPath + "/jgmes/finalQualityAssureanceAction!getBarcodeData.action",
+            //             data: {
+            //                 "Barcode": currSelf.BarCode,//SN码
+            //                 "OuterBarCode": currSelf.OuterBarCode,//外箱码
+            //                 "powerLineCode": currSelf.powerLineCode,//电源线码
+            //                 "BoxCode": currSelf.BoxCode,//附件码
+            //                 "ssh": "14",//校验的工序顺序号
+            //             },
+            //             dataType: "json",
+            //             success: function (result) {
+            //                 // var retData = ReturnData(result);
+            //                 if (result.IsSuccess) {
+            //                     //校验通过
+            //                     $.ajax({
+            //                         type: "post",
+            //                         url: LocalConfig.SrvPath + "/jgmes/finalQualityAssureanceAction!saveFQAData.action",
+            //                         data: {
+            //                             "Barcode": currSelf.BarCode,//SN码
+            //                             "OuterBarCode": currSelf.OuterBarCode,//外箱码
+            //                             "powerLineCode": currSelf.powerLineCode,//电源线码
+            //                             "BoxCode": currSelf.BoxCode,//附件码
+            //                         },
+            //                         dataType: "json",
+            //                         success: function (result) {
+            //                             var retData = ReturnData(result);
+            //                             if (retData.IsSuccess) {
+            //                                 $.toptip("保存数据成功", "success");
+            //                                 //数据初始化
+            //                                 currSelf.BarCode = "";//SN码
+            //                                 currSelf.OuterBarCode = "";//外箱码
+            //                                 currSelf.powerLineCode = "";//电源线条码
+            //                                 currSelf.BoxCode = "";//附件盒条码
+            //                             } else {
+            //                                 $.toptip("数据保存失败", "error");
+            //                             }
+            //                         },
+            //                         error: function (xhr, status, errorThrow) {
+            //                             console.error(status);
+            //                         },
+            //                         complete: function () {
+            //                             $.hideLoading();
+            //                         }
+            //                     });
+            //                 } else {
+            //                     $("#resultMsg").html(result.message);
+            //                 }
+            //             },
+            //             error: function (xhr, status, errorThrow) {
+            //                 console.error(status);
+            //             },
+            //             complete: function () {
+            //                 $.hideLoading();
+            //             }
+            //         });
+            //     } else {
+            //         $.toptip("数据中含有空的项，请扫码验证", "error");
+            //         return false;
+            //
+            //     }
+            // },
+            clearInputText: function (id) {
+                var currSelf = this;
+                $("#" + id).val("")
+            },
+        }
+    })
+</script>
+</body>
+
+</html>

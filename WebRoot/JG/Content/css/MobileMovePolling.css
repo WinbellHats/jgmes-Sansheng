@@ -1,0 +1,47 @@
+/*header部分*/
+body{
+    background-color: #E6EFEE;
+}
+.header {
+    background-color: #231A15;
+    line-height: 50px;
+    font-size: 1.2em;
+    z-index: 100;
+    position: fixed;
+    width: 100%;
+    color: #FFFFFF;
+    top: 0px;
+}
+/*清除浮动*/
+.empty_div{
+    content: "";
+    height:60px;
+}
+#MainPage {
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow-y: auto;
+    background-color: #ffff;
+}
+
+/*搜索框部分*/
+.search_input{
+    width:100%;
+    margin-top: 18px;
+}
+.search_input>span{
+    display: inline-block;
+}
+.search_input>span:first-child{
+    width:13%;
+    text-align: center;
+}
+.search_input>span:last-child{
+    width:85%;
+    text-align: center;
+}
+
+/*列表部分*/
+.weui-cells:after {
+    border-bottom: none;
+}

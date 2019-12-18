@@ -1,0 +1,929 @@
+﻿<!DOCTYPE html>
+<html lang="zh_CN" xmlns:v-on="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/TabletsGlobal.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/Infrared.css">
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap-select.min.css" rel="stylesheet" />
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+	<script src="/JG/Content/Numkeyboard.js"></script>
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<style>
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+.mykb-box{
+    width:390px;
+    height:370px;
+    background:rgba(0,0,0,0.6);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000,endColorstr=#99000000);
+    box-shadow:0 0 10px rgb(43, 42, 42);
+    padding:20px;
+    border-radius:10px;
+    user-select: none;
+    -ms-user-select: none;
+    position:absolute;
+    display: none;
+    left: 50% !important;
+}
+.mykb-box ul,.mykb-box li{
+    list-style: none;
+}
+.mykb-box li{
+    width:60px;
+    height:60px;
+    line-height:60px;
+    text-align: center;
+    background:#f5f5f5;
+    border-radius:10px;
+    font-weight:bold;
+    margin:10px;
+    float:left;
+    box-shadow: 0px 2px 1px #000;
+    color:#1b50a2;
+    font-size:24px;
+    cursor:pointer;
+}
+.mykb-box li.active{
+    box-shadow:0px -2px 1px #000;
+}
+.mykb-box .func{color:#fff;width:90px;}
+.mykb-box .exit{background:#F44336;}
+.mykb-box .del{background:#ff9800}
+.mykb-box .clearall{background:#2196F3}
+.mykb-box .sure{background: #4CAF50;width:170px;}
+
+
+</style>
+	
+	
+    <title>生产任务单</title>
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .btn {
+            margin-left: 3px;
+            width: 80px;
+            height: 35px;
+        }
+        .weui-toptips {
+            z-index: 1051;
+            font-size: 3.0em !important;
+            height: 70px !important;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            line-height: 50px;
+        }
+    </style>
+</head>
+
+<body>
+<header class="header">
+    <div class="empty">
+<!--        <span id="Infrared"></span>-->
+    </div>
+    <div class="header_title">
+        <a href="javascript:;">生产任务单</a>
+    </div>
+    <div class="item item2">
+        <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+            <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+        </div>
+    </div>
+</header>
+<div id="MainPage" class="MainPage" v-cloak>
+
+<!--任务列表弹窗选项部分-->
+        <div tabindex="-1" class="modal fade" id="myModal" role="dialog" aria-hidden="true"
+            aria-labelledby="myModalLabel">
+            <div class="modal-dialog content_dialog">
+                <div class="modal-content">
+                    <!--头部-->
+                    <div class="modal-header content_header">
+                        <div class="close_div">
+                            <button class="close" aria-hidden="true" type="button" data-dismiss="modal">×</button>
+                            <h4 class="modal-title" id="myModalLabel">报工</h4>
+                        </div>
+                    </div>
+                    <!--内容部分-->
+                    <div class="modal-body content_body" id="tanchu" style="overflow-x: auto;overflow-y: auto;">
+                        <div class="bs-example" data-example-id="hoverable-table">
+                            <table class="table table-hover" id="btable">
+                                <thead>
+                                    <tr>
+                                        <th>类型</th>
+                                        <th>值</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableble">
+                                    <tr id="1" >
+                                        <td>
+                                            班别
+                                        </td>
+                                        <td class="">
+											<span class="sum_list">
+												<select name="select2" placeholder="请选择班次" class="weui-select" id="bc">
+													<option disabled="disabled" selected="selected" value="">请选择班次</option> 
+													<option value="正班">
+														正班
+													</option><option value="加班">
+														加班
+													</option>
+                                                </select>
+                                            </span>
+                                        </td>
+                                    </tr>
+									<tr id="trState" >
+                                        <td>
+                                            报工数量
+                                        </td>
+                                        <td class="">
+											<span class="sum_list">
+												<label for="bgsl" class="sum-img"></label>
+												<input id="bgsl"  type="text" placeholder="请输入报工数量" class="form-control"
+													></span></td>
+                                    </tr>
+									<tr>
+                                        <td>
+                                            不良数量
+                                        </td>
+                                        <td class="">
+												<span class="sum_list">
+												<label for="blsl" class="sum-img"></label>
+												<input id="blsl"  type="text" placeholder="请输入报工数量" class="form-control" ></span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+							<!--
+							<ul class="pro_ul list-group">
+								<li class="list-group-item">
+									<span class="sum_title">产线人数</span>
+									<span class="sum_item">
+										<span class="sum_list">
+											<label class="sum-img" for="ProductionLineNum"></label>
+											<input id="ProductionLineNum" v-model="ProductionLineNum" readonly="readonly"
+												maxlength="8" class="form-control" type="text" style="cursor: pointer"
+												placeholder="点击弹出输入数字键盘">
+										</span>-->
+										<!--<button type="button" :disabled="Hgs==FormData.TaskSum" @click="PlusFun">+</button>
+									</span>
+								</li>
+							 </ul>-->
+                        </div>
+                    </div>
+                    <!--底部分页部分-->
+                    <div class="modal-footer page_footer">
+                        <div class="page_num">
+                            <button type="button" class="btn btn-success prev" @click="saveBGSJ(0)"
+                                >报工</button>
+                            <button type="button" class="btn btn-danger next" @click="saveBGSJ(1)"
+                                id="wgButState"
+                                >完工</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="navbar-form navbar-left">
+        排产日期&nbsp;
+        <div class="form-group" style="width:15em" >
+            <input type="text" data-toggle='date' class="form-control" id="ProductionDate"  bind-value="" />
+        </div>
+    </div>
+
+<!--    生产线-->
+<!--    <div class="navbar-form navbar-left">-->
+<!--            生产线&nbsp;-->
+<!--        <div class="form-group" style="width:15em">-->
+<!--            <select class="form-control" id="ProductionLineCode" data-live-search="true">-->
+<!--&lt;!&ndash;                <option value="">查询所有产线</option>&ndash;&gt;-->
+<!--                <option v-for="(item,index) in ProLineData" v-bind:value="item.CXSJ_CXBM">{{item.CXSJ_CXMC}}-->
+<!--                </option>-->
+<!--            </select>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <div class="navbar-form navbar-left">
+        设备
+        <div class="form-group" style="height:44px;">
+            <select id="ProductionLineCode" class="selectpicker form-group" multiple="multiple"
+                    data-live-search="true" v-model="FormData.ProductionLineCode" style="background-color: #FFFFFF">
+<!--                <option value="">查询所有产线</option>-->
+                <option v-for="(item,index) in ProLineData" v-bind:value="item.CXSJ_CXBM">
+                    {{item.CXSJ_CXMC}}</option>
+            </select>
+        </div>
+    </div>
+
+<!--    <div class="navbar-form navbar-left">-->
+<!--        单据信息-->
+<!--        <div class="form-group">-->
+<!--            <input id="ProTaskCode" class="form-control" v-model="FormData.ProTaskCode" type="text"-->
+<!--                   placeholder="输入订单/工单/任务单号模糊搜索">-->
+<!--        </div>-->
+<!--    </div>-->
+    <!--产品名称-->
+    <div class="navbar-form navbar-left">
+        物料编号
+        <div class="form-group">
+            <input v-model="FormData.KeyWord" class="form-control" type="text" placeholder="输入产品编码/名称/型号模糊搜索">
+        </div>
+    </div>
+
+    <div class="navbar-form navbar-left">
+        班组
+        <div class="form-group" style="height:44px;">
+            <select id="BzData" class="selectpicker form-group" multiple="multiple"
+                    data-live-search="true" v-model="FormData.Bz" style="background-color: #FFFFFF">
+                <option v-for="(item,index) in BzData" :value="item.DICTIONARYITEM_ITEMNAME">
+                    {{item.DICTIONARYITEM_ITEMNAME}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="navbar-form navbar-left">
+        班别
+        <div class="form-group" style="height:44px;">
+            <select id="teamOfTime" class="selectpicker form-group" multiple="multiple"
+                    data-live-search="true" v-model="FormData.teamOfTime" style="background-color: #FFFFFF">
+                    <option value="日">日</option>
+                <option value="夜">夜</option>
+            </select>
+        </div>
+    </div>
+    <div class="navbar-form navbar-left">
+        生产状态
+        <div class="form-group" style="height:44px;">
+            <select id="TaskStateData" class="selectpicker form-group" multiple="multiple"
+                    data-live-search="true" v-model="FormData.TaskState" style="background-color: #FFFFFF">
+                <option v-for="(item,index) in TaskStateData"
+                        :value="item.DICTIONARYITEM_ITEMCODE">
+                    {{item.DICTIONARYITEM_ITEMNAME}}</option>
+            </select>
+        </div>
+    </div>
+    <!--<div class="navbar-form navbar-left">-->
+    <!--生产状态&nbsp;-->
+    <!--<div class="form-group" style="width:15em">-->
+    <!--<select id="" v-model="FormData.TaskState" class="selectpicker" multiple="multiple">-->
+    <!--<option v-for="(item,index) in TaskStateData" v-bind:value="item.DICTIONARYITEM_ITEMCODE">{{item.DICTIONARYITEM_ITEMNAME}}-->
+    <!--</option>-->
+    <!--</select>-->
+    <!--</div>-->
+    <!--</div>-->
+    <div class="navbar-form navbar-left">
+        <button type="submit" class="btn btn-default" v-on:click="SearchForm()">搜索</button>
+        <button type="submit" class="btn btn-success" v-on:click="StartSCRW()">批量开工</button>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th><input type='checkbox'  id="iteamCheckboxAll"/></th>
+            <th>排产日期</th>
+            <th>班别</th>
+            <th>班组</th>
+            <th>设备</th>
+<!--            <th>工令单号\订单号</th>-->
+            <th>物料编号</th>
+            <th>产品名称</th>
+<!--            <th>产品规格</th>-->
+
+<!--            <th>计划数量</th>-->
+
+            <!-- <th>生产段</th> -->
+            <th>正班计划数量</th>
+            <th>加班计划数量</th>
+            <th>计划总数</th>
+            <th>完成数量</th>
+            <th>生产状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(item,index) in TaskList" id="itemsList">
+            <td>{{index+1}}</td>
+            <td ><input type='checkbox' name='iteamCheckbox'/></td>
+            <td>{{item.SCRW_PCRQ}}</td>
+            <td>{{item.SCRW_BB}}</td>
+            <td>{{item.SCRW_BZNAME}}</td>
+            <td>{{item.SCRW_SB}}</td>
+<!--            <td>{{item.SCRW_GLDH}}<br />{{item.SCRW_DDHM}}</td>-->
+            <td>{{item.SCRW_CPGG}}</td>
+            <td>{{item.SCRW_NAME}}</td>
+<!--            <td>{{item.SCRW_CPGG}}</td>-->
+
+<!--            <td>{{item.SCRW_PCSL}}</td>-->
+            <td>{{item.SCRW_ZBJHCL}}</td>
+            <td>{{item.SCRW_JBJHCL}}</td>
+            <td>{{countNum(item.SCRW_ZBJHCL,item.SCRW_JBJHCL)}}</td>
+            <td>{{item.SCRW_WCSL}}</td>
+            <td style="display:none" name="itemSingle">{{item}}</td>
+            <!-- <td>
+                <label v-if="item.SCRWZT_CXD=='CXD01'">全段</label>
+                <label v-if="item.SCRWZT_CXD=='CXD02'">前段</label>
+                <label v-if="item.SCRWZT_CXD=='CXD03'">后段</label>
+            </td> -->
+            <td>
+                <label v-if="item.SCRW_RWZT_CODE=='RWZT01'">待生产</label>
+                <label v-if="item.SCRW_RWZT_CODE=='RWZT02'">生产中</label>
+                <label v-if="item.SCRW_RWZT_CODE=='RWZT03'">完成生产</label>
+                <label v-if="item.SCRW_RWZT_CODE=='RWZT04'">暂停</label>
+            </td>
+            <td class="operation">
+                <button v-if="item.SCRW_RWZT_CODE!='RWZT02' && item.SCRW_RWZT_CODE!='RWZT03'" id="StartFull"
+                        class="btn btn-success" @click="StartFull(item)">开工</button>
+				<button v-if="item.SCRW_RWZT_CODE!='RWZT02' && item.SCRW_RWZT_CODE!='RWZT03'" @click="ReportSkill(1,item)" id="reportSkill"
+                        class="btn btn-success" >报工</button>
+                <!-- <button v-if="item.SCRW_RWZT_CODE!='RWZT02' && item.SCRW_RWZT_CODE!='RWZT03'" id="StartFull"
+                    class="btn btn-success" @click="StartFull(item)">全段开工</button>
+                <button v-if="item.SCRW_RWZT_CODE!='RWZT02' && item.SCRW_RWZT_CODE!='RWZT03'" id="FrontSection"
+                    class="btn btn-success" @click="FrontSection(item)">前段开工</button>
+                <button v-if="item.SCRW_RWZT_CODE!='RWZT02' && item.SCRW_RWZT_CODE!='RWZT03'" id="RearEnd"
+                    class="btn btn-success" @click="RearEnd(item)">后段开工</button> -->
+                <button v-if="item.SCRW_RWZT_CODE=='RWZT02'" class="btn btn-danger"
+                        @click="Completed(item)">生产完工</button>
+                <button v-if="item.SCRW_RWZT_CODE=='RWZT02'" class="btn btn-warning"
+                        @click="StopProduction(item)">暂停生产</button>
+				<button v-if="item.SCRW_RWZT_CODE=='RWZT02'" class="btn btn-warning"
+                        @click="ReportSkill(2,item)" id="reportSkill1">报工</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+
+<script src="/JG/Content/jquery/fastclick.js"></script>
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/Utils.js?v=1"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/bootstrap-select.min.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+<script src="/JG/Content/Common.js"></script>
+<script type="text/javascript" src="/JG/Content/AudioUtils.js"></script>
+<script src="/JG/Content/Numkeyboard.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        bootbox.setDefaults("locale", "zh_CN");
+        FastClick.attach(document.body);
+        var stations = LocalUserInfo.GetUserInfo();
+        $("#Infrared").html(stations.ProductionLineName + '-' + stations.StationName);
+    });
+</script>
+<script>
+    $(function() {
+        $("#iteamCheckboxAll").click(function() {
+            $('input[name="iteamCheckbox"]').prop("checked",this.checked);
+        });
+        // var today = new Date();
+        // var day = today.getDate();
+        // var month = today.getMonth() + 1;
+        // var year = today.getFullYear();
+        // console.log(year);//获取日期
+        // var date = year + "-" + month + "-" + day;
+        // $("#ProductionDate").val(date);
+        // var $iteamCheckbox = $("input[name='iteamCheckbox']");
+        // $iteamCheckbox.click(function(){
+        //     $("#iteamCheckboxAll").attr("checked",$iteamCheckbox.length == $("input[name='iteamCheckbox']:checked").length ? true : false);
+        // });
+		$("#Hgs").mynumkb();
+		$("#Nhgs").mynumkb();
+		$("#ProductionLineNum").mynumkb();
+        $("#ProductionDate").calendar({inputReadOnly:false});
+
+    });
+
+</script>
+<script type="text/javascript">
+    $(".operation>span").each(function (index) {
+        $(this).on("click", function () {
+            $(".operation>span").eq(index).addClass("active").siblings(".operation>span").removeClass("active")
+        })
+
+    })
+</script>
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el: "#MainPage",
+        data: {
+            FormData: {
+                // ProductionLineCode: "",
+                ProductionLineCode: [],
+                TaskState:[],     //搜索框选中的状态搜索集合
+                curDate: "",    //当前产线时间
+                AllCount: 0,    //请求到前端的全部条数
+                PageSize: 10,    //每页条数
+                TotalCountPages: "",    //总页数
+                CurrPage: 1,     //当前页
+                teamOfTime:[],  //班别选中的状态搜索集合
+                Bz:[],      //班组选中的状态搜索集合
+				ReportSkillState:"",
+            },
+			ProductionLineNum:"",
+            TaskList: [],
+            ProLineData: [],    //产线集合
+            TaskCode: "",               //任务单号
+            TaskStatu: "",             //任务状态
+            TaskStateData:[],        //任务状态集合
+            BzData:[],              //班组
+            saveDataList:[],
+        },
+        computed:{
+            countNum:function (one,two) {
+                return Number(one)+Number(two);
+            }
+        },
+        mounted: function () {
+            var currSelf = this;
+            currSelf.InitData();
+        },
+        methods: {
+            countNum:function (one,two) {
+                return Number(one)+Number(two);
+            },
+            InitData: function () {
+                var currSelf = this;
+                var data = GetDictionary("JGMES_DIC_RWZT");
+                if (data && data.IsSuccess) {
+                    currSelf.TaskStateData = data.Data;
+                }
+                var bzData = GetDictionary("JGMEST_DIC_LHBZ");
+                if (bzData && bzData.IsSuccess) {
+                    currSelf.BzData = bzData.Data;
+                }
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    async: false,   //异步
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesBaseAction!getCxList.action",
+                    data: {},
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            if (retData.Data && retData.Data.length>0) {
+                                currSelf.ProLineData = retData.Data;
+
+                                //this.ProLineData = retData.Data;
+                                // currSelf.FormData.ProductionLineCode = LocalUserInfo.GetUserInfo().ProductionLineCode;
+                            }
+                        } else if (!retData.Data) {
+                            var showMsg = "未能找到产线信息";
+                            $.toptip(showMsg, "warning");
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取产线失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    },
+                });
+            },
+            // 切换当前选中的产线方法
+            // ProLineClick:function(){
+            //     var currSelf = this;
+            //     $.each(currSelf.ProLineData, function (index, item) {
+            //         if (currSelf.FormData.ProductionLineCode == item.CXSJ_CXBM) {
+            //             currSelf.FormData.ProductionLineCode = item.CXSJ_CXBM;
+            //         }
+            //     });
+            // },
+            //批量开工方法
+            StartSCRW: function () {
+                var currself = this;
+                var chk_value =[];//定义一个数组
+                $('input[name="iteamCheckbox"]:checked').each(function(){//遍历每一个名字为iteamCheckbox的复选框，其中选中的执行函数
+                    chk_value.push(JSON.parse($(this).parent().parent().find("td[name^='itemSingle']").html()));//将选中的值添加到数组chk_value中
+                });
+                console.log(chk_value);
+                if (chk_value.length==0){
+                    $.toptip("请选择您要开工的生产任务", "error")
+                    return;
+                }
+                for(var i = 0;i<chk_value.length;i++){
+                    if (!(chk_value[i].SCRW_RWZT_CODE!="RWZT01" ) && !(chk_value[i].SCRW_RWZT_CODE!="RWZT03")){
+                        $.toptip("选择的任务中含有已开工的生产任务", "error")
+                        return;
+                    }
+                    for (var j=1+i;j<chk_value.length;j++) {
+                        if (chk_value[i].SCRW_CXBM==chk_value[j].SCRW_CXBM) {
+                            $.toptip("选择的任务中含有相同产线！不能同时开工！", "error")
+                            return;
+                        }
+                    }
+                }
+                bootbox.confirm({
+                    message: "是否对当前选中的任务单的进行开工吗？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            for (var i = 0;i<chk_value.length;i++){
+                                currself.ProductionOrderStatus(chk_value[i], "RWZT02", "CXD01");
+                            }
+
+                        }
+                    }
+                });
+            },
+            //搜索功能方法
+            SearchForm: function () {
+                var currSelf = this;
+                currSelf.GetProductTask();
+                currSelf.InitData();
+            },
+            //“全段”,”CXD01”),CXDQD(“前段”,”CXD02”),CXDHD(“后段”,”CXD03”）
+            StartFull: function (item) {
+                var currself = this;
+                bootbox.confirm({
+                    message: "是否对当前任务单的进行开工吗？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            currself.ProductionOrderStatus(item, "RWZT02", "CXD01");
+                        }
+                    }
+                });
+            },
+            FrontSection: function (item) {
+                var currself = this;
+                bootbox.confirm({
+                    message: "是否对当前任务单的产线前段进行开工吗？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            currself.ProductionOrderStatus(item, "RWZT02", "CXD02");
+                        }
+                    }
+                });
+            },
+            RearEnd: function (item) {
+                var currself = this;
+                bootbox.confirm({
+                    message: "是否对当前任务单的产线后段进行开工吗？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            currself.ProductionOrderStatus(item, "RWZT02", "CXD03");
+                        }
+                    }
+                });
+            },
+            Completed: function (item) {
+                var currself = this;
+                bootbox.confirm({
+                    message: "<label style='font-size:25px'>是否要完工当前任务单吗？</label>", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            currself.ProductionOrderStatus(item, "RWZT03");
+                        }
+                    }
+                });
+            },
+            StopProduction: function (item) {
+                var currself = this;
+                bootbox.confirm({
+                    message: "是否要暂停生产当前任务单吗？", buttons: {
+                        confirm: {
+                            label: '是',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: '否',
+                            className: 'btn-danger'
+                        }
+                    }, callback: function (result) {
+                        if (result) {
+                            currself.ProductionOrderStatus(item, "RWZT04");
+                        }
+                    }
+                });
+            },
+
+            //选择生产任务状态
+            ProductionOrderStatus: function (item, SCRW_RWZT_CODE, LineSegment) {
+                var currSelf = this;
+                var updateNot = true;
+                if(SCRW_RWZT_CODE=="RWZT02"){
+                    //先判断当前产线下是否存在生产中的任务单
+                    var rwdh = item.SCRW_RWDH;
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesInfraredAction!checkCXZT.action",
+                        async:false,
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            rwdh:rwdh,
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess) {
+                            } else {
+                                $.toptip("操作失败:" + retData.message, "error");
+                                currSelf.SearchForm();
+                                updateNot = false;
+
+                            }
+                        }, error: function (xhr, status, errorThrown) {
+                            $.alert("请求失败");
+                        }, complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                }
+                if (updateNot){
+                    if (SCRW_RWZT_CODE == "RWZT02"||SCRW_RWZT_CODE =="RWZT03"){ //开工或者完工重置数量
+                        var sb = item.SCRW_SB;
+                        var DeviceID = "";
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/jgmesInfraredAction!getJTH.action",
+                            async:false,
+                            data: {
+                                userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                mac: LocalUserInfo.GetUserInfo().Mac,
+                                sb:sb,
+                            },
+                            dataType: "json",
+                            success: function (ret) {
+                                var retData = ReturnData(ret);
+                                if (retData.IsSuccess) {
+                                    DeviceID = retData.Data.DeviceID;
+                                    //设备清0
+                                    $.ajax({
+                                        type: "post",
+                                        async: false,
+                                        url: "http://192.168.1.5:8088/LhDviceService/ClearCount",
+                                        data: {
+                                            DeviceID: DeviceID,
+                                            Remove:1,
+                                            Cumulative:0,
+                                            Normal:0,
+                                        },
+                                        dataType: "json",
+                                        success: function (ret) {
+                                            if (ret.resultCode == 0) {
+                                                $.toptip("重置设备数量成功", "success");
+                                            } else{
+                                                $.toptip(ret.message, "error");
+                                                updateNot = false;
+                                            }
+                                        }, error: function (xhr, status, errorThrown) {
+                                            $.alert("请求重置设备发生异常,请重试");
+                                            updateNot = false;
+                                        }
+                                    });
+                                } else {
+                                    $.toptip("操作失败:" + retData.message, "error");
+                                    updateNot = false;
+                                }
+                            }, error: function (xhr, status, errorThrown) {
+
+                                $.alert("请求失败");
+                                updateNot = false;
+                            }, complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+                    }
+                }
+                if (updateNot) {
+                    //修改任务单的生产状态
+                    $.showLoading();
+                    LineSegment = LineSegment ? LineSegment : item.SCRWZT_CXD;
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesInfraredAction!updateScrwZtB.action",
+                        async:false,
+                        data: {
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            prodLineCode: item.SCRW_CXBM,
+                            taskCode: item.SCRW_RWDH,
+                            startSection: LineSegment,
+                            taskStatus: SCRW_RWZT_CODE,
+                            scrwId:item.JGMES_PLAN_SCRW_ID,//"生产任务单id"
+                        },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess) {
+                                $.toptip("操作成功！", "success");
+                                currSelf.GetProductTask();
+                            } else {
+                                $.toptip("操作失败:" + retData.message, "error");
+                            }
+                        }, error: function (xhr, status, errorThrown) {
+                            
+                            $.alert("请求失败");
+                        }, complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                }
+            },
+            // SetParamter: function (deviceID) {
+            //     var currSelf = this;
+            //     $.ajax({
+            //         type: "post",
+            //         async: false,
+            //         url: "http://192.168.1.5:8088/LhDviceService/ClearCount",
+            //         data: {
+            //             DeviceID: deviceID,
+            //             Remove:1,
+            //             Cumulative:0,
+            //             Normal:0,
+            //
+            //         },
+            //         dataType: "json",
+            //         success: function (ret) {
+            //             if (ret.resultCode == 0) {
+            //                 $.toptip("重置设备数量成功", "success");
+            //             } else
+            //                 $.toptip(ret.message, "error")
+            //         }, error: function (xhr, status, errorThrown) {
+            //             
+            //             $.alert("请求重置设备发生异常");
+            //         }
+            //     });
+            // },
+            //获取当前产线生产任务单列表
+            GetProductTask: function () {
+                var currSelf = this;
+                var d = $("#ProductionDate").val();
+                if (d=="undefined"||d==null||d==""){
+                    d = "";
+                }
+                currSelf.TaskList = [];
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesInfraredAction!getBatchCxScrw.action",
+                    data: {
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        // prodLineCode: currSelf.FormData.ProductionLineCode,
+                        prodLineCode: currSelf.FormData.ProductionLineCode.join(','),
+                        date:d,
+                        noLike: currSelf.FormData.ProTaskCode,    //获取当前用户输入任务单号
+                        cpLike: currSelf.FormData.KeyWord,     //获取当前用户输入产品关键字
+                        zt: currSelf.FormData.TaskState.join(','),//状态
+                        teamOfTime: currSelf.FormData.teamOfTime.join(','),
+                        BzData:currSelf.FormData.Bz.join(','),
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        console.log("初始化")
+                        console.log(retData);
+                        if (retData.IsSuccess && ret.Data) {
+                            currSelf.TaskList = retData.Data;
+                            var rbjhsl = retData.Data.SCRW_ZBJHCL;
+                            var jbjhsl = retData.Data.SCRW_JBJHCL;
+                            // var jhsl = Nuuber(rbjhsl)+Nuuber(jbjhsl)
+
+
+                        }
+                    }, error: function (xhr, status, errorThrown) {
+                        $.alert("请求失败");
+                    }, complete: function () {
+                        $.hideLoading();
+                    }
+                });
+
+            },
+			ReportSkill:function(varstate,item){
+				var currSelf= this;
+                currSelf.saveDataList=[];
+				$("#myModal").modal("show");
+				if(varstate==2){
+					$("#wgButState").hide();
+					$("#trState").hide();
+				}else{
+					$("#wgButState").show();
+					$("#trState").show();
+				}
+                currSelf.saveDataList=item;
+			},
+			saveBGSJ:function (num) {
+                var currSelf= this;
+                var item = currSelf.saveDataList;
+                console.log(item);
+               var bc = $("#bc").val();
+               var bgsl= $("#bgsl").val();
+                var blsl=$("#blsl").val();
+                if (bc=="undefined"||bc==null||bc==""){
+                    $.toptip("请选择班次！", "error");
+                    return false;
+                }
+                var zt="";
+                if (num==1){
+                    zt = "RWZT03";
+                }
+                $.showLoading();
+
+                //主表数据
+                var jsonStr = {
+                    BGSJ_CXBM:item.SCRW_SB,
+                    BGSJ_CXMC:item.SCRW_CXMC,
+                    BGSJ_CPBH:item.SCRW_ERPGX,
+                    BGSJ_CPMC:item.SCRW_NAME,
+                    BGSJ_CPGG:item.SCRW_CPGG,
+                    BGSJ_SL:bgsl,
+                    BGSJ_STATUS_CODE:1,
+                    BGSJ_STATUS_NAME:"启用",
+                    BGSJ_BLSL:blsl,
+                    BGSJ_BC:bc,
+                    BGSJ_SCRW:item.SCRW_RWDH,
+                };
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesInfraredAction!saveLHBGSJ.action",
+                    data: {
+                        userCode: LocalUserInfo.GetUserInfo().UserCode,
+                        mac: LocalUserInfo.GetUserInfo().Mac,
+                        "jsonStr": JSON.stringify(jsonStr),
+                        zt:zt,
+                    },
+                    dataType: "json",
+                    success: function (ret) {
+                        if (ret.IsSuccess) {
+                            $.toptip("保存成功！", "success");
+                        }else{
+                            $.toptip("保存失败,错误原因:" + ret.message, "error");
+                        }
+                    }, error: function (xhr, status, errorThrown) {
+                        $.alert("请求失败");
+                    }, complete: function () {
+                        $.hideLoading();
+                        $("#myModal").modal("hide");
+                        $("#bc").val("");
+                        $("#bgsl").val("");
+                        $("#blsl").val("");
+                        currSelf.SearchForm();
+                    }
+                });
+            },
+        }
+    });
+</script>
+</html>

@@ -1,0 +1,295 @@
+body{
+    background-color:#E7F0EF;
+    overflow: auto;
+}
+ul li{
+    list-style: none;
+}
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 60px;
+}
+/*heder部分样式*/
+.header{
+    background-color: #231A15;
+    padding: .5em 1em;
+    font-size: 1.2em;
+    z-index: 100;
+    position: fixed;
+    width: 100%;
+    color: #fff;
+    top:0px;
+}
+.header img{
+    width: 27px;
+    height: 27px;
+}
+.top_modal,.polling_list,.count_modal{
+    background-color: #fff;
+}
+.polling_title,.record {
+    background-color: #DEEFD8;
+    color: #49874D;
+    font-weight: bold;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+    margin: 20px 0;
+    padding: 10px 0;
+}
+.polling_list>ul,.polling_record>ul{
+    margin:10px;
+}
+.polling_list .left_list>li,.polling_record>ul>li{
+    padding-bottom: 10px;
+}
+.polling_modal .btns {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+
+.bor:not(:last-child) {
+    border-bottom: 1px solid #ddd;
+}
+.bor {
+    position: relative;
+}
+.select {
+    position: absolute;
+    right: 10px;
+    bottom: 4px;
+}
+.pro_line {
+    padding-left: 15px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+}
+.pro_title {
+    display: inline-block;
+    width: 105px;
+    font-weight: bolder;
+}
+/* 点击工单号码弹窗 */
+.info{
+    height: 534px; 
+    overflow-y: auto;
+}
+.shade{
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    z-index: 100;
+    left: 0;
+    background:rgba(0,0,0,0.2);
+}
+.shade_box{
+    background-color: #fff;
+    height: 100%;
+}
+.bor{
+    position: relative;
+}
+.select{
+    position: absolute;
+    right: 10px;
+}
+.workrecord {
+    position: fixed;
+    width: 100%;
+    background-color: #DDEED8;
+    color: #4C8652;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 0;
+    z-index: 1000;
+}
+.task_btn {
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    padding: 5px 0;
+    border-top: 1px solid #ddd;
+    background-color: #fff;
+    z-index: 1000;
+    bottom: 0;  
+}
+.recordtable {
+    background-color: #fff;
+    position: relative;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.recordtable>div {
+    padding-top: 5px;
+}
+.sub_btn {
+    text-align: center;
+}
+.recordtable input {
+    margin: auto;
+    background-color: #5cb85c;
+    border-color: 1px solid #4cae4c;
+    border-radius: 5px;
+    padding: 2% 10%;
+    border: 0;
+}
+.PollingTitle{
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+.PollingTitle>div{
+    padding-top: 5px;
+}
+/* 合格弹窗 */
+.mod{
+    position: fixed;
+    z-index: 999;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+}
+.mod1{ 
+    position: relative;
+    width: 100%;
+    height: 200px;
+    bottom: 0;
+    background-color: rgb(255, 255, 255);
+    z-Index: 1000;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: .14rem;
+    margin: auto;
+    align-items: center;
+    display: flex;
+   
+} 
+/* 不合格弹窗 */
+.mod2{ 
+    position: relative;
+    width: 100%;
+    height: 200px;
+    bottom: 0;
+    background-color: rgb(255, 255, 255);
+    z-Index: 1000;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: .14rem;
+    margin: auto;
+    align-items: center;
+    display: flex;
+}
+.contentText{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 80%;
+    padding:3%;
+    text-align: center;
+    text-overflow: ellipsis;
+    font-size: 24px;
+    color: #ad0814;
+    
+}
+.contentText>span{
+    display: block;
+    text-align: left;
+}
+.contentText>span>input{
+    width: 50%;
+    border:1px solid  #a9a9a9;
+    margin-top: 1%;
+}
+.contentText>span>textarea{
+    width: 50%;
+    margin-top:1%;
+}
+.mod .btn{
+    width: 100%;
+    height: 20%;
+    position: absolute;
+    top: 75%;
+}
+.cancel{
+    width: 20%;
+    font-size: 24px;
+    margin-right: 30px;
+    background: #d9534f;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}
+.confirm{
+    width: 20%;
+    font-size: 24px;
+    background: #5cb85c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}  
+.poll{
+    width: 40%;
+    display: inline-block;
+}
+.proline{
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+.weui-form-preview__label{
+    color: #000;
+}
+label{
+    margin-bottom: 0px;
+}
+.weui-select{
+    padding-left: 0px;
+}
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (max-width:557px){
+    
+    .contentText{
+        font-size: 20px;
+    }
+    
+}
+@media screen and (max-width:350px){
+    .pro_title {
+        width: 75px;
+    }
+    .weui-label{
+        width: 75px;
+    }
+    .pro_line {
+        padding-left: 10px;
+    }
+    .weui-cell_select-after{
+        padding-left: 10px;
+    }
+    .contentText{
+        font-size: 20px;
+    }
+    .select{
+        right: 3px;
+    }
+}
+@media screen and (max-height:300px){
+    .mod1{
+        margin: 0px;
+    }
+    .mod2{
+        margin: 0px;
+    }
+}

@@ -1,0 +1,301 @@
+﻿<html>
+
+<head>
+    <title>工站程序(测试)-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <style>
+        .header {
+            width:100%;
+            display: flex;
+            justify-content: space-around;
+            padding-bottom: 5px;
+            padding-top: 10px;
+        }
+
+        .item {
+            width:40%;
+            line-height: 45px;
+        }
+        .header_title{
+            width:20%;
+            text-align: center;
+            text-align: -webkit-center;
+            text-align: -moz-center;
+            line-height: 45px;
+        }
+        .header_title>a{
+            font-size: 1.8em;
+            color:#444444;
+        }
+
+        .clean{
+            content: "";
+            clear: both;
+        }
+        .item2_text,.user_img{
+            float: right;
+        }
+        .item2_text>button{
+            line-height: 45px;
+            outline: none;
+            background-color: #FFFFFF;
+            font-size: 1.1em;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+        }
+        .user_img{
+            padding-right: 15px;
+        }
+        .user_img>img{
+            width:55px;
+        }
+
+        .item_btn{
+            float: left;
+            cursor: pointer;
+            margin-left: 20px;
+        }
+        .item_btn>button{
+            padding: 11px 20px;
+            font-size: 1.2em;
+            color:#FFFFFF;
+            text-align: center;
+            text-align: -moz-center;
+            text-align: -webkit-center;
+            outline: none;
+            background-color: #1DDA44;
+            border-radius: 6px;
+            border: 1px solid #FFFFFF;
+            box-shadow: #1DDA44 0px 2px 0px 1px;
+        }
+        .item_btn>button:hover{
+            box-shadow:none;
+            transition: all 0.5s ease;
+        }
+
+        .MainPage {
+            width: 100%;
+            height:auto;
+        }
+
+        .weui-grid__icon {
+            width: 96px;
+            height: 96px;
+        }
+
+        .weui-grid {
+            width: 25%;
+            box-shadow:grey 2px 2px 14px -4px;
+        }
+
+
+        /**********************平板端的媒体查询*********************************/
+        @media screen and (min-width:992px) and (max-width:1199px){
+        }
+
+        /*******************大屏手机端媒体查询********************************/
+        @media screen and (min-width:768px) and (max-width:991px){
+            .user_img {
+                width: 55px;
+            }
+            .header {
+                padding-bottom: 5px;
+                padding-top: 10px;
+            }
+            .item {
+                width: 40%;
+                line-height: 42px;
+            }
+            .header_title {
+                line-height: 42px;
+            }
+            .item_btn>button {
+                padding: 8px 18px;
+            }
+            .user_img>img {
+                width: 48px;
+            }
+        }
+        /**********************小屏幕手机端媒体查询**************************************/
+        @media screen and (min-width:320px) and (max-width:767px){
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="item item1">
+            <div class="item_btn">
+                <button type="button" onclick="javascript:location.href='/JG/Home/Index.html'">返回</button>
+            </div>
+            <div class="item_btn">
+                <button type="button" onclick="javascript:location.href='/JG/Home/Index.html'">首页</button>
+            </div>
+            <div class="clean"></div>
+        </div>
+        <div class="header_title">
+            <a href="javascript:;">工站程序</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img">
+                <img src="/JG/Content/images/avatar_default_96px_1068661_easyicon.net.png" />
+            </div>
+            <div class="item2_text">
+                <button id="btnClear" class="exit">退出</button>
+            </div>
+            <div class="clean"></div>
+        </div>
+    </header>
+
+    <!--下划线-->
+    <div style="width:100%;height:2px;background-color:green;"></div>
+
+
+    <div id="MainPage" class="MainPage">
+        工序 <select class="from-control" onchange="GXQHChange()" id="gxID">
+            <option value="Nothing Mac Address">1.检查木箱、贴扫码贴纸、下机</option>
+            <option value="681FD523-0A3D-4E02-A4F0-1EAA8DD8BB84">2.电池扫码</option>
+            <option value="8F7F50D3-CDA9-4126-8B2B-FEA5B055C89A">3.低音喇叭扫码</option>
+            <option value="68B1E243-7536-4953-AE74-D428F5AD3F4F">4.高音喇叭扫码</option>
+            <option value="E1117530-9F74-45B7-8B52-3E4BBCC2E35C">5.解码板绑定</option>
+            <option value="AB64F64D-E18D-493D-8450-BB37C9B00F14">6.电源板绑定</option>
+            <option value="40817EF8-2FD7-4FB5-8CDA-551CABF1E6C5">7.高压、充电检查</option>
+            <option value="9CEBDABD-2E85-4D4F-B4F2-005C4CA9857A">8.话筒、吉它输出测试</option>
+            <option value="461D5102-873D-49AA-9F8F-879EECD4AC26">9.蓝牙及闪灯测试</option>
+            <option value="339A1B94-537E-40C9-BE99-DC3DCF641C29">10.CLIO测试</option>
+            <option value="997B88FF-B41D-414F-9468-159963369F26">11.USB扫频、极性测试</option>
+            <option value="76C03276-DD38-4ABE-A60E-A5DC6553D119">12.检查版本号及复位</option>
+            <option value="BCFB6558-9AD7-43E3-852F-00C8F55E6EA5">13.外观检查（一）</option>
+            <option value="AF2D4A2C-FD29-4902-8972-91EE7B4965E7">14.外观检查（二）</option>
+            <option value="3B60402D-7C76-4745-9C58-5AD42E636918">15.扫主机条码/打印彩盒条码/贴条码与彩盒</option>
+            <option value="944B4E49-411D-4FF8-8124-A236EB93020B">16.加工附件包/扫电源线</option>
+            <option value="FB79D389-4C15-4D78-A1BD-A9E02048D72C">17.扫附件包/放附件包与主机泡沫</option>
+            <option value="1A69299C-6D62-4650-85FF-35A0BC394507">18.称重</option>
+            <option value="89338204-B438-417D-8205-AD7E1F96FE20">19.堆卡板</option>
+        </select>
+        <div class="weui-grids">
+            <a href="/JG/Features/FirstStation.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <img src="/JG/Content/images/touru.png" />
+                </div>
+                <p class="weui-grid__label">
+                    投入站(扫描投入)
+                </p>
+            </a>
+            <a href="/JG/Features/FirstPrintStation.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <img src="/JG/Content/images/touru2.png" />
+                </div>
+                <p class="weui-grid__label">
+                    投入站(打印贴码)
+                </p>
+            </a>
+            <a href="/JG/Features/ScanningStation.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <img src="/JG/Content/images/saoma.png" />
+                </div>
+                <p class="weui-grid__label">
+                    扫码过站
+                </p>
+            </a>
+            <a href="/JG/Features/ComponentsStation.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <img src="/JG/Content/images/guanjian.png" />
+                </div>
+                <p class="weui-grid__label">
+                    关键部件绑定过站
+                </p>
+            </a>
+            <a href="/JG/Features/QualityInspection.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <img src="/JG/Content/images/wujiance.png" />
+                </div>
+                <p class="weui-grid__label">
+                    无检测数据对接
+                </p>
+            </a>
+            <a href="/JG/Features/SafetyInspection.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <img src="/JG/Content/images/youjiance.png" />
+                </div>
+                <p class="weui-grid__label">
+                    有检测数据对接过站
+                </p>
+            </a>
+            <a href="/JG/Features/OutputStation.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <img src="/JG/Content/images/touchu.png" />
+                </div>
+                <p class="weui-grid__label">
+                    产出站
+                </p>
+            </a>
+            <a href="/JG/Features/PackingList.html" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <img src="/JG/Content/images/zhaungchai.png" />
+                </div>
+                <p class="weui-grid__label">
+                    装箱拆箱
+                </p>
+            </a>
+            <a href="" class="weui-grid js_grid">
+                <div class="weui-grid__icon">
+                    <img src="/JG/Content/images/gongzhuang.png" />
+                </div>
+                <p class="weui-grid__label">
+                    工装绑定
+                </p>
+            </a>
+        </div>
+    </div>
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+    <script type="text/javascript">
+        $("#btnClear").on("click", function () {
+            LocalUserInfo.ClearUser();
+            window.location.href = window.location.href;
+        });
+
+        function GXQHChange() {
+            var mac = $("#gxID").val();
+            $.ajax({
+                url: LocalConfig.SrvPath + "/jgmes/jgmesLoginAction!doSaveLogin.action",
+                data: { mac: mac, userCode: LocalUserInfo.GetUserInfo().UserCode },
+                dataType: "json",
+                success: function (ret) {
+                    var retData = ret;
+                    if (retData.IsSuccess) {
+                        if (retData.Data) {
+                            LocalUserInfo.Init(retData.Data.userCode, retData.Data.userName, retData.Data.deptCode, retData.Data.deptName, retData.Data.cxCode, retData.Data.cxName, retData.Data.gwCode, retData.Data.gwName, mac);
+                            // var retUrl = $.getUrlParam("returnUrl");
+                            // if (!retUrl)
+                            //     //window.location.href = "/JG/Home/Index.html";
+                            //     window.location.href = LocalConfig.SrvPath + "JG/Features/StationProgram.html";
+                            // else window.location.href = retUrl;
+                            $.toptip("工序切换成功", "success");
+                        } else $.toptip("用户与设备未关联认证,请与管理员联系", "error");
+                    } else {
+                        $.toptip(ret.message, "error");
+                    }
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $.toptip("发生异常错误", "error");
+                },
+                complete: function () {
+                    $.hideLoading();
+                }
+            });
+        }
+
+    </script>
+</body>
+
+</html>

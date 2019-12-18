@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/SwipingCard.css">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <title>刷卡</title>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        .weui-toptips {
+            z-index: 1051;
+            font-size: 2.8em !important;
+            height: 80px !important;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            line-height: 50px;
+            border-radius: 0.1em;
+            width: 75%;
+            margin: auto 12.5%
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="empty">
+            <span id="CurrTime"></span>
+        </div>
+        <div class="header_title">
+            <a href="javascript:;" id="stations"></a>
+            <a href="javascript:;">产线:刷卡</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+            <div class="clean"></div>
+        </div>
+    </header>
+    <div id="MainPage" class="MainPage" v-cloak>
+        <div class="content">
+            <div class="select">
+                <strong class="strong">功能选择：</strong>
+                <button class="btn btn-success btnactive" @click="MountGuard($event)">上岗</button>
+                <button class="btn btn-success" @click="OffLeave($event)">离岗</button>
+                <button class="btn btn-success" @click="OffDuty($event)">下班</button>
+                <button class="btn btn-success" @click="OutData($event)">调出</button>
+                <button class="btn btn-success" @click="OutAssemblyDepartment($event)">调出装配部</button>
+
+            </div>
+            <div class="current">
+                <strong class="strong">当前功能：</strong>
+                <button class="showcont">{{SelectStatu}}</button>
+                <select name="" id="" class="selectline" v-if="SelectStatu == '调出'" v-model="ProductionLineCode"
+                    @change="ProductionLineClick(this)">
+
+                    <option disabled selected value>请选择调出产线</option>
+                    <option v-for="item in ProductionLineData" :value="item.CXSJ_CXBM">
+                        {{item.CXSJ_CXMC}}
+                    </option>
+                </select>
+            </div>
+            <div class="card">
+                <strong class="strong">刷卡：</strong>
+
+                <input id="BarCode" type="text" placeholder="刷卡或录入" v-model="jobNum" maxlength="50" autofocus />
+            </div>
+            <div class="record">
+                <div class="recordtitle">刷卡记录</div>
+                <div class="recorddetial">
+                    <div class="recordnum" v-for="item in RecordData">
+                        <span class="datetime">{{item.DateTime}}</span>
+                        <span>{{item.StaffRecord}}</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/Common.js"></script>
+<script src="/JG/Content/Utils.js?v=1"></script>
+<script src="/JG/Content/Station.js"></script>
+<script src="/JG/Content/AudioUtils.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/swiper.min.js"></script>
+<script src="/JG/Content/jquery/fastclick.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+<script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+<script>
+    $(function () {
+
+        var stations = LocalUserInfo.GetUserInfo();
+        $("#stations").html(stations.ProductionLineName + '-' + stations.StationName);
+        setInterval("getTime();", 1000); //每隔一秒运行一次
+
+        $(".select>button").each(function (index) {
+            $(this).on("click", function () {
+                $(".select>button").eq(index).addClass("btnactive").siblings(".select>button").removeClass("btnactive")
+            })
+
+        })
+    });
+    function getTime() {
+        // var myDate = new Date();
+        // var date = myDate.toLocaleDateString();
+        // var hours = myDate.getHours();
+        // var minutes = myDate.getMinutes();
+        // var seconds = myDate.getSeconds();
+        // $("#CurrTime").html(date + " " + hours + ":" + minutes + ":" + seconds); //将值赋给div
+        if (!LocalConfig.SysDateTime)
+            LocalConfig.SysDateTime = LocalConfig.GetServerSysTime();
+        else
+            LocalConfig.SysDateTime.setSeconds(LocalConfig.SysDateTime.getSeconds() + 1);
+        $("#CurrTime").html(LocalConfig.SysDateTime.Format("yyyy-MM-dd hh:mm:ss"));//(new Date()).Format("hh:mm:sss"),
+
+
+    }
+</script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el: "#MainPage",
+        data: {
+            RecordData: [],
+            //disabled: true,  
+            SelectStatu: "上岗", //初始为上岗
+            Statu: "",
+            jobNum: "",
+            scrwID: "",
+            ProductionLineData: [],
+            ProductionLineCode: "",
+            ProductLineName: "",
+            IsRecordExist: [],
+        },
+        mounted: function () {
+            var currSelf = this;
+
+            $.showLoading();
+            $.ajax({
+                type: "post",
+                async: false,   //异步
+                url: LocalConfig.SrvPath + " /jgmes/commonAction!getCurrentProductByCxCp.action",
+                data: {
+                    userCode: LocalUserInfo.GetUserInfo().UserCode,
+                    mac: LocalUserInfo.GetUserInfo().Mac,
+                    cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode,
+                },
+                dataType: "json",
+                success: function (result) {
+                    var retData = ReturnData(result);
+                    if (retData.IsSuccess) {
+                        if (retData.Data) {
+
+                            currSelf.scrwID = retData.Data.SCRW_RWDH;
+                        }
+                    } else if (!retData.Data) {
+                        var showMsg = "未能找到产线信息";
+                        $.toptip(showMsg, "warning");
+                    }
+                },
+                error: function (xhr, status, errorThrow) {
+                    console.error(status);
+                    $.alert("获取产线失败!");
+                },
+                complete: function () {
+                    $.hideLoading();
+                },
+            });
+
+            $("#BarCode").bind("keypress", currSelf.SearchjobNum)
+            $("#BarCode").focus();
+            Utils.AutoBarCodeFocus();
+        },
+        methods: {
+            //上岗
+            MountGuard: function (e) {
+                var currSelf = this;
+                currSelf.SelectStatu = e.target.innerHTML;
+                $("#BarCode").focus();
+            },
+            //离岗
+            OffLeave: function (e) {
+                var currSelf = this;
+
+                currSelf.SelectStatu = e.target.innerHTML;
+                $("#BarCode").focus();
+            },
+            //下班           
+            OffDuty: function (e) {
+                var currSelf = this;
+
+                currSelf.SelectStatu = e.target.innerHTML;
+                $("#BarCode").focus();
+            },
+            //调出
+            OutData: function (e) {
+                var currSelf = this;
+
+                currSelf.SelectStatu = e.target.innerHTML;
+                $("#BarCode").focus();
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    async: true,
+                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getCxGwList.action",
+                    data: { phone: '1' },
+                    dataType: "json",
+                    success: function (result) {
+                        var retData = ReturnData(result);
+                        if (retData.IsSuccess) {
+                            if (retData.Data) {
+
+                                currSelf.ProductionLineData = retData.Data;
+                            }
+                        }
+                    },
+                    error: function (xhr, status, errorThrow) {
+                        console.error(status);
+                        $.alert("获取信息失败!");
+                    },
+                    complete: function () {
+                        $.hideLoading();
+                    }
+                })
+            },
+            //调出装配部功能
+            OutAssemblyDepartment: function (e) {
+                var currSelf = this;
+
+                currSelf.SelectStatu = e.target.innerHTML;
+                $("#BarCode").focus();
+            },
+            SearchjobNum: function (event) {
+                var currSelf = this;
+                if (event.which == 13) {
+                    if (currSelf.SelectStatu === "上岗") {
+                        currSelf.Statu = "SKZT01";
+                        $.showLoading();
+                        $.ajax({
+                            type: "post",
+                            async: true,   //异步
+                            url: LocalConfig.SrvPath + "/jgmes/jgmesClockInAction!doSaveSkkqb.action",
+                            data: {
+                                userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                mac: LocalUserInfo.GetUserInfo().Mac,
+                                jobNum: currSelf.jobNum,
+                                skStatus: currSelf.Statu,
+                                cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode,
+                                scrwNo: currSelf.scrwID,
+
+                            },
+                            dataType: "json",
+                            success: function (result) {
+                                var retData = ReturnData(result);
+                                if (retData.IsSuccess) {
+                                    if (retData.Data) {
+                                        var record = { DateTime: retData.Data.SKKQB_SKSJ, StaffRecord: retData.Data.SKKQB_YHMC + currSelf.SelectStatu }
+                                        if (retData.Data.Duplication == "1") {
+                                            currSelf.RecordData.splice(0, 0, record);
+                                        } else if (retData.Data.Duplication == "0") {
+                                            $.toptip("刷卡重复", 'warning');
+                                        }
+                                    }
+                                }
+                            },
+                            error: function (xhr, status, errorThrow) {
+                                console.error(status);
+                                $.alert("获取信息失败!");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            },
+                        });
+                        currSelf.jobNum = "";
+                    } else if (currSelf.SelectStatu === "离岗") {
+                        currSelf.Statu = "SKZT02";
+                        $("#BarCode").blur()
+                        $.showLoading();
+                        $.ajax({
+                            type: "post",
+                            async: true,   //异步
+                            url: LocalConfig.SrvPath + "/jgmes/jgmesClockInAction!doSaveSkkqb.action",
+                            data: {
+                                userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                mac: LocalUserInfo.GetUserInfo().Mac,
+                                jobNum: currSelf.jobNum,
+                                skStatus: currSelf.Statu,
+                                cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode,
+                                scrwNo: currSelf.scrwID,
+
+
+                            },
+                            dataType: "json",
+                            success: function (result) {
+                                var retData = ReturnData(result);
+                                if (retData.IsSuccess) {
+                                    if (retData.Data) {
+                                        var record = { DateTime: retData.Data.SKKQB_SKSJ, StaffRecord: retData.Data.SKKQB_YHMC + currSelf.SelectStatu }
+                                        if (retData.Data.Duplication == "1") {
+                                            currSelf.RecordData.splice(0, 0, record);
+                                        } else if (retData.Data.Duplication == "0") {
+                                            $.toptip("刷卡重复", 'warning');
+                                        }
+                                    }
+
+                                } else {
+                                    //AudioUtils.Play(AudioUtils.LeaveWord);
+                                }
+                                $("#BarCode").focus();
+                            },
+                            error: function (xhr, status, errorThrow) {
+                                console.error(status);
+                                $.alert("获取信息失败!");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            },
+                        });
+                        currSelf.jobNum = "";
+                    } else if (currSelf.SelectStatu === "下班") {
+                        currSelf.Statu = "SKZT05";
+                        $.showLoading();
+                        $.ajax({
+                            type: "post",
+                            async: true,   //异步
+                            url: LocalConfig.SrvPath + "/jgmes/jgmesClockInAction!doSaveSkkqb.action",
+                            data: {
+                                userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                mac: LocalUserInfo.GetUserInfo().Mac,
+                                jobNum: currSelf.jobNum,
+                                skStatus: currSelf.Statu,
+                                cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode,
+                                scrwNo: currSelf.scrwID,
+
+                            },
+                            dataType: "json",
+                            success: function (result) {
+                                var retData = ReturnData(result);
+                                if (retData.IsSuccess) {
+                                    if (retData.Data) {
+                                        var record = { DateTime: retData.Data.SKKQB_SKSJ, StaffRecord: retData.Data.SKKQB_YHMC + currSelf.SelectStatu }
+                                        if (retData.Data.Duplication == "1") {
+                                            currSelf.RecordData.splice(0, 0, record);
+                                        } else if (retData.Data.Duplication == "0") {
+                                            $.toptip("刷卡重复", 'warning');
+                                        }
+                                    }
+                                }
+                            },
+                            error: function (xhr, status, errorThrow) {
+                                console.error(status);
+                                $.alert("获取信息失败!");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            },
+                        });
+                        currSelf.jobNum = "";
+                    } else if (currSelf.SelectStatu === "调出") {
+                        currSelf.Statu = "SKZT03";
+                        if (!currSelf.ProductLineName) {
+                            $.toptip("未选择调出产线，刷卡无效", 'error');
+                            currSelf.jobNum = "";
+                        } else {
+                            $("#BarCode").blur()
+                            $.showLoading();
+                            $.ajax({
+                                type: "post",
+                                async: true,   //异步
+                                url: LocalConfig.SrvPath + "/jgmes/jgmesClockInAction!doSaveSkkqb.action",
+                                data: {
+                                    userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                    mac: LocalUserInfo.GetUserInfo().Mac,
+                                    jobNum: currSelf.jobNum,
+                                    skStatus: currSelf.Statu,
+                                    cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode,
+                                    scrwNo: currSelf.scrwID,
+                                    cpCode: currSelf.ProductCode,//产品编号
+                                    zgCxCode: currSelf.ProductionLineCode,
+
+                                },
+                                dataType: "json",
+                                success: function (result) {
+                                    var retData = ReturnData(result);
+                                    if (retData.IsSuccess) {
+                                        if (retData.Data) {
+                                            var record = { DateTime: retData.Data.SKKQB_SKSJ, StaffRecord: retData.Data.SKKQB_YHMC + '从' + LocalUserInfo.GetUserInfo().ProductionLineName + currSelf.SelectStatu + currSelf.ProductLineName }
+                                            if (retData.Data.Duplication == "1") {
+                                                currSelf.RecordData.splice(0, 0, record);
+                                            } else if (retData.Data.Duplication == "0") {
+                                                $.toptip("刷卡重复", 'warning');
+                                            }
+                                        }
+
+                                    }
+                                    $("#BarCode").focus();
+                                },
+                                error: function (xhr, status, errorThrow) {
+                                    console.error(status);
+                                    $.alert("获取信息失败!");
+                                },
+                                complete: function () {
+                                    $.hideLoading();
+                                },
+                            });
+                            currSelf.jobNum = "";
+                        }
+                    } else if (currSelf.SelectStatu === "调出装配部") {
+                        currSelf.Statu = "SKZT04";
+                        $("#BarCode").blur()
+                        $.showLoading();
+                        $.ajax({
+                            type: "post",
+                            async: true,   //异步
+                            url: LocalConfig.SrvPath + "/jgmes/jgmesClockInAction!doSaveSkkqb.action",
+                            data: {
+                                userCode: LocalUserInfo.GetUserInfo().UserCode,
+                                mac: LocalUserInfo.GetUserInfo().Mac,
+                                jobNum: currSelf.jobNum,
+                                skStatus: currSelf.Statu,
+                                cxCode: LocalUserInfo.GetUserInfo().ProductionLineCode,
+                                scrwNo: currSelf.scrwID,
+
+                            },
+                            dataType: "json",
+                            success: function (result) {
+                                var retData = ReturnData(result);
+                                if (retData.IsSuccess) {
+                                    if (retData.Data) {
+                                        var record = { DateTime: retData.Data.SKKQB_SKSJ, StaffRecord: retData.Data.SKKQB_YHMC + currSelf.SelectStatu }
+                                        if (retData.Data.Duplication == "1") {
+                                            currSelf.RecordData.splice(0, 0, record);
+                                        } else if (retData.Data.Duplication == "0") {
+                                            $.toptip("刷卡重复", 'warning');
+                                        }
+                                    }
+                                }
+                                $("#BarCode").focus();
+                            },
+                            error: function (xhr, status, errorThrow) {
+                                console.error(status);
+                                $.alert("获取信息失败!");
+                            },
+                            complete: function () {
+                                $.hideLoading();
+                            },
+                        });
+                        currSelf.jobNum = "";
+                    }
+                }
+            },
+            ProductionLineClick: function () {
+                var currSelf = this;
+                $.each(currSelf.ProductionLineData, function (index, item) {
+                    if (currSelf.ProductionLineCode == item.CXSJ_CXBM) {
+                        currSelf.ProductionLineCode = item.CXSJ_CXBM
+
+                        currSelf.ProductLineName = item.CXSJ_CXMC;
+
+                    }
+                });
+            },
+
+
+        }
+    });
+</script>
+
+</html>

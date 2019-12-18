@@ -1,0 +1,194 @@
+body{
+    background-color:#E7F0EF;
+    min-width: 557px;
+}
+#MainPage{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 90px;
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    background-color: #231A15;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index:50;
+}
+
+.item, .header_title,.empty {
+    width:33.33%;
+    line-height: 50px;
+}
+.header_title {
+    padding-left: 15px;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.header_title>a {
+    font-size: 3em;
+    color: #FFFFFF;
+}
+.user_img{
+    float: right;
+    padding-right: 15px;
+}
+
+.back{
+    width:85px;
+    height:30px;
+    display: inline-block;
+}
+.back>img{
+    width:60%;
+}
+
+/* MainPage部分 */
+.nav{
+    font-size: 1.3em;
+    font-weight: bold;
+    background-color: #fff;
+    padding: 1em;
+}
+.content{
+    width: 100%;
+    /* height: 50%; */
+    background-color: #FFFFFF;
+}
+.content img{
+    width: 100%;
+    height: 100%;
+}
+.footer{
+    background-color: #FFFFFF;
+    font-size: 1.3em;
+    font-weight: bold;
+    padding: 1em;
+    text-align: center;
+    text-align: -moz-center;
+    text-align: -webkit-center;
+}
+.footer .process{
+    background-color: #8AC007; 
+    display: inline-block;
+    padding: 2% 10%;
+    border-radius: 5px;
+}
+/* 双击图片的全屏样式设置 */
+.dbImg{
+    width: 100%;
+    height:100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color:rgba(0,0,0,.5);
+    z-index: 999;
+    display: none;
+}
+.dbImg>img{
+    width: 100%;
+    height: 100%;
+}
+.dbImg>span{
+    position: absolute;
+    top: 1%;
+    right: 1%;
+    z-index: 999;
+    
+    /* width: ;
+    height: ; */
+}
+.dbImg>span>img{
+    height: 5em;
+    width: 5em;
+    border-radius: 50%;
+}
+/**********************平板端的媒体查询*********************************/
+@media screen and (min-width:1281px) and (max-width:1920px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.8em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+    
+}
+@media all and (min-height:1024px) and (max-height:1080px){}
+
+
+
+/*******************大屏手机端媒体查询********************************/
+@media screen and (min-width:1025px) and (max-width:1280px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2.2em;
+    }
+    .back {
+        width: 70px;
+        height: 30px;
+    }
+    
+}
+@media all and (min-height:891px) and (max-height:1024px){}
+
+
+
+/**********************小屏幕手机端媒体查询**************************************/
+@media screen and (min-width:769px) and (max-width:1024px){
+    #MainPage {
+        margin-top: 80px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 2em;
+    }
+    .back {
+        width: 75px;
+        height: 30px;
+    }
+    
+}
+@media screen and (min-width:557px) and (max-width:768px){
+    #MainPage {
+        margin-top: 70px;
+    }
+    .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .header_title>a {
+        font-size: 1.5em;
+    }
+    .back {
+        width: 60px;
+        height: 30px;
+    }
+    .item, .header_title {
+        line-height: 40px;
+    }
+    
+}
+@media all and (min-height:768px) and (max-height:891px){}

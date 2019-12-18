@@ -1,0 +1,500 @@
+﻿<html>
+
+<head>
+    <title>返修管理-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/ReworkManagement.css?v=2">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+
+<body>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="item header_title">
+            <a href="javascript:;">返修站</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="MainPage" class="MainPage">
+        <div class="input-group" style="text-align:center;font-size:18px;">
+            <label class="input-group-addon" for="BarCode">产品码</label>
+            <input type="text" class="form-control" maxlength="50" v-model="BarCode" placeholder="扫描或输入产品码回车"
+                id="BarCode" :disabled="IsDisable" />
+        </div>
+        <div class="row" style="margin-top: 20px">
+            <div class="col-md-6 col-lg-6 col-sm-12">
+                <ul class="list-group">
+                    <li class="list-group-item active">
+                        产品详情
+                    </li>
+                    <li class="list-group-item">
+                        产品码&nbsp; &nbsp;{{FormData.InvBarCode}}
+                    </li>
+                    <li class="list-group-item">
+                        产品编码&nbsp; &nbsp;{{FormData.InvCode}}
+                    </li>
+                    <li class="list-group-item">
+                        产品名称&nbsp; &nbsp;{{FormData.InvName}}
+                    </li>
+                    <li class="list-group-item">
+                        产品型号&nbsp; &nbsp;{{FormData.InvStd}}
+                    </li>
+                    <li class="list-group-item">
+                        来源工位&nbsp;&nbsp;{{FormData.SourceProcessName}}
+                    </li>
+                    <li class="list-group-item" style="color:red;">
+                        现场问题&nbsp; &nbsp;{{FormData.OnsiteProblem}}
+                    </li>
+                    <li class="list-group-item">
+                        维修状态&nbsp;&nbsp;{{FormData.MaintenanceStatus}}
+                    </li>
+                    <li class="list-group-item">
+                        <div class="swiper-container">
+                            <div class="swiper-wrapper" id="Top-Swiper" style="width:100%;font-size: 0.8em;height:300px;">
+                                <img id="img" :src="FormData.ImagePath" v:if="FormData.ImagePath" />
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-6 col-sm-12 col-md-6">
+                <ul class="list-group">
+                    <li class="list-group-item active">
+                        产品返修
+                    </li>
+                    <li class="list-group-item">
+                        返修站&nbsp; &nbsp; <button class="btn btn-default" style="margin-left: 10px;font-size: 0.8em;height: 5em;"
+                            v-for="(item,index) in ServiceCentres" :id="item.Code"
+                            v-on:click="ServiceCentreClick(item)">
+                            {{item.Name}}
+                        </button>
+                    </li>
+                    <!-- <li class="list-group-item">
+                        故障分类&nbsp; &nbsp;
+                        <button class="btn btn-default" v-for="(item,index) in FaultClassData">
+                            {{item.Name}}
+                        </button>
+                    </li> -->
+                    <li class="list-group-item">
+                        故障原因&nbsp; &nbsp;
+                        <button class="btn btn-default" style="margin-left:10px;font-size: 0.8em;height: 5em;"
+                            v-for="(item,index) in DefectiveItemData" :id="item.Code"
+                            v-on:click="DefectiveItemClick(item)">
+                            {{item.Name}}
+                        </button>
+                    </li>
+<!--                    <li class="list-group-item">-->
+<!--                        维修原因&nbsp; &nbsp;-->
+<!--                        <span class="textarea">限制{{remnant}}/100字</span>-->
+<!--                        <textarea name="textarea" id="" cols="30" rows="5" maxlength="100" placeholder="限制输入文字100"-->
+<!--                            v-model="MaintenanceReasons" @input="descInput"></textarea>-->
+<!--                    </li>-->
+                    <li class="list-group-item">
+                        返回工站&nbsp; &nbsp;
+                        <button class="btn btn-default" v-for="(item,index) in StationData" :id="item.Code"
+                            v-on:click="StationClick(item)" style="margin-left:10px;margin-top: 5px;font-size: 0.8em;height: 5em;">
+                            {{index+1}}.{{item.Name}}
+                        </button>
+                    </li>
+                    <!-- <li class="list-group-item">
+                        提交时间&nbsp; &nbsp;
+                        <input style="width:400px;height:35px" v-model="FormData.RepairTime" readonly="readonly" />
+                    </li> -->
+                    <li class="list-group-item" style="text-align: center">
+                        <button type="button" style="width:160px;height:60px;font-size:1.2em" class="btn btn-success"
+                            v-on:click="SubmitData()">通过</button>
+                        <button type="button" style="width:160px;height:60px;font-size:1.2em;margin-left: 30px"
+                            class="btn btn-danger" v-on:click="ObsoleteData()">报废</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/bootstrap.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.min.js"></script>
+    <script src="/JG/Content/bootstrap/bootbox/bootbox.locales.min.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script type="text/javascript">
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                BarCode: "",
+                IsDisable: false,
+                FormData: {
+                    ScheduleID: "", //排产单ID
+                    ReworkOrderID: "", //返修单ID
+                    InvCode: "",
+                    InvName: "",
+                    InvStd: "",
+                    InvBarCode: "",
+                    ImagePath: "",
+                    OnsiteProblem: "", //现场问题
+                    SourceProcessName: "", //来源工序
+                    MaintenanceStatus: "", //维修状态
+                },
+                ServiceCentres: [],  //返修站信息
+                CurrServiceCentre: {}, //选中返修站
+                DefectiveItemData: [], //不良项目
+                SelectDefectiveItem: [],
+                StationData: [],
+                SelectStationItem: {},
+                MaintenanceReasons: "",      //维修原因
+                remnant: 0,
+            },
+            mounted: function () {
+                var currSelf = this;
+                $("#BarCode").bind("keypress", currSelf.SearchBarCode);
+                $("#BarCode").focus();
+                //获取维修站
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    url: LocalConfig.SrvPath + "/jgmes/commonAction!getWXZList.action",
+                    data: { "userCode": LocalUserInfo.GetUserInfo().UserCode, "mac": LocalUserInfo.GetUserInfo().Mac },
+                    dataType: "json",
+                    success: function (ret) {
+                        var retData = ReturnData(ret);
+                        if (retData.IsSuccess) {
+                            if (retData.Data) {
+                                for (var i in retData.Data) {
+                                    var item = retData.Data[i];
+                                    currSelf.ServiceCentres.push({
+                                        ID: item.JGMES_PB_FXZ_ID,
+                                        Code: item.FXZ_FXZBH,
+                                        Name: item.FXZ_FXZMC,
+                                        TypeCode: item.FXZ_FXZLX_CODE,
+                                        TypeName: item.FXZ_FXZLX_NAME
+                                    });
+                                }
+                            } else
+                                $.toptip("未查找维修站记录,请联系系统管理人员", "error", 10000);
+                        }
+                    }, error: function (xhr, status, error) {
+                        console.error(status);
+                        bootbox.alert("请求失败");
+                    }, complete: function () {
+                        $.hideLoading();
+                    }
+                });
+            },
+            methods: {
+                initData: function () {
+                    var currSelf = this;
+                    currSelf.FormData.ScheduleID = "";
+                    currSelf.FormData.ReworkOrderID = "";
+                    currSelf.FormData.InvCode = "";
+                    currSelf.FormData.InvName = "";
+                    currSelf.FormData.InvStd = "";
+                    currSelf.FormData.InvBarCode = "";
+                    currSelf.FormData.ImagePath = "";
+                    currSelf.FormData.OnsiteProblem = "";
+                    currSelf.FormData.SourceProcessName = "";
+                    currSelf.FormData.MaintenanceStatus = "";
+                    currSelf.StationData = [];
+                    currSelf.SelectStationItem = {};
+                    for (var i in currSelf.SelectDefectiveItem) {
+                        var element = currSelf.SelectDefectiveItem[i];
+                        $("#" + element.Code).removeClass("btn-success");
+                        $("#" + element.Code).addClass("btn-default");
+                    }
+                    currSelf.SelectDefectiveItem = [];
+                },
+                SearchBarCode: function (event) {
+                    var currSelf = this;
+                    if (event.which == 13) {
+                        currSelf.initData();
+                        currSelf.IsDisable = true;
+                        if (!currSelf.BarCode || currSelf.BarCode.length <= 0) {
+                            $.toptip("产品码不能为空", "warning");
+                            $("#BarCode").focus();
+                        } else {
+                            $.showLoading("努力加载中...");
+                            currSelf.FormData.InvBarCode = currSelf.BarCode;
+                            currSelf.BarCode = "";
+                            $.ajax({
+                                type: "post",
+                                url: LocalConfig.SrvPath + "/jgmes/commonAction!getWXZCpInfo.action",
+                                data: { "userCode": LocalUserInfo.GetUserInfo().UserCode, "mac": LocalUserInfo.GetUserInfo().Mac, barCode: currSelf.FormData.InvBarCode },
+                                dataType: "json",
+                                success: function (ret) {
+                                    var retData = ReturnData(ret);
+                                    if (retData.IsSuccess) {
+                                        if (retData.Data && retData.Data.cpInfo) {
+                                            currSelf.FormData.ScheduleID = retData.Data.cpInfo.FXD_SCRWDID;
+                                            currSelf.FormData.ReworkOrderID = retData.Data.cpInfo.JGMES_PB_FXD_ID;
+                                            currSelf.FormData.InvCode = retData.Data.cpInfo.FXD_CPBH;
+                                            currSelf.FormData.InvName = retData.Data.cpInfo.FXD_NAME;
+                                            currSelf.FormData.InvStd = retData.Data.cpInfo.FXD_CPGG;
+                                            currSelf.FormData.MaintenanceStatus = retData.Data.cpInfo.FXD_WXZT_NAME;
+                                            currSelf.FormData.SourceProcessName = retData.Data.cpInfo.FXD_LYGWMC;
+                                            //currSelf.FormData.ImagePath = retData.Data.cpInfo.;
+                                            if (retData.Data.fxXmList && retData.Data.fxXmList.length > 0) {
+                                                for (var i in retData.Data.fxXmList) {
+                                                    var element = retData.Data.fxXmList[i];
+                                                    currSelf.FormData.OnsiteProblem += element.FXDZB_BLXMC + ",";
+                                                }
+                                            }
+                                            currSelf.StationData = [];
+                                            //获取当前产品工序列表
+                                            $.ajax({
+                                                type: "post",
+                                                async: false,
+                                                url: LocalConfig.SrvPath + "/jgmes/commonAction!getGXList.action",
+                                                data: {
+                                                    "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                                    "mac": LocalUserInfo.GetUserInfo().Mac,
+                                                    cpCode: currSelf.FormData.InvCode,
+                                                    isBackWorkStation: "1",
+                                                },
+                                                dataType: "json",
+                                                success: function (ret) {
+                                                    var retData = ReturnData(ret);
+                                                    if (retData && retData.IsSuccess) {
+                                                        if (retData.Data) {
+                                                            for (var i in retData.Data) {
+                                                                var element = retData.Data[i];
+                                                                currSelf.StationData.push({ ID: element.GYLXGX_ID, Code: element.GYLXGX_GXNUM, Name: element.GYLXGX_GXNAME });
+                                                            }
+                                                        }
+                                                    }
+                                                }, error: function (xhr, status, error) {
+                                                    console.error(status);
+                                                    bootbox.alert("请求失败");
+                                                }
+                                            });
+                                        } else {
+                                            $.toptip("未能获取到相关的产品信息", "warning");
+                                        }
+                                    }
+                                }, error: function (xhr, status, error) {
+                                    console.error(status);
+                                    bootbox.alert("请求失败");
+                                }, complete: function () {
+                                    $.hideLoading();
+                                }
+                            });
+                        }
+                        currSelf.IsDisable = false;
+                    }
+                },
+                ServiceCentreClick: function (item) {
+                    var currSelf = this;
+                    if (currSelf.CurrServiceCentre.Code == item.Code) {
+                        $("#" + item.Code).removeClass("btn-success");
+                        $("#" + item.Code).addClass("btn-default");
+                        currSelf.CurrServiceCentre = {};
+                    } else if (currSelf.CurrServiceCentre) {
+                        $("#" + item.Code).removeClass("btn-default");
+                        $("#" + item.Code).addClass("btn-success");
+                        $("#" + currSelf.CurrServiceCentre.Code).removeClass("btn-success");
+                        $("#" + currSelf.CurrServiceCentre.Code).addClass("btn-default");
+                        currSelf.CurrServiceCentre = item;
+                        currSelf.GetDefectiveItem(item);
+                    } else {
+                        $("#" + item.Code).removeClass("btn-default");
+                        $("#" + item.Code).addClass("btn-success");
+                        currSelf.GetDefectiveItem(item);
+                        currSelf.CurrServiceCentre = item;
+                    }
+                    currSelf.DefectiveItemData = [];
+                    currSelf.SelectDefectiveItem = [];
+                },
+                GetDefectiveItem: function (item) {
+                    var currSelf = this;
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/commonAction!getWXZXMList.action",
+                        data: { "userCode": LocalUserInfo.GetUserInfo().UserCode, "mac": LocalUserInfo.GetUserInfo().Mac, fxzCode: item.Code },
+                        dataType: "json",
+                        success: function (ret) {
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess) {
+                                if (retData.Data) {
+                                    $.each(retData.Data, function (i, element) {
+                                        currSelf.DefectiveItemData.push({
+                                            Code: element.FXZZB_FXXMBH,
+                                            Name: element.FXZZB_FXXMMC
+                                        });
+                                    });
+                                } else {
+                                    $.toptip("未能查找[" + item.Name + "]的故障原因,请联系系统管理员", "error", 10000);
+                                }
+                            }
+                        }, error: function (xhr, status, error) {
+                            console.error(status);
+                            bootbox.alert("请求失败");
+                        }, complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+                DefectiveItemClick: function (item) {
+                    var currSelf = this;
+                    var btn = $("#" + item.Code);
+                    if (btn[0].className.indexOf("btn-default") > 0) {
+                        $("#" + item.Code).removeClass("btn-default");
+                        $("#" + item.Code).addClass("btn-success");
+                        currSelf.SelectDefectiveItem.push(item);
+                    } else {
+                        $("#" + item.Code).removeClass("btn-success");
+                        $("#" + item.Code).addClass("btn-default");
+                        for (var index in currSelf.SelectDefectiveItem) {
+                            if (currSelf.SelectDefectiveItem[index].Code == item.Code) {
+                                currSelf.SelectDefectiveItem.splice(index, 1);
+                                return;
+                            }
+                        }
+                    }
+                },
+                StationClick: function (item) {
+                    var currSelf = this;
+                    if (currSelf.SelectStationItem.Code == item.Code) {
+                        $("#" + item.Code).removeClass("btn-success");
+                        $("#" + item.Code).addClass("btn-default");
+                        currSelf.SelectStationItem = {};
+                    } else if (currSelf.SelectStationItem) {
+                        $("#" + item.Code).removeClass("btn-default");
+                        $("#" + item.Code).addClass("btn-success");
+                        $("#" + currSelf.SelectStationItem.Code).removeClass("btn-success");
+                        $("#" + currSelf.SelectStationItem.Code).addClass("btn-default");
+                        currSelf.SelectStationItem = item;
+                    } else {
+                        $("#" + item.Code).removeClass("btn-default");
+                        $("#" + item.Code).addClass("btn-success");
+                        currSelf.SelectStationItem = item;
+                    }
+                },
+                SubmitData: function () {
+                    var currSelf = this;
+                    if (!currSelf.FormData.InvCode) {
+                        $.toptip("当前无返修产品,请核对!", "error");
+                    } else if (!currSelf.CurrServiceCentre) {
+                        $.toptip("请选择返修站!", "error");
+                    } else if (currSelf.SelectDefectiveItem.length == 0) {
+                        $.toptip("请选择返修故障原因!", "error");
+                    } else if (!currSelf.SelectStationItem) {
+                        $.toptip("请选择返回工站", "error");
+                    }
+                    else {
+                        var jsonStr = JSON.stringify(
+                            {
+                                "FXD_CPTMH": currSelf.FormData.InvBarCode,
+                                "JGMES_PB_FXZ_ID": currSelf.CurrServiceCentre.ID,
+                                "FXD_FXZBH": currSelf.CurrServiceCentre.Code,
+                                "FXD_WXJG_CODE": "WXJG01",
+                                "JGMES_PB_FXD_ID": currSelf.FormData.ReworkOrderID,
+                                "FXD_SCRWDID": currSelf.FormData.ScheduleID,
+                                "FXD_CPBH": currSelf.FormData.InvCode,
+                                "FXD_NAME": currSelf.FormData.InvName,
+                                "FXD_FHGXID": currSelf.SelectStationItem.ID,
+                                "FXD_FHGXBH": currSelf.SelectStationItem.Code,
+                                "FXD_FHGXMC": currSelf.SelectStationItem.Name,
+                                "FXD_WXYY": currSelf.MaintenanceReasons, //维修原因保存
+                                "FXD_LYCXBH": LocalUserInfo.GetUserInfo().ProductionLineCode,
+                            });
+                        var jsonStrDetail = [];
+
+                        $.each(currSelf.SelectDefectiveItem, function (i, element) {
+                            jsonStrDetail.push({ "JGMES_B_FXZZB_ID": currSelf.FormData.ReworkOrderID, "FXDETAIL_FXXMBH": element.Code, "FXDETAIL_FXXMMC": element.Name });
+                        });
+
+                        $.showLoading();
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/commonAction!doJsonSaveWxAll.action",
+                            data: {
+                                "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                                "mac": LocalUserInfo.GetUserInfo().Mac,
+                                jsonStr: jsonStr, 
+                                jsonStrDetail: JSON.stringify(jsonStrDetail),
+                               
+                            },
+                            dataType: "json",
+                            success: function (ret) {
+                                var retData = ReturnData(ret);
+                                if (retData.IsSuccess) {
+                                    currSelf.initData();
+                                    $.toptip("提交成功！", "success");
+                                }
+                            }, error: function (xhr, status, error) {
+                                console.error(status);
+                                bootbox.alert("请求失败");
+                            }, complete: function () {
+                                $("#BarCode").focus();
+                                $.hideLoading();
+                            }
+                        });
+                    }
+                },
+                ObsoleteData: function () {
+                    var currSelf = this;
+                    if (!currSelf.FormData.InvCode) {
+                        $.toptip("当前无返修产品,请核对!", "error");
+                    } else if (!currSelf.CurrServiceCentre) {
+                        $.toptip("请选择返修站!", "error");
+                    } else if (currSelf.SelectDefectiveItem.length == 0) {
+                        $.toptip("请选择返修故障原因!", "error");
+                    }
+                    else {
+                        $.confirm("确实要报废产品【" + currSelf.FormData.InvName + "】吗?", function () {
+                            var jsonStr = JSON.stringify({
+                                "FXD_CPTMH": currSelf.FormData.InvBarCode, "JGMES_PB_FXZ_ID": currSelf.CurrServiceCentre.ID, "FXD_FXZBH": currSelf.CurrServiceCentre.Code, "FXD_WXJG_CODE": "WXJG03", "JGMES_PB_FXD_ID": currSelf.FormData.ReworkOrderID, "FXD_SCRWDID": currSelf.FormData.ScheduleID, "FXD_CPBH": currSelf.FormData.InvCode, "FXD_NAME": currSelf.FormData.InvName,
+                                "FXD_WXYY": currSelf.MaintenanceReasons
+                            });
+                            var jsonStrDetail = [];
+                            $.each(currSelf.SelectDefectiveItem, function (i, element) {
+                                jsonStrDetail.push({ "JGMES_B_FXZZB_ID": currSelf.FormData.ReworkOrderID, "FXDETAIL_FXXMBH": element.Code, "FXDETAIL_FXXMMC": element.Name });
+                            });
+                            $.showLoading();
+                            $.ajax({
+                                type: "post",
+                                url: LocalConfig.SrvPath + "/jgmes/commonAction!doJsonSaveWxAll.action",
+                                data: { "userCode": LocalUserInfo.GetUserInfo().UserCode, "mac": LocalUserInfo.GetUserInfo().Mac, jsonStr: jsonStr, jsonStrDetail: JSON.stringify(jsonStrDetail) },
+                                dataType: "json",
+                                success: function (ret) {
+                                    var retData = ReturnData(ret);
+                                    if (retData.IsSuccess) {
+                                        currSelf.initData();
+                                        $.toptip("操作成功！", "success");
+                                    }
+                                }, error: function (xhr, status, error) {
+                                    console.error(status);
+                                    bootbox.alert("请求失败");
+                                }, complete: function () {
+                                    $("#BarCode").focus();
+                                    $.hideLoading();
+                                }
+                            });
+                        });
+                    }
+                },
+                //限制字数倒数
+                descInput: function () {
+                    var txtVal = this.MaintenanceReasons.length;
+                    this.remnant = 0 + txtVal;
+                },
+            }
+        });
+    </script>
+</body>
+
+</html>

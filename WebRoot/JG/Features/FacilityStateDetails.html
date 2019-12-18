@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>设备状态详情-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/FacilityStateDetails.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+<body>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="header_title">
+            <a href="javascript:;">设备状态明细</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Features/FacilityState.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+    <div id="MainPage">
+        <div class="details_modal">
+            <div class="top_modal">
+                <div class="left_modal">
+                    <div class="fac_code input-group">
+                        <label for="code" class="input-group-addon">设备码</label>
+                        <input id="code" type="text" maxlength="50" class="form-control" placeholder="请输入或扫描设备码">
+                    </div>
+                    <div class="fac_msg row">
+                        <ul class="fac_msg2 col-lg-8 col-md-6 col-sm-7 col-xs-6">
+                            <li>
+                                设备编号:<span>{{Serial}}</span>
+                            </li>
+                            <li>
+                                设备名称:<span>{{FacName}}</span>
+                            </li>
+                            <li>
+                                设备状态:<span>{{FacState}}</span>
+                            </li>
+                        </ul>
+                        <div class="fac_img col-lg-4 col-md-6 col-sm-5 col-xs-6">
+                            <div>
+                                <img v-bind:src="FacImg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right_modal">
+                    <ul>
+                        <li>
+                            <button type="button" class="btn btn-success">运行中</button>
+                        </li>
+                        <li>
+                            <button type="button" class="btn btn-default">暂停中</button>
+                        </li>
+                        <li>
+                            <button type="button" class="btn btn-danger">维修中</button>
+                        </li>
+                        <li>
+                            <button type="button" class="btn btn-info">换模中</button>
+                        </li>
+                        <li>
+                            <button type="button" class="btn btn-warning">已关机</button>
+                        </li>
+                    </ul>
+                </div>
+                <!--清除浮动-->
+                <div class="clean"></div>
+            </div>
+            <div class="bottom_modal">
+                <div class="left_data">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>数采项</th>
+                                <th>标准值</th>
+                                <th>采集值</th>
+                                <th>判定结果</th>
+                            </tr>
+                        </thead>
+                        <tbody v-for="(item,index) in AdData">
+                            <tr>
+                                <td>{{item.ShuCai}}</td>
+                                <td>{{item.StandData}}</td>
+                                <td>{{item.GatherNm}}</td>
+                                <td>{{item.Result}}</td>
+                            </tr>
+                            <!--<tr>-->
+                                <!--<td>电压</td>-->
+                                <!--<td>200V-230V</td>-->
+                                <!--<td>220V</td>-->
+                                <!--<td>OK</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>电压</td>-->
+                                <!--<td>200V-230V</td>-->
+                                <!--<td>220V</td>-->
+                                <!--<td>OK</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>电压</td>-->
+                                <!--<td>200V-230V</td>-->
+                                <!--<td>220V</td>-->
+                                <!--<td>OK</td>-->
+                            <!--</tr>-->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="right_data">
+                    <img src="/JG/Content/images/pic_160.png" alt="">
+                </div>
+                <!--清除浮动-->
+                <div class="clean"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/Utils.js?v=1"></script>
+
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el:"#MainPage",
+        data:{
+            Serial:"SB123456",
+            FacName:"测试设备名称",
+            FacState:"运行中",
+            FacImg:"/JG/Content/images/pic_160.png",
+            AdData:[
+                {
+                    ShuCai:"电压",
+                    StandData:"200V-300V",
+                    GatherNm:"220V",
+                    Result:"NO",
+                },
+                {
+                    ShuCai:"电压",
+                    StandData:"200V-230V",
+                    GatherNm:"220V",
+                    Result:"OK",
+                },
+                {
+                    ShuCai:"电压",
+                    StandData:"200V-250V",
+                    GatherNm:"220V",
+                    Result:"NO",
+                },
+                {
+                    ShuCai:"电压",
+                    StandData:"200V-230V",
+                    GatherNm:"220V",
+                    Result:"OK",
+                }
+            ],
+        },
+        methods:{},
+    });
+</script>
+</html>

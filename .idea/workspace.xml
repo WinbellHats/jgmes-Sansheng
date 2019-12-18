@@ -9,27 +9,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3f8e5a91-266f-4235-875b-361be1b2c094" name="Default Changelist" comment="三胜1.0项目 后台文件">
-      <change afterPath="$PROJECT_DIR$/.classpath" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/JGY_Web_exploded.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.project" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.settings/.jsdtscope" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.settings/org.eclipse.core.resources.prefs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.settings/org.eclipse.jdt.core.prefs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.settings/org.eclipse.wst.common.component" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.settings/org.eclipse.wst.common.project.facet.core.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.settings/org.eclipse.wst.jsdt.ui.superType.container" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.settings/org.eclipse.wst.jsdt.ui.superType.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JGY.iml" afterDir="false" />
+    <list default="true" id="3f8e5a91-266f-4235-875b-361be1b2c094" name="Default Changelist" comment="三胜1.0项目 前台文件和资源文件">
       <change afterPath="$PROJECT_DIR$/WebRoot/JE/coreApp/lib/JE-all-min.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/WebRoot/JE/coreApp/lib/JE-common-min.css" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/WebRoot/JE/coreApp/lib/JE-tool-min.js" afterDir="false" />
@@ -7083,9 +7063,6 @@
       <change afterPath="$PROJECT_DIR$/WebRoot/loginForward.jsp" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/WebRoot/register.jsp" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/WebRoot/操作文档.docx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/logs/console/console-2019-08-14.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/logs/error/error-2019-08.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/logs/warn/warn-2019-08-14.log" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/out/artifacts/JGY_Web_exploded/JE/coreApp/lib/JE-all-min.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/out/artifacts/JGY_Web_exploded/JE/coreApp/lib/JE-common-min.css" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/out/artifacts/JGY_Web_exploded/JE/coreApp/lib/JE-tool-min.js" afterDir="false" />
@@ -14150,136 +14127,7 @@
       <change afterPath="$PROJECT_DIR$/out/artifacts/JGY_Web_exploded/loginForward.jsp" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/out/artifacts/JGY_Web_exploded/register.jsp" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/out/artifacts/JGY_Web_exploded/操作文档.docx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro-config/META-INF/xfire/services.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro-config/beans.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro-config/dbServer.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro-config/ehcache-pro.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro-config/jdbc.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro-config/logback.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro-config/messageCode.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro-config/pro/struts-actionbuilder.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro-config/pro/struts-actionjgmes.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro-config/pro/struts-demork.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro-config/pro/struts-jgmes.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro-config/sysconfig.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/demo/action/BtnAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/demo/action/DemoRkdAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/demo/action/DsfCpInfoAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/demo/action/TbbbDbAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/demo/service/DemoService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/demo/service/DemoServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/demo/service/LessionService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/demo/service/LessionServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/demo/service/ProductiveTaskService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/demo/service/ProductiveTaskServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/demo/service/WorkorderService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/demo/service/WorkorderServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/itxc/CorsFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/BGSJAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/BtnMulityAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/CommonAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/CopyBtnAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/FinalQualityAssureanceAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JdAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgDataImportAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgDataImportActionLH.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesAPSAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesBarCodeAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesBaseAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesBgBatchAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesButtonAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesClockInAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesElectronicScaleAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesFindRO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesFirstInspectionAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesInfraredAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesLogAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesLoginAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesNoticeAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesPatentAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesPcAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesPerssionAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesProductionQueueAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesQmsAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesScrwAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesUpdateAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesWorksheetAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/JgmesXunJianAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/LHMouldCountAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/ManagePointAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/MaterialCodeAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/SanShengAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/StudentAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/action/TestDoSaveAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/saas/SaasSynchronizeTask.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/DeviceProducConService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/DeviceProducConServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/ERPService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/ERPServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/FinalQualityAssureanceServices.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/FinalQualityAssureanceServicesImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/GZJDDeviceService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/GZJDDeviceServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/GZJDDeviceSrv.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/GZJDDeviceSrvImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/IJdService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JdServiceServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesButtonService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesButtonServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesClockInService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesClockInServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesComService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesComServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesElectronicScaleService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesElectronicScaleServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesFirstInspectionService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesFirstInspectionServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesInfraredService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesInfraredServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesPatentService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesPatentServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesProductionQueueService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesProductionQueueServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesWorksheetService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/JgmesWorksheetServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/MaterialCodeService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/MaterialCodeServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/MouldCountService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/MouldCountServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/ProductCodeService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/ProductCodeServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/SanshengService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/SanshengServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/emailRecipientsImportService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/emailRecipientsImportServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/equipmentProducConDeviceService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/equipmentProducConDeviceServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/lhImportService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/service/lhImportServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/DataCollection.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/DateUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/EarlyWarningTask.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/FileUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/HibernateConfigurationUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/InsItemDynaBean.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/JJGDWebSocket.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/JgmesBarCode.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/JgmesBarCodeBase.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/JgmesCommon.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/JgmesEnumsBgsjLx.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/JgmesEnumsDic.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/JgmesEnumsErr.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/JgmesJDBC.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/JgmesResult.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/JgmesUser.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/PropertyUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/PubUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/RegularExpressionCheck.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/SaasTimingTask.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/TreeDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/TreeToolUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/jgmes/util/WebSocketSop.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pro/com/note/util/NoteUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14662,8 +14510,23 @@
       <workItem from="1576458728143" duration="5305000" />
       <workItem from="1576468238393" duration="928000" />
       <workItem from="1576566792649" duration="4585000" />
-      <workItem from="1576629762019" duration="12871000" />
+      <workItem from="1576629762019" duration="16382000" />
     </task>
+    <task id="LOCAL-00001" summary="三胜1.0项目 后台文件">
+      <created>1576651957533</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1576651957533</updated>
+    </task>
+    <task id="LOCAL-00002" summary="config">
+      <created>1576652278396</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1576652278396</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -14672,7 +14535,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="三胜1.0项目" />
     <MESSAGE value="三胜1.0项目 后台文件" />
-    <option name="LAST_COMMIT_MESSAGE" value="三胜1.0项目 后台文件" />
+    <MESSAGE value="config" />
+    <MESSAGE value="三胜1.0项目 前台文件和资源文件" />
+    <option name="LAST_COMMIT_MESSAGE" value="三胜1.0项目 前台文件和资源文件" />
   </component>
   <component name="WindowStateProjectService">
     <state x="749" y="176" key="#Inspections" timestamp="1575338404329">
@@ -14696,10 +14561,10 @@
     </state>
     <state x="641" y="438" width="613" height="596" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1575265877123" />
     <state x="855" y="590" key="#xdebugger.evaluate/0.0.2560.1400@0.0.2560.1400" timestamp="1576136676685" />
-    <state x="813" y="293" key="CommitChangelistDialog2" timestamp="1576651897959">
+    <state x="813" y="293" key="CommitChangelistDialog2" timestamp="1576659283786">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="813" y="293" key="CommitChangelistDialog2/0.0.2560.1400@0.0.2560.1400" timestamp="1576651897959" />
+    <state x="813" y="293" key="CommitChangelistDialog2/0.0.2560.1400@0.0.2560.1400" timestamp="1576659283786" />
     <state width="640" height="628" key="DebuggerActiveHint" timestamp="1576141119397">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
@@ -14710,86 +14575,86 @@
     </state>
     <state x="740" y="261" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1575337703128" />
     <state x="987" y="351" key="FileChooserDialogImpl/0.0.2560.1400@0.0.2560.1400" timestamp="1576649413934" />
-    <state width="2164" height="436" key="GridCell.Tab.0.bottom" timestamp="1576651524610">
+    <state width="2164" height="436" key="GridCell.Tab.0.bottom" timestamp="1576651965153">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="123" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1576630125257" />
-    <state width="2164" height="436" key="GridCell.Tab.0.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524610" />
-    <state width="2164" height="436" key="GridCell.Tab.0.center" timestamp="1576651524610">
+    <state width="2164" height="436" key="GridCell.Tab.0.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965153" />
+    <state width="2164" height="436" key="GridCell.Tab.0.center" timestamp="1576651965153">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="123" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1576630125256" />
-    <state width="2164" height="436" key="GridCell.Tab.0.center/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524610" />
-    <state width="2164" height="436" key="GridCell.Tab.0.left" timestamp="1576651524610">
+    <state width="2164" height="436" key="GridCell.Tab.0.center/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965153" />
+    <state width="2164" height="436" key="GridCell.Tab.0.left" timestamp="1576651965152">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="123" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1576630125256" />
-    <state width="2164" height="436" key="GridCell.Tab.0.left/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524610" />
-    <state width="2164" height="436" key="GridCell.Tab.0.right" timestamp="1576651524610">
+    <state width="2164" height="436" key="GridCell.Tab.0.left/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965152" />
+    <state width="2164" height="436" key="GridCell.Tab.0.right" timestamp="1576651965153">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="123" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1576630125256" />
-    <state width="2164" height="436" key="GridCell.Tab.0.right/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524610" />
-    <state width="2164" height="436" key="GridCell.Tab.1.bottom" timestamp="1576651524611">
+    <state width="2164" height="436" key="GridCell.Tab.0.right/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965153" />
+    <state width="2164" height="436" key="GridCell.Tab.1.bottom" timestamp="1576651965153">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="71" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1576571383211" />
-    <state width="2164" height="436" key="GridCell.Tab.1.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524611" />
-    <state width="2164" height="436" key="GridCell.Tab.1.center" timestamp="1576651524611">
+    <state width="2164" height="436" key="GridCell.Tab.1.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965153" />
+    <state width="2164" height="436" key="GridCell.Tab.1.center" timestamp="1576651965153">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="71" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1576571383211" />
-    <state width="2164" height="436" key="GridCell.Tab.1.center/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524611" />
-    <state width="2164" height="436" key="GridCell.Tab.1.left" timestamp="1576651524610">
+    <state width="2164" height="436" key="GridCell.Tab.1.center/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965153" />
+    <state width="2164" height="436" key="GridCell.Tab.1.left" timestamp="1576651965153">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="71" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1576571383211" />
-    <state width="2164" height="436" key="GridCell.Tab.1.left/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524610" />
-    <state width="2164" height="436" key="GridCell.Tab.1.right" timestamp="1576651524611">
+    <state width="2164" height="436" key="GridCell.Tab.1.left/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965153" />
+    <state width="2164" height="436" key="GridCell.Tab.1.right" timestamp="1576651965153">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="71" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1576571383211" />
-    <state width="2164" height="436" key="GridCell.Tab.1.right/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524611" />
-    <state width="2164" height="436" key="GridCell.Tab.2.bottom" timestamp="1576651524611">
+    <state width="2164" height="436" key="GridCell.Tab.1.right/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965153" />
+    <state width="2164" height="436" key="GridCell.Tab.2.bottom" timestamp="1576651965155">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="71" key="GridCell.Tab.2.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1576571383211" />
-    <state width="2164" height="436" key="GridCell.Tab.2.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524611" />
-    <state width="2164" height="436" key="GridCell.Tab.2.center" timestamp="1576651524611">
+    <state width="2164" height="436" key="GridCell.Tab.2.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965155" />
+    <state width="2164" height="436" key="GridCell.Tab.2.center" timestamp="1576651965153">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="71" key="GridCell.Tab.2.center/0.0.1920.1040@0.0.1920.1040" timestamp="1576571383211" />
-    <state width="2164" height="436" key="GridCell.Tab.2.center/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524611" />
-    <state width="2164" height="436" key="GridCell.Tab.2.left" timestamp="1576651524611">
+    <state width="2164" height="436" key="GridCell.Tab.2.center/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965153" />
+    <state width="2164" height="436" key="GridCell.Tab.2.left" timestamp="1576651965153">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="71" key="GridCell.Tab.2.left/0.0.1920.1040@0.0.1920.1040" timestamp="1576571383211" />
-    <state width="2164" height="436" key="GridCell.Tab.2.left/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524611" />
-    <state width="2164" height="436" key="GridCell.Tab.2.right" timestamp="1576651524611">
+    <state width="2164" height="436" key="GridCell.Tab.2.left/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965153" />
+    <state width="2164" height="436" key="GridCell.Tab.2.right" timestamp="1576651965155">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="71" key="GridCell.Tab.2.right/0.0.1920.1040@0.0.1920.1040" timestamp="1576571383211" />
-    <state width="2164" height="436" key="GridCell.Tab.2.right/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524611" />
-    <state width="2164" height="436" key="GridCell.Tab.3.bottom" timestamp="1576651524611">
+    <state width="2164" height="436" key="GridCell.Tab.2.right/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965155" />
+    <state width="2164" height="436" key="GridCell.Tab.3.bottom" timestamp="1576651965155">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="71" key="GridCell.Tab.3.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1576571383211" />
-    <state width="2164" height="436" key="GridCell.Tab.3.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524611" />
-    <state width="2164" height="436" key="GridCell.Tab.3.center" timestamp="1576651524611">
+    <state width="2164" height="436" key="GridCell.Tab.3.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965155" />
+    <state width="2164" height="436" key="GridCell.Tab.3.center" timestamp="1576651965155">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="71" key="GridCell.Tab.3.center/0.0.1920.1040@0.0.1920.1040" timestamp="1576571383211" />
-    <state width="2164" height="436" key="GridCell.Tab.3.center/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524611" />
-    <state width="2164" height="436" key="GridCell.Tab.3.left" timestamp="1576651524611">
+    <state width="2164" height="436" key="GridCell.Tab.3.center/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965155" />
+    <state width="2164" height="436" key="GridCell.Tab.3.left" timestamp="1576651965155">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="71" key="GridCell.Tab.3.left/0.0.1920.1040@0.0.1920.1040" timestamp="1576571383211" />
-    <state width="2164" height="436" key="GridCell.Tab.3.left/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524611" />
-    <state width="2164" height="436" key="GridCell.Tab.3.right" timestamp="1576651524611">
+    <state width="2164" height="436" key="GridCell.Tab.3.left/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965155" />
+    <state width="2164" height="436" key="GridCell.Tab.3.right" timestamp="1576651965155">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1607" height="71" key="GridCell.Tab.3.right/0.0.1920.1040@0.0.1920.1040" timestamp="1576571383211" />
-    <state width="2164" height="436" key="GridCell.Tab.3.right/0.0.2560.1400@0.0.2560.1400" timestamp="1576651524611" />
+    <state width="2164" height="436" key="GridCell.Tab.3.right/0.0.2560.1400@0.0.2560.1400" timestamp="1576651965155" />
     <state x="615" y="218" width="1165" height="861" key="SettingsEditor" timestamp="1576649381393">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>

@@ -1,0 +1,286 @@
+﻿<html>
+
+<head>
+    <title>产品追溯-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/ProductTranceBack.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+
+<body>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="item header_title">
+            <a href="javascript:;">产品追溯</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+    <div id="MainPage" class="MainPage">
+        <div class="input-group" style="text-align:center;font-size:18px;">
+            <label class="input-group-addon" for="BarCode">产品码</label>
+            <input type="text" class="form-control" maxlength="50" v-model="BarCode" placeholder="扫描或输入产品码回车" id="BarCode" />
+        </div>
+        <div id="tab2" class="weui-tab__bd-item">
+            <div class="left">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        已扫码&nbsp;&nbsp;{{CurrBarCode}}
+                    </li>
+                    <li class="list-group-item">
+                        扫码结果&nbsp;&nbsp;<span :style="{color:ScanCodeResult=='查询成功'?'green':'red'}">{{ScanCodeResult}}</span>
+                    </li>
+                </ul>
+                <ul class="list-group">
+<!--                    <li class="list-group-item">-->
+<!--                        产品码&nbsp; &nbsp;{{FormData.InvBarCode}}-->
+<!--                    </li>-->
+                    <li class="list-group-item">
+                        产品编码&nbsp; &nbsp;{{FormData.InvCode}}
+                    </li>
+                    <li class="list-group-item">
+                        产品名称&nbsp; &nbsp;{{FormData.InvName}}
+                    </li>
+<!--                    <li class="list-group-item">-->
+<!--                        产品型号&nbsp; &nbsp;{{FormData.InvStd}}-->
+<!--                    </li>-->
+                    <li class="list-group-item">
+                        国家&nbsp; &nbsp;{{FormData.InvStd}}
+                    </li>
+                    <li class="list-group-item">
+                        订单号&nbsp; &nbsp;{{FormData.InvStd}}
+                    </li>
+
+                </ul>
+            </div>
+            <div class="right  swiper-container panel panel-default">
+                <div class="panel-heading">
+                    产品展示
+                </div>
+                <div>
+                    <img id="img" :src="FormData.ImagePath" v:if="FormData.ImagePath" style="width:100%;height:100%" />
+                </div>
+            </div>
+        </div>
+        <div>
+            <ul class="list-group">
+                <li class="list-group-item" v-for="(item,index) in ProcessTimeLineData">
+                    工序{{index+1}}: {{item.ProcessName}} 过站时间: {{item.PassTime}}
+                    <div class="panel panel-default" v-if="item.Components && item.Components.length>0">
+                        <div class="panel-heading">
+                            关键部件绑定
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>条码</th>
+                                    <th>部件编码</th>
+                                    <th>部件名称</th>
+                                    <th>型号</th>
+                                    <!-- <th>数量</th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item1,n) in item.Components">
+                                    <td>{{n+1}}</td>
+                                    <td>{{item1.BarCode}}</td>
+                                    <td>{{item1.InvCode}}</td>
+                                    <td>{{item1.InvName}}</td>
+                                    <td>{{item1.InvStd}}</td>
+                                    <!-- <td>{{item1.Qty}}</td> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel panel-default" v-if="item.TestItems && item.TestItems.length>0">
+                        <div class="panel-heading">
+                            检测项目
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>检测编码</th>
+                                    <th>检测名称</th>
+                                    <th>检测值</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item2,M) in item.TestItems">
+                                    <td>{{M+1}}</td>
+                                    <td>{{item2.ItemCode}}</td>
+                                    <td>{{item2.ItemName}}</td>
+                                    <td>{{item2.DetectedValue}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel panel-default" v-if="item.DefectiveItem && item.DefectiveItem.length>0">
+                        <div class="panel-heading">
+                            不良项
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>编码</th>
+                                    <th>名称</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item3,d) in item.DefectiveItem">
+                                    <td>{{d+1}}</td>
+                                    <td>{{item3.ItemCode}}</td>
+                                    <td>{{item3.ItemName}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel panel-default" v-if="item.MaintenanceItem && item.MaintenanceItem.length>0">
+                        <div class="panel-heading">
+                            维修项目
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>编码</th>
+                                    <th>名称</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item4,M) in item.MaintenanceItem">
+                                    <td>{{M+1}}</td>
+                                    <td>{{item4.Code}}</td>
+                                    <td>{{item4.Name}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script type="text/javascript">
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                BarCode: "",
+                CurrBarCode: "",
+                ScanCodeResult: "",
+                FormData: {
+                    InvCode: "",
+                    InvName: "",
+                    InvStd: "",
+                    InvBarCode: "",
+                    ImagePath: "",
+                    Country:"",
+                    orderNum:"",
+                },
+                ProcessTimeLineData: [],
+            },
+            mounted: function () {
+                var currSelf = this;
+                $("#BarCode").bind("keypress", currSelf.SearchBarCode);
+                $("#BarCode").focus();
+
+            },
+            methods: {
+                SearchBarCode: function (event) {
+                    var currSelf = this;
+                    if (event.which == 13) {
+                        if (!currSelf.BarCode || currSelf.BarCode.length <= 0) {
+                            $.toptip("产品码不能为空", "warning");
+                            return;
+                        }
+                        
+                        currSelf.CurrBarCode = currSelf.BarCode;
+                        currSelf.BarCode = "";
+                        $.showLoading();
+                        currSelf.ProcessTimeLineData = [];
+                        $.ajax({
+                            type: "post",
+                            url: LocalConfig.SrvPath + "/jgmes/commonAction!getScList.action",
+                            data: { mac: LocalUserInfo.GetUserInfo().Mac, userCode: LocalUserInfo.GetUserInfo().UserCode, barCode: currSelf.CurrBarCode },
+                            datatype: "json",
+                            success: function (result) {
+                                var data = JSON.parse(result);
+                                var ret = ReturnData(data);
+                                if (ret.IsSuccess) {
+                                    if (ret.Data && ret.Data.cpData) {
+                                        currSelf.FormData.InvCode = ret.Data.cpData.PRODUCTDATA_BH;
+                                        currSelf.FormData.InvName = ret.Data.cpData.PRODUCTDATA_NAME;
+                                        currSelf.FormData.InvStd = ret.Data.cpData.PRODUCTDATA_GG;
+                                        currSelf.FormData.InvBarCode = currSelf.BarCode;
+
+                                        if (ret.Data.mainData) {
+                                            currSelf.ScanCodeResult = "查询成功";
+                                            $.each(ret.Data.mainData, function (i, element) {
+                                                var item = { ProcessCode: element.BGSJ_GXBH, ProcessName: element.BGSJ_GXMC, PassTime: element.BGSJ_GZSJ };
+                                                item.DefectiveItem = [];
+                                                item.TestItems = [];
+                                                item.Components = [];
+                                                item.MaintenanceItem = [];
+                                                if (element.detail && element.detail.length > 0) {
+                                                    $.each(element.detail, function (i, detail) {
+                                                        //不良项、检测项、关键部件、维修项目
+                                                        if (detail.BGSJZB_BLBH) {//不良项
+                                                            item.DefectiveItem.push({ ItemCode: detail.BGSJZB_BLBH, ItemName: detail.BGSJZB_BLMC });
+                                                        }
+                                                        if (detail.BGSJZB_JCXMBH) //检测项
+                                                        {
+                                                            item.TestItems.push({ ItemCode: detail.BGSJZB_JCXMBH, ItemName: detail.BGSJZB_JCXMMC, DetectedValue: detail.BGSJZB_JCZ });
+                                                        }
+                                                        if (detail.BGSJZB_WLBH) { //关键部件
+                                                            item.Components.push({ BarCode: detail.BGSJZB_TMH, InvCode: detail.BGSJZB_WLBH, InvName: detail.BGSJZB_WLMC, InvStd: detail.BGSJZB_WLGG, Qty: detail.BGSJZB_SL });
+                                                        }
+                                                        if (detail.BGSJZB_WXBH) {//维修项目
+                                                            item.MaintenanceItem.push({ Code: detail.BGSJZB_WLBH, Name: detail.BGSJZB_WXMC, Result: detail.BGSJZB_WXJG });
+                                                        }
+                                                    });
+                                                }
+                                                currSelf.ProcessTimeLineData.push(item);
+                                            });
+                                        } else {
+                                            currSelf.ScanCodeResult = "未查找相关" + currSelf.FormData.InvName + "的生产过程记录";
+                                            $.toptip(currSelf.ScanCodeResult, "warning");
+                                        }
+                                    } else {
+                                        currSelf.ScanCodeResult = "未查找到相关条形码的相关联产品信息";
+                                        $.toptip(currSelf.ScanCodeResult, "warning");
+                                    }
+                                }
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                console.error(textStatus);
+                                $.alert("请求失败" + errorThrown);
+                            }, complete: function () {
+                                $.hideLoading();
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

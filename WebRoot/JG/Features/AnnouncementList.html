@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <title>通知公告-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--<meta name="viewport" content="width=1920, initial-scale=1.0,maximum-scale=2.0, minimum-scale=0.5, user-scalable=no,target-densitydpi=device-dpi" />-->
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/AnnouncementList.css?v=1">
+    <script src="/JG/Content/LocalConfigs.js?v=1"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+</head>
+<body>
+    <!--title部分-->
+    <header class="header">
+        <div class="empty"></div>
+        <div class="header_title">
+            <a href="javascript:;">通知公告</a>
+        </div>
+        <div class="item item2">
+            <div class="user_img" onclick="javascript:location.href='/JG/Home/Index.html'">
+                <span class="back"><img src="/JG/Content/images/return.png" alt=""></span>
+            </div>
+        </div>
+    </header>
+
+
+    <!--主体部分-->
+    <div id="MainPage" class="panel panel-default">
+        <!--表格部分-->
+        <table class="table">
+            <thead>
+                <tr class="panel  panel-success">
+                    <th class="panel-heading">通知类型</th>
+                    <th class="panel-heading">通知内容</th>
+                    <th class="panel-heading">通知时间</th>
+                    <th class="panel-heading"></th>
+                </tr>
+            </thead>
+            <tbody class="panel-body">
+                <tr v-for="(item,index) in AnnouncementList">
+                    <td style="vertical-align:middle;">{{item.NotieType}}</td>
+                    <td>{{item.Content}}</td>
+                    <td>{{item.NotieTime}}</td>
+                    <td style="vertical-align:middle;">
+                        <a href="javascript:;" v-on:click="LookDetail(item)" class="glyphicon">
+                            <!--<span class="glyphicon glyphicon-arrow-right" style="color:#3B3B3B;font-size: 20px"></span>-->
+                            <button class="details_btn" type="button">查看详情</button>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/Utils.js"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+    <script type="text/javascript">
+        //给div动态赋值滚动条
+        window.onload=function(){
+            var BodyHeight=$(window).height();
+            //console.log(BodyHeight);
+            var MainPageHeight=BodyHeight-90;
+            //console.log(MainPageHeight);
+            //赋值给div
+            $("#MainPage").height(MainPageHeight);
+        }
+
+
+        var vmPage = new Vue({
+            el: "#MainPage",
+            data: {
+                AnnouncementList: []
+            },
+            mounted: function () {
+                var currSelf = this;
+                //初始化方法
+                currSelf.initData();
+            },
+
+
+            methods:{
+                //初始化
+                initData:function(){
+                    var currSelf = this;
+                    //debugger;
+                    var url=LocalConfig.SrvPath + "/jgmes/jgmesNoticeAction!getNoticeList.action";
+                    //显示加载时弹窗
+                    $.showLoading();
+
+                    $.ajax({
+                        type:"post",
+                        url:url,
+                        data:{
+                            mac: LocalUserInfo.GetUserInfo().Mac,
+                            userCode: LocalUserInfo.GetUserInfo().UserCode,
+                            dateStart:"2010-01-01",
+                            dateEnd: "2999-12-30",
+                            NOTICE_QY:0
+                        },
+                        datatype:"json",
+                        success:function(result){
+                            //将字符串转为对象
+                            var data=JSON.parse(result);
+                            console.log(data);
+                            var back = ReturnData(data);
+                            //判断是否请求成功
+                            if(back.IsSuccess){
+                                if(back.Data.length>0){
+                                    for(var i in back.Data){
+                                        var item = back.Data[i];
+                                        currSelf.AnnouncementList.push({
+                                            ID: item.JE_SYS_NOTICE_ID,
+                                            NotieType: item.NOTICE_NOTICETYPE_NAME,
+                                            Content: item.NOTICE_CONTEXT,
+                                            NotieTime: item.SY_CREATETIME,
+                                            //NotieTime: item.SY_CREATETIME.slice(0,10),   //这是截取时间部分
+                                        });
+                                    }
+                                }
+                            }
+                        },
+                        error:function(XMLHttpRequest, textStatus, errorThrown){
+                            alert("请求失败" + errorThrown);
+                        },
+                        complete: function () {
+                             //当数据加载完成隐藏加载弹窗
+                             $.hideLoading();
+                        }
+                    });
+                },
+
+                LookDetail: function (item) {
+                    //debugger
+                     console.log(item.ID);
+                    // 指向重新打开另外个页面，并且带参数
+                    window.location.href = "/JG/Features/AnnouncementDetail.html?ID=" + item.ID;
+                 }
+            }
+        });
+    </script>
+</body>
+</html>

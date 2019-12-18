@@ -1,0 +1,395 @@
+﻿<html lang="zh-CN">
+
+<head>
+    <title>精工云MES系统移动端</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="yes">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <script src="/JG/Content/LocalConfigs.js?v=2"></script>
+    <script src="/JG/Content/LocalMobileUserInfo.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        img {
+            border: 0;
+        }
+
+        ul {
+            list-style: none outside none;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #eee;
+            margin: 0 0;
+            padding: 0 0;
+        }
+
+        body .mainmenu:after {
+            clear: both;
+            content: " ";
+            display: block;
+        }
+
+        body .mainmenu li {
+            float: left;
+            margin-left: 2.5%;
+            margin-top: 2.5%;
+            width: 30%;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        body .mainmenu li a {
+            display: block;
+            color: #FFF;
+            text-align: center
+        }
+
+        body .mainmenu li a b {
+            display: block;
+            height: 80px;
+        }
+
+        body .mainmenu li a img {
+            margin: 15px auto 15px;
+            width: 50px;
+            height: 50px;
+        }
+
+        body .mainmenu li a span {
+            display: block;
+            height: 30px;
+            line-height: 30px;
+            background-color: #FFF;
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* body .mainmenu li:nth-child(8n+1) {
+            background-color: #36A1DB
+        }
+
+        body .mainmenu li:nth-child(8n+2) {
+            background-color: #678ce1
+        }
+
+        body .mainmenu li:nth-child(8n+3) {
+            background-color: #8c67df
+        }
+
+        body .mainmenu li:nth-child(8n+4) {
+            background-color: #84d018
+        }
+
+        body .mainmenu li:nth-child(8n+5) {
+            background-color: #14c760
+        }
+
+        body .mainmenu li:nth-child(8n+6) {
+            background-color: #f3b613
+        }
+
+        body .mainmenu li:nth-child(8n+7) {
+            background-color: #ff8a4a
+        }
+
+        body .mainmenu li:nth-child(8n+8) {
+            background-color: #fc5366
+        } */
+
+        .weui-tabbar__label {
+            font-size: 16px
+        }
+
+        .weui-bar__item--on {
+            font-size: 16px;
+            font-weight: bold
+        }
+
+        #Me {
+            width: 100%;
+            background: url("/JG/Content/images/mine_bg.png") no-repeat;
+            background-size: contain;
+        }
+
+        #Me .logoimg {
+            width: 100%;
+            height: 30%;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+        }
+
+        #Me .logoimg img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        .userInfo {
+
+            background-color: #fff;
+            border-radius: 5px;
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            margin: auto;
+            font-size: 16px;
+            padding: 10px 0;
+        }
+
+        .userInfo div:not(:last-child) {
+            margin-bottom: 20px;
+        }
+
+        #Me .userName,
+        .userdept,
+        .userAvater {
+            text-align: center;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .userAvater img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+        }
+
+        #Me .clear {
+            width: 50%;
+            display: block;
+            margin: auto;
+            border-radius: 5px;
+            text-align: center;
+            background-color: #ddd;
+            padding: 2%;
+        }
+    </style>
+</head>
+
+<body ontouchstart>
+
+    <div class="weui-tab" id="MainPage" v-cloak>
+        <div class="weui-tab__bd">
+            <div id="Mesage" class="weui-tab__bd-item" style="text-align: center">
+                <!-- <h3>正在处于开发中...</h3> -->
+            </div>
+            <div id="Workbench" class="weui-tab__bd-item  weui-tab__bd-item--active">
+                <ul class="mainmenu">
+
+                    <!-- <li><a href="/JG/ProcessReport/MobileBatchSubmittedNo.html"><img
+                                src="/JG/Content/images/facility.png" /></b><span>工序报工</span></a>
+                    </li>
+
+                    <li><a href="/JG/ProcessReport/MobileBadnessSubmitted.html">
+                            <img src="/JG/Content/images/repair.png" /></b><span>不良报工</span></a>
+                    </li>
+
+                    <li><a href="/JG/Quality/MobilePolling.html"><img
+                                src="/JG/Content/images/move.png" /></b><span>车间巡检</span></a>
+                    </li>
+                    <li><a href="/JG/Features/MobileProductionProgressList.html"><img
+                                src="/JG/Content/images/process.png" /></b><span>生产进度</span></a>
+                    </li>
+                    <li><a href="/JG/SingleStation/MobileConfirmedTaskList.html"><img
+                                src="/JG/Content/images/setting.png" /></b><span>生产待确认</span></a>
+                    </li>
+                    <li>
+                        <a href="/JG/Quality/MobileFirstCheckout.html">
+                            <img src="/JG/Content/images/inspection.png" /></b>
+                            <span>首件检验</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/JG/Quality/MobileMovePolling.html">
+                            <img src="/JG/Content/images/inspection.png" /></b>
+                            <span>移动巡检</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/JG/Features/MobilePalletManagement.html">
+                            <img src="/JG/Content/images/inspection.png" /></b>
+                            <span>栈板管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/JG/Features/MobileContainerManagement.html">
+                            <img src="/JG/Content/images/inspection.png" /></b>
+                            <span>货柜管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/JG/Quality/FinalQualityAssureance.html">
+                            <img src="/JG/Content/images/inspection.png" /></b>
+                            <span>FQA</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/JG/Features/WebSocket.html">
+                            <img src="/JG/Content/images/inspection.png" /></b>
+                            <span>WebSocket测试</span>
+                        </a>
+                    </li> -->
+                    <li  v-for="(item,index) in MenuList">
+                        <a v-bind:id="item.menuCode"
+                        :href="item.menuAddress | FilterMyStation"
+                        :style="'backgroundColor:'+item.backgroundColor">
+                            <img  :src="item.picture | ImageUrlConvert"  /></b>
+                            <span  v-bind:style="{fontSize:item.fontSize,color:item.fontCol,fontFamily:item.fontSty}">{{item.menuName}}</span>
+                        </a>
+                    </li>
+                </ul>
+                <div style="height:73px">
+
+                </div>
+            </div>
+            <div id="Me" class="weui-tab__bd-item">
+                <div class="logoimg">
+                    <img src="/JG/Content/images/Mylogo.png" alt="" v-if="!avatar">
+                    <img :src="avatar" alt="" v-else>
+                </div>
+                <div class="userInfo">
+                    <div class="userName">当前用户：{{username}}</div>
+                    <div class="userdept">部门：{{dname}}</div>
+                    <span class="clear" @click="userClear">退出</span>
+                </div>
+
+            </div>
+            <div class="weui-tabbar">
+                <a href="#Mesage" class="weui-tabbar__item">
+                    <div class="weui-tabbar__icon">
+                        <img src="/JG/Content/images/message.png" alt="">
+                    </div>
+                    <p class="weui-tabbar__label">消息</p>
+                </a>
+                <a href="#Workbench" class="weui-tabbar__item weui-bar__item--on">
+                    <div class="weui-tabbar__icon">
+                        <img src="/JG/Content/images/menu.png" alt="">
+                    </div>
+                    <p class="weui-tabbar__label">工作台</p>
+                </a>
+                <a href="#Me" class="weui-tabbar__item">
+                    <div class="weui-tabbar__icon">
+                        <img src="/JG/Content/images/head.png" alt="">
+                    </div>
+                    <p class="weui-tabbar__label">我</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="/JG/Content/jquery/fastclick.js"></script>
+    <script src="/JG/Content/Common.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+    <script src="/JG/Content/vue-v2.34.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            FastClick.attach(document.body);
+        });
+    </script>
+    <script>
+        var vuePage = new Vue({
+            el: "#MainPage",
+            data: {
+                MenuList: [],
+                MyStation: "",
+                avatar: "",
+                username: "",
+                dname: "",
+
+            },
+            mounted: function () {
+                var currSelf = this;
+                currSelf.avatar = LocalUserInfo.GetUserInfo().Avatar;
+                currSelf.username = LocalUserInfo.GetUserInfo().UserName;
+                currSelf.dname = LocalUserInfo.GetUserInfo().DepName;
+
+                currSelf.LoadMenu();
+            },
+            methods: {
+                LoadMenu: function () { //动态加载菜单
+                    var currSelf = this;
+                    $.showLoading();
+                    $.ajax({
+                        async: false,
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesPerssionAction!getPdaMenuListByUserCode.action",
+                        data: { userCode: LocalUserInfo.GetUserInfo().UserCode, mac: LocalUserInfo.GetUserInfo().Mac },
+                        dataType: "json",
+                        success: function (ret) {
+                            //console.log(ret);
+                            var retData = ReturnData(ret);
+                            if (retData.IsSuccess && retData.Data) {
+                                $.each(retData.Data, function (i, item) {
+                                    //console.log(item);
+                                    currSelf.MenuList.push({
+                                        "menuCode": item.MENUSET_CDBH,
+                                        "menuAddress": item.MENUSET_CDLJ,
+                                        "backgroundColor": item.MENUSET_BJYS,
+                                        "menuName": item.MENUSET_CDMC,
+                                        "picture": item.MENUSET_TBDZ,
+                                        "fontSize": item.MENUSET_ZTDX,
+                                        "fontCol": item.MENUSET_ZTCOLOR,
+                                        "fontSty": item.MENUSET_ZTYS
+                                    });
+                                });
+                            } else {
+                                $.alert("当前用户无权限访问");
+                                LocalUserInfo.ClearUser();
+                                window.location.href = window.location.href;
+                            }
+                        },
+                        complete: function () {
+                            $.hideLoading();
+                        }
+                    });
+                },
+                userClear: function () {
+                    var currSelf = this;
+                    $.confirm("确定要退出吗？", "操作提示", function () {
+                        LocalUserInfo.ClearUser();
+                        window.location.href = window.location.href;
+                    })
+
+                }
+            },
+            filters: {
+                ImageUrlConvert: function (value) {
+                    if (value) {
+                        return value.split('*')[1];
+                    }
+                    return value;
+                },
+                FilterMyStation: function (value) {
+                    var currSelf = this;
+                    if (!value)
+                        return currSelf.MyStation;
+                    return value;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

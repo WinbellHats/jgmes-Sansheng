@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>首件检验登记详情-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/icon.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/MobileFirstCheckoutDetails.css?v=1">
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+</head>
+<body>
+    <div id="ContentContainer" class="content_container">
+        <!--header部分-->
+        <header class="header">
+            <div class="empty">
+                <span id="stations"></span>
+            </div>
+            <div class="weui-flex">
+                <div class="weui-flex__item" style="position:absolute;">
+                    <span style="font-size:16px;padding-left: 10px;" class="icon icon-109 f-white" onclick="javascript:location.href='/JG/Quality/MobileFirstCheckout.html'">
+                        返回
+                    </span>
+                </div>
+                <div class="weui-flex__item" style="text-align: center;">首件检验登记详情</div>
+                <div class="weui-flex__item" style="position:absolute;right:10px;">
+                    <span @click="AddCheckoutData"   ><img src="/JG/Content/images/compile.png" alt="" style="width:20px;"></span>
+                </div>
+            </div>
+        </header>
+
+        <!--解决浮动空内容div-->
+        <div class="empty_div"></div>
+
+
+        <!--主体部分-->
+        <div id="MainPage" v-cloak>
+            <div class="task_code">
+                <div class="task_title" style="margin-top: 10px;border-bottom: 1px solid #F3F3F3;">
+                    <div style="display: inline-block;padding-left: 10px;padding-right: 10px;width:10%;">
+                        <img style="margin-top: -30px;" src="/JG/Content/images/1557739033(1).png" alt="">
+                    </div>
+                    <div style="display: inline-block;width:88%;">
+                        <p style="margin: 0 0 0px;">
+                            <span>{{DetailsData.TaskCode}}</span>
+                            <span style="margin-left: 10px;">{{DetailsData.CheckoutTime}}</span>
+                        </p>
+                        <p>
+                            <span>{{DetailsData.MaterialCode}}</span>/
+                            <span>{{DetailsData.MaterialName}}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="task_container">
+                    <div class="text_title">
+                        <span class="active_detail">详情</span>
+                        <span>检验项目</span>
+                    </div>
+
+                    <div class="text_div">
+                        <!--详情部分-->
+                        <div class="text_bottom detail_checkout">
+                            <div class="text_content">
+                                <div>
+                                    <span>生产线</span>
+                                    <span>{{DetailsData.ProductionLine}}</span>
+                                </div>
+                                <div>
+                                    <span>任务单号</span>
+                                    <span>{{DetailsData.TaskCode}}</span>
+                                </div>
+                                <div>
+                                    <span>检验方案</span>
+                                    <span>{{DetailsData.CheckoutScheme}}</span>
+                                </div>
+                                <div>
+                                    <span>订单号</span>
+                                    <span>{{DetailsData.OrderCode}}</span>
+                                </div>
+                                <div>
+                                    <span>送检人</span>
+                                    <span>{{DetailsData.InspectPerson}}</span>
+                                </div>
+                                <div>
+                                    <span>检验人</span>
+                                    <span>{{DetailsData.CheckoutPerson}}</span>
+                                </div>
+                            </div>
+                            <div class="img_content">
+                                <p>附件图片</p>
+                                <div class="img_list">
+                                	<img v-for="(item,index) in ImgData" :src='item.path' alt="" style="width:60px;">
+                                    <!--<span v-for="(item,index) in ImgData">
+                                        <img :src="item.path" alt="">
+                                    </span>-->
+                                </div>
+                            </div>
+                            <div class="checkout_result">
+                                <span>首检结果</span>
+                               <span>{{DetailsData.YesOrNotCheckout==1?"合格":"不合格"}}</span>
+                            </div>
+                        </div>
+                        <!--检验项目部分-->
+                        <div class="checkout_list">
+                            <div class="checked_title">
+                                <span v-for="(item,index) in FirstCheckoutData" @click="SwitcherData(item)">{{item.JCXMFL_FLMC}}</span>
+                            </div>
+
+                            <!--树形数据结构-->
+                            <div class="checked_title_item"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/Common.js"></script>
+<script type="text/javascript" src="/JG/Content/TierPullDown2.js"></script>
+
+
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el:"#ContentContainer",
+        data:{
+            FormData:{
+                ClassifyItemID:"",     //检验分类项ID
+                SchemeID:$.getUrlParam("SchemeID"),    //首件检验ID
+                FirstInspectionID:$.getUrlParam("FirstInspectionID"),    //检验方案ID
+            },
+            DetailsData:"",     //接收MobileFirstCheckout.html页面传过来的值
+            ImgData:[],    //图片集合
+            FirstCheckoutData:[],     //检验分类项集合
+            FirstCheckoutItemData:[],    //检验项目明细集合
+        },
+        mounted:function(){
+            var currSelf = this;
+            currSelf.Initialize();       //初始化
+
+            //点击切换颜色
+            $(".text_title>span").each(function (index) {
+                $(this).on("click", function () {
+                    $(".text_title>span").eq(index).addClass("active_detail").siblings().removeClass("active_detail");
+                    $(".text_div>div").hide();
+                    $(".text_div>div").eq(index).show();
+                })
+            })
+        },
+        methods:{
+            //点击编辑按钮方法
+            AddCheckoutData:function(){
+                window.location.href = "/JG/Quality/MobileFirstItemInspection.html";
+            },
+
+            //初始化方法
+            Initialize:function(){
+                var currSelf = this;
+                currSelf.DetailsData = JSON.parse(window.localStorage.getItem("userInfo"));    //获取MobileFirstCheckout.html页面传过来的数据集合
+                
+                 //保存数据到localStorage
+               		var jsonStr = JSON.stringify({		
+							//"CPJYBZ_DJH":currSelf.DetailsData.CheckoutTypeCode,//
+							"SJJY_RWDH": currSelf.DetailsData.TaskCode, //任务单号
+							"SJJY_DDH": currSelf.DetailsData.OrderCode, //订单号
+							"SJJY_CPBM": currSelf.DetailsData.MaterialCode, //产品编码
+							"JGMES_ZLGL_SJJY_ID": currSelf.DetailsData.SchemeID, //检验标准主表 ID
+							"JGMES_ZLGL_CPJYBZ_ID":currSelf.DetailsData.FirstInspectionID,//检测方案ID
+							"SJJY_CPMC": currSelf.DetailsData.MaterialName, //产品名称
+							"SJJY_NO_CODE": currSelf.DetailsData.YesOrNotCheckout==1?"合格":"不合格", //是否合格名称
+                            "SJJY_CXBM":currSelf.DetailsData.ProductionLineBM,//当前产线编码
+							"SJJY_SJR": currSelf.DetailsData.InspectPerson, //送检人
+							"SJJY_JYR": currSelf.DetailsData.CheckoutPerson, //检验人
+							"SJJY_FJ":currSelf.DetailsData.ImgNameData,//检验照片
+						});
+						localStorage.setItem("jsonStr", jsonStr)
+                
+                
+                //获取图片集合循环获取当个图片显示
+               	currSelf.ImgData=JSON.parse(currSelf.DetailsData.ImgNameData);
+                //根据首件检验ID请求对应的检验分类项
+                if(currSelf.FormData.FirstInspectionID){
+                    //获取检验分类项接口
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        async:false,
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getInspectionItemRootClassify.action",
+                        data: {
+                            "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                            "mac": LocalUserInfo.GetUserInfo().Mac,
+                            "jybzID":currSelf.FormData.FirstInspectionID,    //检验方案检验ID
+                        },
+                        dataType: "json",
+                        success:function(result){
+                            var res = ReturnData(result);
+                            console.log(res);
+                            if(res.IsSuccess){
+                                if(res.Data){
+                                    currSelf.FirstCheckoutData = res.Data;
+                                    currSelf.FormData.ClassifyItemID = res.Data[0].JGMES_ZLGL_JCXMFL_ID;
+                                    currSelf.$nextTick(function(){
+                                        $(".checked_title>span:first-child").addClass("checked_title_span_show");
+                                        $(".checked_title>span").each(function (index) {
+                                            $(this).on("click", function () {
+                                                $(".checked_title>span").eq(index).addClass("checked_title_span_show").siblings().removeClass("checked_title_span_show");
+                                                // $(".checked_title_item>div").hide();
+                                                // $(".checked_title_item>div").eq(index).show();
+                                            })
+                                        })
+                                    });
+                                   titleOne="{";
+                                    //alert(currSelf.FormData.FirstRootId);
+                                    for(var i=0;i<res.Data.length;i++){
+//                              		var titleOneStr="{\""+res.Data[i].JGMES_ZLGL_JCXMFL_ID+"\":\"\"}";
+//	                                  	titleOne.push(titleOneStr);
+										if((i+1)==res.Data.length){
+		                                  	titleOne+='"'+res.Data[i].JGMES_ZLGL_JCXMFL_ID+'":""';
+		                                  }else{
+		                                  	titleOne+='"'+res.Data[i].JGMES_ZLGL_JCXMFL_ID+'":"",'
+		                                  }
+	                                    }
+                                    titleOne+='}';
+                                    if(!localStorage.getItem("jsonStrDetail")){
+                                    	localStorage.setItem("jsonStrDetail",titleOne);
+                                    }
+                                    if(localStorage.getItem("jsonStrDetail")){
+                                    	var jsonArray=$.parseJSON(localStorage.getItem("jsonStrDetail"));
+                                    	for(var b in jsonArray){
+                                    		currSelf.xixihah(b)
+                                    		
+                                    	}
+                                    	
+                                    }
+                                   }
+                                    
+                                }else {
+                                    var showMsg = "没有相关的首检信息!可点击添加";
+                                    $.toptip(showMsg, "warning");
+                                }
+                           
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            $.alert("请求失败" + errorThrown);
+                        },
+                        complete: function () {
+                            //当数据加载完成隐藏加载弹窗
+                            $.hideLoading();
+                        }
+                    });
+                }
+
+
+                //根据检验方案ID和检验项目分类ID请求对应的检验项目明细
+                if(currSelf.FormData.SchemeID){
+                    //获取字表信息接口
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getEffectiveProductStandardChild.action",
+                        data: {
+                            "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                            "mac": LocalUserInfo.GetUserInfo().Mac,
+                            "sjzbId":currSelf.FormData.SchemeID,    //首件检验ID
+                            "rootId":currSelf.FormData.ClassifyItemID,    //检验分类项ID
+                        },
+                        dataType: "json",
+                        success:function(result){
+                            var res = ReturnData(result);
+                            console.log(res);
+                            if(res.IsSuccess){
+                                if(res.Data&&res.Data.length>0){
+                                    currSelf.FirstCheckoutItemData = res.Data;
+                                    //添加无级树
+                                    $(".checked_title_item").html(forTree(currSelf.FirstCheckoutItemData));
+                                    // for(var i in res.Data){
+                                    //     var item = res.Data[i];
+                                    //     currSelf.FirstCheckoutData.push({
+                                    //         TaskCode: item.SJJY_RWDH,    //任务单号
+                                    //         YesOrNoQualified: item.SJJY_NO_CODE,     //是否合格名称
+                                    //         MaterialCode: item.SJJY_CPBM,  //物料编码
+                                    //         MaterialName: item.PRODUCTDATA_NAME,  //物料名称
+                                    //         CheckoutScheme:item.CPJYBZ_BZMC,     //检验方案
+                                    //         InspectPerson:item.SJJY_SJR,     //送检人
+                                    //         CheckoutPerson:item.SJJY_JYR,     //检验人
+                                    //         CheckoutTime:item.SJJY_DJRQ.substr(0,10),   //检验时间,substr（）去掉时分秒
+                                    //     });
+                                    // }
+                                }else {
+//                                  var showMsg = "没有相关的检验项目信息!";
+//                                  $.toptip(showMsg, "warning");
+                                }
+                            }else {
+                                $.toptip(res.message, "error");
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            $.alert("请求失败" + errorThrown);
+                        },
+                        complete: function () {
+                            //当数据加载完成隐藏加载弹窗
+                            $.hideLoading();
+                        }
+                    });
+                }
+            },
+
+            //切换检验分类项时数据切换方法
+            SwitcherData:function(val){
+                var currSelf = this;
+                currSelf.FirstCheckoutItemData = [];
+                str="";
+
+                currSelf.FormData.ClassifyItemID = val.JGMES_ZLGL_JCXMFL_ID;
+                if(currSelf.FormData.ClassifyItemID){
+                    //获取字表信息接口
+                    $.showLoading();
+                    $.ajax({
+                        type: "post",
+                        url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getEffectiveProductStandardChild.action",
+                        data: {
+                            "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                            "mac": LocalUserInfo.GetUserInfo().Mac,
+                            "sjzbId":currSelf.FormData.SchemeID,    //首件检验ID
+                            "rootId":currSelf.FormData.ClassifyItemID,    //检验分类项ID
+                        },
+                        dataType: "json",
+                        success:function(result){
+                            var res = ReturnData(result);
+                            console.log(res);
+                            if(res.IsSuccess){
+                                if(res.Data&&res.Data.length>0){
+                                    currSelf.FirstCheckoutItemData = res.Data;
+                                    $(".checked_title_item").html(forTree(currSelf.FirstCheckoutItemData));
+                                }else {
+//                                  var showMsg = "没有相关的首检信息!可点击添加";
+//                                  $.toptip(showMsg, "warning");
+                                }
+                            }else {
+                                $.toptip(res.message, "error");
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            $.alert("请求失败" + errorThrown);
+                        },
+                        complete: function () {
+                            //当数据加载完成隐藏加载弹窗
+                            $.hideLoading();
+                        }
+                    });
+                }
+            },
+            xixihah:function(val){
+            	var currSelf = this;
+            	var b=val;
+            	$.ajax({
+	                type: "post",
+	                url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getEffectiveProductStandardChild.action",
+	                data: {
+	                    "userCode": LocalUserInfo.GetUserInfo().UserCode,
+	                    "mac": LocalUserInfo.GetUserInfo().Mac,
+	                    "sjzbId":currSelf.FormData.SchemeID,    //首件检验ID
+	                    "rootId":b,    //检验分类项ID
+	                },
+	                dataType: "json",
+	                success:function(result){
+	                	 var res = ReturnData(result);
+	                    console.log(res);
+	                    if(res.IsSuccess){
+	                        if(res.Data&&res.Data.length>0){
+	                            currSelf.FirstCheckoutItemData = res.Data;
+	                            var StrDetail=$.parseJSON(localStorage.getItem("jsonStrDetail"));
+	                                if(StrDetail||StrDetail[b]!=""){
+		                                var strJson="{";
+		                         		for(var i=0;i<res.Data.length;i++){
+		                         			var root=res.Data[i];
+		                                 	for(var j=0;j<root.childTreeDto.length;j++){
+		                                 		var jroot=root.childTreeDto[j];
+		                                 		if(jroot.data.length>0){
+		                                 			for(var n=0;n<jroot.data.length;n++){
+			                                 			if(n+1==jroot.data.length){
+			                                 			    var StrArray=new Array();
+			                                 			     StrArray.push('"'+jroot.data[n].productInsStandardChildList[0].values.JGMES_ZLGL_SJJYZB_ID+'"');
+			                                 			    var one=jroot.data[n].productInsStandardChildList[0].values.SJJYZB_HG_CODE==1?"合格":"不合格";
+			                                 			    StrArray.push('"'+one+'"');
+//                                                          StrArray.push('"'+jroot.data[n].productInsStandardChildList[0].values.SJJYZB_JYZ+'"');
+                                                            if(jroot.data[n].productInsStandardChildList[0].values.SJJYZB_JYZ!=""){
+                                                            	StrArray.push('"'+jroot.data[n].productInsStandardChildList[0].values.SJJYZB_JYZ+'"');
+                                                           	}
+				                                 			strJson+='"'+jroot.data[n].productInsStandardChildList[0].values.SJJYZB_JYFAZBZJID+'":['+StrArray+']';
+			                                 			}else{
+                                                            var StrArray=new Array();
+                                                            StrArray.push('"'+jroot.data[n].productInsStandardChildList[0].values.JGMES_ZLGL_SJJYZB_ID+'"');
+			                                 			    var one=jroot.data[n].productInsStandardChildList[0].values.SJJYZB_HG_CODE==1?"合格":"不合格";
+			                                 			    StrArray.push('"'+one+'"');
+			                                 			    if(jroot.data[n].productInsStandardChildList[0].values.SJJYZB_JYZ!=""){
+                                                            	StrArray.push('"'+jroot.data[n].productInsStandardChildList[0].values.SJJYZB_JYZ+'"');
+                                                           	}
+                                                            strJson+='"'+jroot.data[n].productInsStandardChildList[0].values.SJJYZB_JYFAZBZJID+'":['+StrArray+']';
+			                                 			}
+		                                 			}
+		                                 		}else{
+		                                 			if(j+1==root.childTreeDto.length){
+                                                        var StrArray=new Array();
+                                                        StrArray.push('"'+jroot.childTreeDto[0].data[0].productInsStandardChildList[0].values.JGMES_ZLGL_SJJYZB_ID+'"');
+                                                        var one=jroot.childTreeDto[0].data[0].productInsStandardChildList[0].values.SJJYZB_HG_CODE==1?"合格":"不合格";
+                                                        StrArray.push('"'+one+'"');
+                                                         if(jroot.childTreeDto[0].data[0].productInsStandardChildList[0].values.SJJYZB_JYZ!=""){
+                                                       		 StrArray.push('"'+jroot.childTreeDto[0].data[0].productInsStandardChildList[0].values.SJJYZB_JYZ+'"');
+                                                        }
+                                                        
+			                                 			strJson+='"'+jroot.childTreeDto[0].data[0].productInsStandardChildList[0].values.SJJYZB_JYFAZBZJID+'":['+StrArray+']';
+		                                 			}else{
+                                                        var StrArray=new Array();
+                                                         StrArray.push('"'+jroot.childTreeDto[0].data[0].productInsStandardChildList[0].values.JGMES_ZLGL_SJJYZB_ID+'"');
+                                                        var one=jroot.childTreeDto[0].data[0].productInsStandardChildList[0].values.SJJYZB_HG_CODE==1?"合格":"不合格";
+                                                        StrArray.push('"'+one+'"');
+                                                        if(jroot.childTreeDto[0].data[0].productInsStandardChildList[0].values.SJJYZB_JYZ!=""){
+                                                       		 StrArray.push('"'+jroot.childTreeDto[0].data[0].productInsStandardChildList[0].values.SJJYZB_JYZ+'"');
+                                                        }
+                                                        
+		                                 				strJson+='"'+jroot.childTreeDto[0].data[0].productInsStandardChildList[0].values.SJJYZB_JYFAZBZJID+'":['+StrArray+'],';
+		                                 			}
+		                                 		}
+		                                 	}
+		                         		}
+		                         		strJson+="}";
+		                         		console.log(typeof(strJson));
+		                         		var jsonzb=$.parseJSON(strJson);
+									   	StrDetail[b]=jsonzb;
+										localStorage.setItem("jsonStrDetail",JSON.stringify(StrDetail));
+	                         		}
+	                        }else {
+//	                            var showMsg = "没有相关的首检信息!可点击添加";
+//	                            $.toptip(showMsg, "warning");
+	                        }
+	                    }else {
+	                        $.toptip(res.message, "error");
+	                    }
+	                },
+	                error: function (XMLHttpRequest, textStatus, errorThrown) {
+	                    $.alert("请求失败" + errorThrown);
+	                },
+	                complete: function () {
+	                    //当数据加载完成隐藏加载弹窗
+	                    $.hideLoading();
+	                }
+	            });
+            },
+        },
+
+    });
+</script>
+</html>

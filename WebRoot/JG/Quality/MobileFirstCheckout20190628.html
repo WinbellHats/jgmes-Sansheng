@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>首件检验-精工云MES系统移动端</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="/JG/Content/jquery/weui/style/weui.min.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/jquery-weui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/bootstrap.min.css">
+    <link href="/JG/Content/css/Global.css" rel="stylesheet" />
+    <link href="/JG/Content/jquery/jquery-weui/css/icon.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/JG/Content/css/MobileFirstCheckout.css?v=1">
+
+    <script src="/JG/Content/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/JG/Content/LocalConfigs.js"></script>
+    <script src="/JG/Content/LocalUserInfo.js"></script>
+    <script src="/JG/Content/Utils.js?v=1"></script>
+</head>
+<body>
+    <div id="ContentContainer" class="content_container">
+        <!--header部分-->
+        <header class="header">
+            <div class="empty">
+                <span id="stations"></span>
+            </div>
+            <div class="weui-flex">
+                <div class="weui-flex__item" style="position:absolute;">
+                <span style="font-size:16px;padding-left: 10px;" class="icon icon-109 f-white" onclick="javascript:location.href='/JG/Home/MobileIndex.html'">
+                    返回
+                </span>
+                </div>
+                <div class="weui-flex__item" style="text-align: center;">首件检验</div>
+                <div class="weui-flex__item" style="position:absolute;right:10px;">
+                    <span @click="AddCheckoutData"><img src="/JG/Content/images/addpitrue.png" alt="" style="width:20px;"></span>
+                </div>
+            </div>
+        </header>
+
+        <!--解决浮动空内容div-->
+        <div class="empty_div"></div>
+
+
+        <!--主体部分-->
+        <div id="MainPage" v-cloak>
+            <div class="search_input">
+                <span @click="SearchData"><img src="/JG/Content/images/search.png" alt="" style="width:25px;"></span>
+                <span><input v-model="FormData.KeyWord" type="text" placeholder="关键字搜索" style="width:100%;line-height: 30px;border: none;outline-style: none"></span>
+            </div>
+            <!--列表部分-->
+            <div>
+                <div class="weui-cells" v-for="(item,index) in FirstCheckoutData">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <span>{{item.TaskCode}}</span>
+                        </div>
+                        <div @click="FirstCheckoutDetails(item)" class="weui-cell__ft" v-if="item.YesOrNoQualified == 1">合格 > </div>
+                        <div @click="FirstCheckoutDetails(item)" class="weui-cell__ft" v-if="item.YesOrNoQualified == 0">不合格 > </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <span>{{item.MaterialCode}}</span>/<span>{{item.MaterialName}}</span>
+                        </div>
+                        <div class="weui-cell__ft">{{item.CheckoutScheme}}</div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <span>{{item.InspectPerson}}</span>/<span>{{item.CheckoutPerson}}</span>
+                        </div>
+                        <div class="weui-cell__ft">{{item.CheckoutTime}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="/JG/Content/jquery/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="/JG/Content/bootstrap.min.js"></script>
+<script src="/JG/Content/vue-v2.34.js"></script>
+<script src="/JG/Content/Common.js"></script>
+
+
+<script type="text/javascript">
+    var vmPage = new Vue({
+        el:"#ContentContainer",
+        data:{
+            FormData:{
+                KeyWord:"",      //搜索关键字
+                TaskCode: "",    //任务单号
+                YesOrNoQualified:"",    //是否合格
+                MaterialCode:"",    //物料编码
+                MaterialName:"",    //物料名称
+                CheckoutScheme:"",     //检验方案
+                InspectPerson:"",     //送检人
+                CheckoutPerson:"",     //检验人
+                CheckoutTime:"",     //检验时间
+                ProductionLine:"",      //点击跳转所对应的产线名称
+                OrderCode:"",    //订单号
+                FirstInspectionID:"",     //检验方案的ID
+                SchemeID:"",     //首检检验ID
+            },
+            FirstCheckoutData:[],     //首件检验数据集合
+            ImgNameData:[],       //图片集合
+        },
+        mounted:function(){
+            var currSelf = this;
+            currSelf.FirstCheckout();   //初始化
+            window.localStorage.setItem("FirstCheckoutData", currSelf.FormData.FirstCheckoutData);      //存储键名为coffeeType和键值为mocha的数据到本地
+            window.localStorage.removeItem("coffeeType");           //从本地存储中移除键名为coffeeType的数据
+        },
+        methods:{
+            //首件检验信息方法
+            FirstCheckout:function(){
+                var currSelf = this;
+                //获取首件检验主表接口
+                $.showLoading();
+                $.ajax({
+                    type: "post",
+                    async:false,
+                    url: LocalConfig.SrvPath + "/jgmes/jgmesFirstInspectionAction!getFirstInspection.action",
+                    data: {
+                        "userCode": LocalUserInfo.GetUserInfo().UserCode,
+                        "mac": LocalUserInfo.GetUserInfo().Mac,
+                       "antistop":currSelf.FormData.KeyWord,    //搜索关键字
+                    },
+                    dataType: "json",
+                    success:function(result){
+                        var res = ReturnData(result);
+                        console.log(res);
+						localStorage.removeItem("jsonStrDetail");
+                        if(res.IsSuccess){
+                            if(res.Data!=null&&res.Data.length>0){
+                                // currSelf.FirstCheckoutData = res.Data;
+                                for(var i in res.Data){
+                                    var item = res.Data[i];
+                                    currSelf.FirstCheckoutData.push({
+                                        TaskCode: item.SJJY_RWDH,    //任务单号
+                                        OrderCode:item.SJJY_DDH,    //订单号
+                                        YesOrNoQualified: item.SJJY_NO_CODE,     //是否合格名称
+                                        MaterialCode: item.SJJY_CPBM,  //物料编码
+                                        MaterialName: item.PRODUCTDATA_NAME,  //物料名称
+                                        CheckoutScheme:item.CPJYBZ_BZMC,     //检验方案
+                                        InspectPerson:item.SJJY_SJR,     //送检人
+                                        CheckoutPerson:item.SJJY_JYR,     //检验人
+                                        CheckoutTime:item.SJJY_DJRQ.substr(0,10),   //检验时间,substr（）去掉时分秒
+                                        FirstInspectionID:item.JGMES_ZLGL_CPJYBZ_ID,    //检验方案ID
+                                        SchemeID:item.JGMES_ZLGL_SJJY_ID,     //首件检验ID
+                                        ProductionLineBM:item.CXSJ_CXBM,//产线编码
+                                        ProductionLine:item.CXSJ_CXMC,         //产线名称
+                                        ImgNameData:item.SJJY_FJ,     //图片集合
+                                    });
+                                }
+                            }else {
+                                var showMsg = "没有相关的首检信息!可点击添加";
+                                $.toptip(showMsg, "warning");
+                            }
+                        }else {
+                            $.toptip(res.message, "error");
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        $.alert("请求失败" + errorThrown);
+                    },
+                    complete: function () {
+                        //当数据加载完成隐藏加载弹窗
+                        $.hideLoading();
+                    }
+                });
+            },
+
+            //搜索按钮方法
+            SearchData:function(){
+                var currSelf = this;
+                currSelf.FirstCheckoutData = [];     //把之前请求的数据清空
+                currSelf. FirstCheckout();
+            },
+
+            //添加按钮方法
+            AddCheckoutData:function(){
+                localStorage.removeItem('cpbm');
+            	localStorage.removeItem('jsonStr');
+        	   localStorage.removeItem('jsonStrDetail');	
+                window.location.href = "/JG/Quality/MobileFirstItemInspection.html";
+            },
+
+            //跳转首件检验登记详情页面
+            FirstCheckoutDetails:function(val){
+                var currSelf = this;
+                //用h5的webstorage方法保存数据供于MobileFirstCheckoutDetails.html页面使用
+                window.localStorage.setItem("userInfo",JSON.stringify(val));
+               window.location.href = "/JG/Quality/MobileFirstCheckoutDetails.html?FirstInspectionID=" + val.FirstInspectionID + "&SchemeID=" + val.SchemeID;
+            },
+        },
+    });
+</script>
+</html>
