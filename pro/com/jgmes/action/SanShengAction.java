@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class SanShengAction extends DynaAction {
         String pcDate = request.getParameter("pcDate");
         String cpKeyWord = request.getParameter("cpKeyWord");
         String DH = request.getParameter("DH");
-        String IsFirstStation = request.getParameter("IsFirstStation");//是首工站的话，值为1
+//        String IsFirstStation = request.getParameter("IsFirstStation");//是首工站的话，值为1
         StringBuilder selectSql = new StringBuilder();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         //排产日期
@@ -70,36 +69,23 @@ public class SanShengAction extends DynaAction {
 
         List<DynaBean> jgmes_plan_scrw = serviceTemplate.selectList("JGMES_PLAN_SCRW", selectSql.toString());
         ret.TotalCount = Long.valueOf(jgmes_plan_scrw.size());
-        /* 若为首工站，则查询该生产任务单是否已经绑定满生产任务单，若已满绑定，则不统计 */
-        if (IsFirstStation!=null&&IsFirstStation.equals("1")) {
-            List<DynaBean> newScrwBean = new ArrayList<>();
-            for (DynaBean dynaBean : jgmes_plan_scrw) {
-                /* 绑定的该生产任务的条码数 */
-                long bingingNum = serviceTemplate.selectCount("JGMES_BASE_GDCPTM", "and GDCPTM_SCRWDH='" + dynaBean.getStr("SCRW_RWDH") + "'");
-                if (dynaBean.getLong("SCRW_PCSL")>bingingNum){
-                    newScrwBean.add(dynaBean);
-                }
-            }
-            ret.TotalCount = Long.valueOf(newScrwBean.size());
-        }
-
         if (pageSize != null && !"".equals(pageSize) && currPage != null && !"".equals(currPage)) {
             int start = Integer.parseInt(pageSize) * (Integer.parseInt(currPage) - 1);
             int size = Integer.parseInt(pageSize);
             selectSql.append("  LIMIT " + start + "," + size + "");
             List<DynaBean> jgmes_plan_scrw_limit = serviceTemplate.selectList("JGMES_PLAN_SCRW", selectSql.toString());
-            /* 若为首工站，则查询该生产任务单是否已经绑定满生产任务单，若已满绑定，则不统计 */
-            if (IsFirstStation!=null&&IsFirstStation.equals("1")) {
-                List<DynaBean> newScrwBean1 = new ArrayList<>();
-                for (DynaBean dynaBean : jgmes_plan_scrw_limit) {
-                    /* 绑定的该生产任务的条码数 */
-                    long bingingNum = serviceTemplate.selectCount("JGMES_BASE_GDCPTM", "and GDCPTM_SCRWDH='" + dynaBean.getStr("SCRW_RWDH") + "'");
-                    if (dynaBean.getLong("SCRW_PCSL")>bingingNum){
-                        newScrwBean1.add(dynaBean);
-                    }
-                }
-                jgmes_plan_scrw_limit = newScrwBean1;
-            }
+//            /* 若为首工站，则查询该生产任务单是否已经绑定满生产任务单，若已满绑定，则不统计 */
+//            if (IsFirstStation!=null&&IsFirstStation.equals("1")) {
+//                List<DynaBean> newScrwBean1 = new ArrayList<>();
+//                for (DynaBean dynaBean : jgmes_plan_scrw_limit) {
+//                    /* 绑定的该生产任务的条码数 */
+//                    long bingingNum = serviceTemplate.selectCount("JGMES_BASE_GDCPTM", "and GDCPTM_SCRWDH='" + dynaBean.getStr("SCRW_RWDH") + "'");
+//                    if (dynaBean.getLong("SCRW_PCSL")>bingingNum){
+//                        newScrwBean1.add(dynaBean);
+//                    }
+//                }
+//                jgmes_plan_scrw_limit = newScrwBean1;
+//            }
 
             //根据生产任务单ID获取上线数（投入数量），进线数量（第二个工序的数量）
             for (DynaBean dynaBean : jgmes_plan_scrw_limit) {
@@ -261,16 +247,49 @@ public class SanShengAction extends DynaAction {
         String mac = request.getParameter("mac");
         /* 用户编码  必填 */
         String userCode = request.getParameter("userCode");
+        String pageSize = request.getParameter("pageSize");
+        String currPage = request.getParameter("currPage");
+        String cpKeyWord = request.getParameter("cpKeyWord");
+        String DH = request.getParameter("DH");
+
+        StringBuilder selectSql = new StringBuilder();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         if (doCheck(userCode, mac).IsSuccess) {
             try {
-                List<DynaBean> jgmes_plan_scrw = serviceTemplate.selectList("JGMES_PLAN_SCRW", "and SCRW_CXBM='" + cxCode + "' and SCRW_RWZT_CODE not in ('RWZT03','RWZT06')");
-                /* 获取条码列表下该生产任务绑定过的数量 */
-                for (DynaBean dynaBean : jgmes_plan_scrw) {
-                    /* 绑定的该生产任务的条码数 */
-                    long bingingNum = serviceTemplate.selectCount("JGMES_BASE_GDCPTM", "and GDCPTM_SCRWDH='" + dynaBean.getStr("SCRW_RWDH") + "'");
-                    dynaBean.setLong("bingingNum",bingingNum);
+                /* 产线信息 */
+                if (StringUtil.isNotEmpty(cxCode)){
+                    selectSql.append(" and SCRW_CXBM='" + cxCode + "'");
                 }
+                /* 产品信息 */
+                if (StringUtil.isNotEmpty(cpKeyWord)) {
+                    selectSql.append(" and (SCRW_CPBH like '%" + cpKeyWord + "%' or SCRW_NAME like '%" + cpKeyWord + "%' or SCRW_CPGG like '%" + cpKeyWord + "%') ");
+                }
+                /* 单据信息 */
+                if (StringUtil.isNotEmpty(DH)) {
+                    selectSql.append(" and (SCRW_DDHM like '%" + DH + "%' or SCRW_RWDH like '%" + DH + "%' or SCRW_GDHM like '%" + DH+ "%')");
+                }
+                /* 排除完成状态的生产任务单 */
+                selectSql.append(" and SCRW_RWZT_CODE not in ('RWZT03','RWZT06') ");
+
+                /* 排除已经绑定足够数量条码的生产任务单 */
+                selectSql.append(" and SCRW_PCSL>(SELECT COUNT(1) FROM JGMES_BASE_GDCPTM WHERE GDCPTM_SCRWDH=SCRW_RWDH) ");
+                List<DynaBean> jgmes_plan_scrw = serviceTemplate.selectList("JGMES_PLAN_SCRW", selectSql.toString());
                 ret.Data = ret.getValues(jgmes_plan_scrw);
+                ret.TotalCount = Long.valueOf(jgmes_plan_scrw.size());
+                if (pageSize != null && !"".equals(pageSize) && currPage != null && !"".equals(currPage)) {
+                    int start = Integer.parseInt(pageSize) * (Integer.parseInt(currPage) - 1);
+                    int size = Integer.parseInt(pageSize);
+                    selectSql.append("  LIMIT " + start + "," + size + "");
+                    List<DynaBean> jgmes_plan_scrw_limit = serviceTemplate.selectList("JGMES_PLAN_SCRW", selectSql.toString());
+                    for (DynaBean dynaBean : jgmes_plan_scrw_limit) {
+                        String id = dynaBean.getStr("JGMES_PLAN_SCRW_ID");
+                        long first = serviceTemplate.selectCount("JGMES_PB_BGSJ", "and BGSJ_SCRWID='" + id + "' and BGSJ_GXSXH=1 and BGSJ_STATUS_CODE!=2");
+                        long second = serviceTemplate.selectCount("JGMES_PB_BGSJ", "and BGSJ_SCRWID='" + id + "' and BGSJ_GXSXH=2 and BGSJ_STATUS_CODE!=2");
+                        dynaBean.setLong("first",first);
+                        dynaBean.setLong("second",second);
+                    }
+                    ret.Data = ret.getValues(jgmes_plan_scrw_limit);
+                }
             }catch (Exception e){
                 e.printStackTrace();
                 ret.setMessage(e.toString());
