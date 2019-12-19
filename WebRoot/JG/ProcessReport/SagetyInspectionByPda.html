@@ -449,6 +449,7 @@
                 var currSelf = this;
                 if (event.which == 13) {
                     currSelf.CurrBarCode = currSelf.BarCode;
+                    var barCode = currSelf.BarCode;
                     currSelf.BarCode = "";
                     var showMsg;
                     currSelf.IsDisabled = true;

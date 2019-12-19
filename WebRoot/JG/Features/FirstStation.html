@@ -75,11 +75,11 @@
                 <ul class="list-group">
                     <!-- <li class="list-group-item" v-if="CurrProcessName">当前工序&nbsp;&nbsp;{{CurrProcessName}}</li> -->
                     <li class="list-group-item">
-                        需要绑定的生产任务单：<span><button type="button" class="btn btn-success" v-on:click="reloadScrw">刷新</button></span>
-                        <span><button class="btn btn-success badbtn" @click="ShowScrwlog">选择排产单</button></span>
+                        需要绑定的生产任务单：<span><button type="button" class="btn btn-success" v-on:click="reloadScrw" style="height: 3em;width: 5em;font-size: 1em;">刷新</button></span>
+                        <span><button class="btn btn-success badbtn" @click="ShowScrwlog" style="height: 3em;width: 7em;font-size: 1em;">选择排产单</button></span>
                         <span>
                             <select class="form-control" id="scrwList" v-model="scrwData" style="font-size: 1em;">
-                                    <option v-for="(item,index) in scrwList" v-bind:value="item.SCRW_RWDH" >{{item.SCRW_DDHM}} / {{item.SCRW_NAME}}  / {{item.SCRW_XSGJ}}   / 数量：{{item.SCRW_PCSL}}  / {{item.SCRW_RWZT_NAME}}
+                                    <option v-for="(item,index) in scrwList" v-bind:value="item.SCRW_RWDH" >{{item.SCRW_DDHM}} / {{item.SCRW_NAME}}  / {{item.SCRW_XSGJ}}   / 数量：{{item.SCRW_PCSL}}
                                     </option>
                             </select>
                         </span>
@@ -230,14 +230,14 @@
                             <div class="search_list col-lg-12 col-md-12 col-sm-12" style="text-align: left">
                                 <div class="search_item search_item2">
                                     <span>物料信息</span>
-                                    <input v-model="ProductionTaskData.invData" type="text" placeholder="模糊搜索不良项名称">
+                                    <input v-model="ProductionTaskData.invData" type="text" placeholder="请输入产品信息">
                                 </div>
                                 <div class="search_item search_item2">
                                     <span>单据信息</span>
-                                    <input v-model="ProductionTaskData.TaskData" type="text" placeholder="搜索不良项编码">
+                                    <input v-model="ProductionTaskData.TaskData" type="text" placeholder="请输入订单号">
                                 </div>
                                 <div class="shut_btn">
-                                    <button class="btn btnn btn-success" v-on:click="getProductionTaskData">搜索</button>
+                                    <button class="btn btnn btn-success" v-on:click="getProductionTaskData" style="width: 6em;height: 3em;font-size: 0.9em;">搜索</button>
                                 </div>
                             </div>
                         </div>
@@ -261,9 +261,9 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for="(item,index) in TaskList" id="itemsList">
+                                <tr v-for="(item,index) in TaskList" id="itemsList" style="font-size: 2em;">
                                     <td>
-                                        <button class="btn btnn btn-success" type="button" name="inputs" @click="switchScrw(item)" >选择</button>
+                                        <button class="btn btnn btn-success" type="button" name="inputs" @click="switchScrw(item)" style="    width: 4em;height: 4em;font-size: 1em;" >选择</button>
                                     </td>
                                     <td>{{index+1}}</td>
                                     <td>{{item.SCRW_PCRQ}}</td>
@@ -373,6 +373,20 @@
                 },
                 TaskList: [],//生产任务单查询集合
             },
+            // watch:{
+            //     scrwData(val,oldVal){
+            //         var currSelf = this;
+            //         console.log(val);
+            //         for (var i = 0;i<currSelf.scrwList.length;i++){
+            //             if (val==currSelf.scrwList[i].SCRW_RWDH){
+            //                 console.log(currSelf.scrwList[i]);
+            //                 var ret = [];
+            //                 ret.Data = currSelf.scrwList[i];
+            //                 currSelf.SetBaseData(ret);
+            //             }
+            //         }
+            //     }
+            // },
             mounted: function () {
                 var currSelf = this;
                 $("#BarCode").bind("keypress", currSelf.SearchBarCode);
@@ -443,7 +457,7 @@
                                             break;
                                         }
                                     }
-                                    if (ret.Data[i].bingingNum<ret.Data[i].SCRW_PCSL){
+                                    // if (Number(ret.Data[i].bingingNum)<Number(ret.Data[i].SCRW_PCSL)){
                                         currSelf.scrwList.push({
                                             SCRW_RWDH:ret.Data[i].SCRW_RWDH,
                                             SCRW_RWZT_CODE:ret.Data[i].SCRW_RWZT_CODE,
@@ -455,7 +469,7 @@
                                             bingingNum:ret.Data[i].bingingNum,
 
                                         })
-                                    }
+                                    // }
 
                                 }
                                 currSelf.scrwData=currSelf.scrwList[0].SCRW_RWDH;
@@ -927,7 +941,7 @@
                     //后台获取任务单信息
                     $.ajax({
                         type: "post",
-                        url: LocalConfig.SrvPath + "/jgmes/sanShengAction!getProductionTaskData.action",
+                        url: LocalConfig.SrvPath + "/jgmes/sanShengAction!getProductionTaskByProductionLineCode.action",
                         data: {
                             //此处不做工位机校验
                             userCode: LocalUserInfo.GetUserInfo().UserCode,
@@ -937,7 +951,6 @@
                             // "pcDate": pcDate,
                             "pageSize": currSelf.ProductionTaskData.PageSize,   //每页条数
                             "currPage": currSelf.ProductionTaskData.CurrPage,     //当前页
-                            "IsFirstStation": 1,
                         },
                         dataType: "json",
                         success: function (ret) {
@@ -945,6 +958,7 @@
                                 currSelf.TaskList = ret.Data;
                                 currSelf.ProductionTaskData.TotalCount = ret.TotalCount;
                                 currSelf.ProductionTaskData.TotalCountPages = Math.ceil(currSelf.ProductionTaskData.TotalCount/currSelf.ProductionTaskData.PageSize);
+                                currSelf.reloadScrw();
                             }
                         },
                         error: function (xhr, status, errorThrown) {
@@ -972,9 +986,16 @@
                 //选中生产任务单方法
                 switchScrw:function (item) {
                     var currSelf = this;
-                    console.log(item);
-                    currSelf.scrwData = item.SCRW_RWDH;
                     $("#Scrwlog").modal("hide");
+                    var ret = [];
+                    ret.Data = item;
+                    currSelf.SetBaseData(ret);
+                    currSelf.scrwData = item.SCRW_RWDH;
+                    //获取当前已扫码数量
+                    var NumData = GetCountScan(item.JGMES_PLAN_SCRW_ID,"",item.SCRW_CPBH);
+                    if (NumData.IsSuccess) {
+                        currSelf.ScanCodeNum = NumData.Data;
+                    }
                 }
 
             }
