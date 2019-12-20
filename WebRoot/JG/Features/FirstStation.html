@@ -781,11 +781,6 @@
                     var currSelf = this;
                         var barCode = currSelf.BarCode;
                         if (event.which == 13) {
-                            //定时器
-                            currSelf.timeCount =  setTimeout(function () {
-                                $("#BarCode").focus();
-                                LocalConfig.HideSoftInputFromWindow();
-                            }, 500)
                         var showMsg;
                         currSelf.IsDisable = true;
                         currSelf.BarCode = "";
@@ -922,9 +917,12 @@
                                     $.hideLoading();
                                 }
                             });
-                            // $("#BarCode").focus();
                         }
-                    // $("#BarCode").focus();
+                    //定时器
+                    currSelf.timeCount =  setTimeout(function () {
+                        $("#BarCode").focus();
+                        LocalConfig.HideSoftInputFromWindow();
+                    }, 500)
                 },
                 //点击更换排产单按钮方法
                 ShowScrwlog: function () {
