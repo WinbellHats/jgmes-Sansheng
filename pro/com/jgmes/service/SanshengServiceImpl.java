@@ -343,18 +343,18 @@ public class SanshengServiceImpl implements SanshengService {
                     ret.setMessage("该生产任务单需绑定的生产任务单已满，请切换其他生产任务单");
                     return ret;
                 }
-                //校验条码号的工单号码和生产任务的工单号码是否一致
-                if (!jgmes_plan_scrw.getStr("SCRW_GDHM").equals(jgmes_base_gdcptm.getStr("GDCPTM_GDHM"))) {
-                    ret.setMessage("该条码绑定的工单和生产任务单的工单不一致，无法绑定");
-                    return ret;
-                }
+
                 if (jgmes_base_gdcptm!=null){
+                    //校验条码号的工单号码和生产任务的工单号码是否一致
+                    if (!jgmes_plan_scrw.getStr("SCRW_GDHM").equals(jgmes_base_gdcptm.getStr("GDCPTM_GDHM"))) {
+                        ret.setMessage("该条码绑定的工单和生产任务单的工单不一致，无法绑定");
+                        return ret;
+                    }
                     if (StringUtil.isEmpty(jgmes_base_gdcptm.getStr("GDCPTM_SCRWDH"))){
                         jgmes_base_gdcptm.set("JGMES_PLAN_SCRW_ID", jgmes_plan_scrw.get("JGMES_PLAN_SCRW_ID"));
                         jgmes_base_gdcptm.set("GDCPTM_SCRWDH", jgmes_plan_scrw.get("SCRW_RWDH"));
                         serviceTemplate.update(jgmes_base_gdcptm);
                     }
-
                 }else{
                     ret.setMessage("该条码号不存在或已被删除！");
                 }
