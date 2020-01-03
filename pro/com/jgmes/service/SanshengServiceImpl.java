@@ -184,7 +184,7 @@ public class SanshengServiceImpl implements SanshengService {
     @Override
     public JgmesResult<HashMap> SumitScheduling(String sumitList, String cxCode) {
         JgmesResult<HashMap> ret = new JgmesResult<>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         DynaBean jgmes_base_cxsj = serviceTemplate.selectOne("JGMES_BASE_CXSJ", "and CXSJ_CXBM ='" + cxCode + "'");
         if (jgmes_base_cxsj == null) {
             ret.setMessage("产线信息获取失败，请重新登录绑定！");
@@ -194,16 +194,28 @@ public class SanshengServiceImpl implements SanshengService {
             if (StringUtil.isNotEmpty(sumitList)) {
                 JSONArray jsonArray = JSONArray.fromObject(sumitList);
                 for (Object o : jsonArray) {
-                    //获取工单信息
+                    /* 获取工单信息 */
                     JSONObject gdObject = JSONObject.parseObject(JSONObject.toJSONString(o));
                     String gdid = gdObject.getString("JGMES_PLAN_GDLB_ID");
                     if (StringUtil.isNotEmpty(gdid)) {
                         DynaBean gdBean = serviceTemplate.selectOne("JGMES_PLAN_GDLB", "and JGMES_PLAN_GDLB_ID='" + gdid + "'");
                         //更新工单信息
                         if (gdBean != null) {
+                            /*校验可排产数量*/
+                            /*工单号码*/
+                            String gdhm = gdBean.getStr("GDLB_GDHM");
+                            /*获取当前工单号上面的生产任务单，统计出未排产数量进行对比*/
+                            List<DynaBean> jgmes_plan_scrw = serviceTemplate.selectList("JGMES_PLAN_SCRW", "and SCRW_GDHM='" + gdhm + "'");
+                            Integer pcsl = 0;
+                            for (DynaBean dynaBean : jgmes_plan_scrw) {
+                                pcsl+=dynaBean.getInt("SCRW_PCSL");
+                            }
+                            if (pcsl+gdObject.getIntValue("PCQty")>gdBean.getInt("GDLB_DDSL")){
+                                continue;
+                            }
                             gdBean.set("GDLB_YPCSL", gdBean.getInt("GDLB_YPCSL") + gdObject.getIntValue("PCQty"));//已排产数量
                             gdBean.set("GDLB_WPCSL", gdBean.getInt("GDLB_WPCSL") - gdObject.getIntValue("PCQty"));//未排产数量
-                            //生成生产任务单
+                            /* 生成生产任务单 */
                             DynaBean scrwBean = new DynaBean();
                             String uuid = JEUUID.uuid();
                             scrwBean.set(BeanUtils.KEY_TABLE_CODE, "JGMES_PLAN_SCRW");
@@ -229,24 +241,11 @@ public class SanshengServiceImpl implements SanshengService {
                             scrwBean.set("SCRW_CXBM", jgmes_base_cxsj.getStr("CXSJ_CXBM"));
                             scrwBean.set("SCRW_CXMC", jgmes_base_cxsj.getStr("CXSJ_CXMC"));
                             scrwBean.set("SCRW_XSGJ", gdBean.getStr("GDLB_CKGJ"));//出口国家
-                            //绑定条码号：1.获取该工单下面的未绑定生产任务ID的条码号，以流水号排序，筛选出排产数量条数据
-//							List<DynaBean> dynaBeans = serviceTemplate.selectList("JGMES_BASE_GDCPTM",
-//									"and GDCPTM_GDHM='" + gdBean.get("GDLB_GDHM") +
-//											"' AND JGMES_PLAN_SCRW_ID IS NULL ORDER BY GDCPTM_LSH ASC LIMIT " + gdObject.getIntValue("PCQty"));
-//							if (dynaBeans.size() < gdObject.getIntValue("PCQty")) {
-//								ret.setMessage("该工单下需要绑定的条码号不足，绑定失败，排产失败");
-//							} else {
-//								for (DynaBean dynaBean : dynaBeans) {
-//									dynaBean.set("JGMES_PLAN_SCRW_ID", scrwBean.get("JGMES_PLAN_SCRW_ID"));
-//									dynaBean.set("GDCPTM_SCRWDH", scrwBean.get("SCRW_RWDH"));
-//								}
-//							}
+                            serviceTemplate.buildModelCreateInfo(scrwBean);
                             //集中操作
                             if (ret.IsSuccess) {
                                 serviceTemplate.update(gdBean);
                                 serviceTemplate.insert(scrwBean);
-//								for (DynaBean dynaBean : dynaBeans) {
-//									serviceTemplate.update(dynaBean);
                             }
                         } else {
                             ret.setMessage("工单信息获取失败！");
@@ -356,13 +355,13 @@ public class SanshengServiceImpl implements SanshengService {
                         serviceTemplate.update(jgmes_base_gdcptm);
                     }
                 }else{
-                    ret.setMessage("该条码号不存在或已被删除！");
+                    ret.setMessage("条码号"+barCode+"不存在或已被删除！");
                 }
             }else {
-                ret.setMessage("该生产任务单不存在或已被删除！");
+                ret.setMessage("该排产单不存在或已被删除！");
             }
         }else{
-            ret.setMessage("条码号与生产任务单号不能为空！");
+            ret.setMessage("条码号与排产单不能为空！");
         }
         return ret;
     }
@@ -386,9 +385,17 @@ public class SanshengServiceImpl implements SanshengService {
                         String scrw_gdhm = jgmes_plan_scrw.getStr("SCRW_GDHM");//订单号码，三胜工单中订单号码和工单号码一致
                         int scrw_pcsl = jgmes_plan_scrw.getInt("SCRW_PCSL");//排产数量
                         DynaBean jgmes_plan_gdlb = serviceTemplate.selectOne("JGMES_PLAN_GDLB", "and GDLB_GDHM='" + scrw_gdhm + "'");
+                        /*二层校验：获取该订单中除了要删除的生产任务单的数据*/
+                        List<DynaBean> jgmes_plan_scrw1 = serviceTemplate.selectList("JGMES_PLAN_SCRW", "and SCRW_GDHM='" + scrw_gdhm + "' and JGMES_PLAN_SCRW_ID!='"+scrwId+"'");
+                        /*已排产数量*/
+                        Integer ypcsl = 0;
+                        for (DynaBean dynaBean : jgmes_plan_scrw1) {
+                            ypcsl+=dynaBean.getInt("SCRW_PCSL");
+                        }
                         if (jgmes_plan_gdlb != null) {
-                            jgmes_plan_gdlb.set("GDLB_YPCSL", jgmes_plan_gdlb.getInt("GDLB_YPCSL") - scrw_pcsl);
-                            jgmes_plan_gdlb.set("GDLB_WPCSL", jgmes_plan_gdlb.getInt("GDLB_WPCSL") + scrw_pcsl);
+                            // jgmes_plan_gdlb.set("GDLB_YPCSL", jgmes_plan_gdlb.getInt("GDLB_YPCSL") - scrw_pcsl);
+                            jgmes_plan_gdlb.set("GDLB_YPCSL", ypcsl);
+                            jgmes_plan_gdlb.set("GDLB_WPCSL", jgmes_plan_gdlb.getInt("GDLB_DDSL")-ypcsl);
                             //获取该生产任务单绑定的条码号，进行解绑操作
                             List<DynaBean> jgmes_base_gdcptm = serviceTemplate.selectList("JGMES_BASE_GDCPTM", "and JGMES_PLAN_SCRW_ID='" + scrwId + "'");
                             serviceTemplate.update(jgmes_plan_gdlb);
@@ -427,7 +434,6 @@ public class SanshengServiceImpl implements SanshengService {
      **/
 
     public void getConnection() {
-        System.out.println(111);
         Properties properties = new Properties();
         Connection conn = null;
         try {

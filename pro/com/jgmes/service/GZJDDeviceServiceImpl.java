@@ -54,7 +54,7 @@ public class GZJDDeviceServiceImpl implements GZJDDeviceService {
 		ResultString result = new ResultString();
 		String data = "";
 		if (barCode != "" || barCode.isEmpty()) {
-			// GX0027:æ‰«è§£ç æ¿äºŒç»´ç /BTæ¿äºŒç»´ç , CP20190120012:è“ç‰™æ¿
+			// GX0027:É¨½âÂë°å¶şÎ¬Âë/BT°å¶şÎ¬Âë, CP20190120012:À¶ÑÀ°å
 			String sql = "SELECT b.BGSJZB_TMH FROM JGMES_PB_BGSJ a,JGMES_PB_BGSJZB b WHERE a.JGMES_PB_BGSJ_ID=b.JGMES_PB_BGSJ_ID and BGSJ_GXBH='GX0027' and b.BGSJZB_WLBH='CP20190120012' and BGSJ_TMH='"
 					+ barCode + "'";
 			List<?> list = pcServiceTemplate.queryBySql(sql);
@@ -78,54 +78,72 @@ public class GZJDDeviceServiceImpl implements GZJDDeviceService {
 			if (barCode != "" || !barCode.isEmpty()) {
 				List<DynaBean> bean = serviceTemplate.selectList("JGMES_PB_BGSJ", "and BGSJ_TMH='" + barCode + "'");
 				if (bean.size() > 0) {
-					String cxbm = bean.get(0).getStr("BGSJ_CXBM");// è·å–äº§çº¿ç¼–ç 
-					String cxmc = bean.get(0).getStr("BGSJ_CXMC");// è·å–äº§çº¿åç§°
-					String cpbh = bean.get(0).getStr("BGSJ_CPBH");// è·å–äº§å“ç¼–å·
-					String cpmc = bean.get(0).getStr("BGSJ_CPMC");// è·å–äº§å“åç§°
-					String cpgg = bean.get(0).getStr("BGSJ_CPGG");// è·å–äº§å“è§„æ ¼
-					String macdz = bean.get(0).getStr("BGSJ_MACDZ");// è·å–Macåœ°å€
-					String gwid = bean.get(0).getStr("BGSJ_GWID");// è·å–å·¥ä½id
-					String rwid = bean.get(0).getStr("BGSJ_SCRWID");//ä»»åŠ¡å•å·id
-					String rwdh = bean.get(0).getStr("BGSJ_SCRW");//ä»»åŠ¡å•å·
-					String zjid = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 19);// ä¸»é”®idï¼ŒJGMES_PB_BGSJ_ID
-					// è·å–å½“å‰æ—¶é—´
+					String cxbm = bean.get(0).getStr("BGSJ_CXBM");// »ñÈ¡²úÏß±àÂë
+					String cxmc = bean.get(0).getStr("BGSJ_CXMC");// »ñÈ¡²úÏßÃû³Æ
+					String cpbh = bean.get(0).getStr("BGSJ_CPBH");// »ñÈ¡²úÆ·±àºÅ
+					String cpmc = bean.get(0).getStr("BGSJ_CPMC");// »ñÈ¡²úÆ·Ãû³Æ
+					String cpgg = bean.get(0).getStr("BGSJ_CPGG");// »ñÈ¡²úÆ·¹æ¸ñ
+					String macdz = bean.get(0).getStr("BGSJ_MACDZ");// »ñÈ¡MacµØÖ·
+					String gwid = bean.get(0).getStr("BGSJ_GWID");// »ñÈ¡¹¤Î»id
+					String rwid = bean.get(0).getStr("BGSJ_SCRWID");//ÈÎÎñµ¥ºÅid
+					String rwdh = bean.get(0).getStr("BGSJ_SCRW");//ÈÎÎñµ¥ºÅ
+					String zjid = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 19);// Ö÷¼üid£¬JGMES_PB_BGSJ_ID
+					// »ñÈ¡µ±Ç°Ê±¼ä
 					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					String NowDate = df.format(new Date());// BGSJ_GZSJ
-
-					String lygxid = "b9zRoTeAqkH2PJXJpZr";  // b9zRoTeAqkH2PJXJpZr
+					/*Í¨¹ıÏµÍ³±äÁ¿»ñÈ¡µ±Ç°µÄÀ¶ÑÀ¹¤ĞòµÄ±àºÅ*/
+					DynaBean jgmes_xtgl_xtcs = serviceTemplate.selectOne("JGMES_XTGL_XTCS", "and XTCS_CXFL2_CODE='LYGX'");
+					if (jgmes_xtgl_xtcs==null){
+						result.setIsSuccess(false);
+						result.setMessage("»ñÈ¡ÏµÍ³²ÎÊı¡ª¡ªÀ¶ÑÀ²âÊÔ±àºÅÊ§°Ü£¡");
+						result.setData(false);
+						return result;
+					}
+					/*À¶ÑÀ¹¤Ğò±àºÅ*/
+					String lyGx = jgmes_xtgl_xtcs.getStr("XTCS_CSZ");
+					/*¸ù¾İÀ¶ÑÀ¹¤Ğò±àºÅ»ñÈ¡¹¤ĞòID*/
+					DynaBean jgmes_gygl_gxgl = serviceTemplate.selectOne("JGMES_GYGL_GXGL", " and GXGL_GXNUM='" + lyGx + "'");
+					String lygxid = jgmes_gygl_gxgl.getStr("GXGL_ID");
+					if (StringUtil.isEmpty(lygxid)) {
+						result.setIsSuccess(false);
+						result.setMessage("Î´ÕÒµ½¸Ã¹¤Ğò±àÂë¶ÔÓ¦µÄ¹¤ĞòÊı¾İ£¡");
+						result.setData(false);
+						return result;
+					}
+					// String lygxid = "b9zRoTeAqkH2PJXJpZr";  // b9zRoTeAqkH2PJXJpZr
 					List<DynaBean> jgmes_base_cpgwgx = serviceTemplate.selectList("JGMES_BASE_CPGWGX", "and CPGWGX_CPBH='" + cpbh + "' and CPGWGX_CXBM='" + cxbm + "' and CPGWGX_GXID = '" + lygxid + "'");
 					String gxid = "";
 					String gwbh ="";
 					String gxmc = "";
 					String gwmc = "";
 					if (jgmes_base_cpgwgx.size()>0){
-						gxid = jgmes_base_cpgwgx.get(0).getStr("CPGWGX_GYGXID");//å·¥è‰ºè·¯çº¿å·¥åºID
-						gwbh = jgmes_base_cpgwgx.get(0).getStr("CPGWGX_GWBH");//å·¥ä½ç¼–å·
-						gxmc = jgmes_base_cpgwgx.get(0).getStr("CPGWGX_GXNAME");//å·¥åºåç§°
-						gwmc = jgmes_base_cpgwgx.get(0).getStr("CPGWGX_GWMC");//å·¥ä½åç§°
+						gxid = jgmes_base_cpgwgx.get(0).getStr("CPGWGX_GYGXID");//¹¤ÒÕÂ·Ïß¹¤ĞòID
+						gwbh = jgmes_base_cpgwgx.get(0).getStr("CPGWGX_GWBH");//¹¤Î»±àºÅ
+						gxmc = jgmes_base_cpgwgx.get(0).getStr("CPGWGX_GXNAME");//¹¤ĞòÃû³Æ
+						gwmc = jgmes_base_cpgwgx.get(0).getStr("CPGWGX_GWMC");//¹¤Î»Ãû³Æ
 					}else{
 						result.setIsSuccess(false);
-						result.setMessage("è·å–äº§å“å·¥ä½å·¥åºå¯¹åº”è¡¨å¤±è´¥");
+						result.setMessage("»ñÈ¡²úÆ·¹¤Î»¹¤Ğò¶ÔÓ¦±íÊ§°Ü");
 						result.setData(false);
 						return result;
 					}
-					String gxbh = "GX0031";// å·¥åºç¼–å·ï¼Œå†™æ­»ï¼ŒBGSJ_GXBH
-//					String gxmc = "è“ç‰™æµ‹è¯•";// å·¥åºåç§°ï¼Œå†™æ­»ï¼ŒBGSJ_GXMC
-//					String gwbh = "GW000038";// å·¥ä½ç¼–å·ï¼Œå†™æ­»ï¼ŒBGSJ_GWBH    GW000124
-//					String gwmc = "è“ç‰™æµ‹è¯•";// å·¥ä½åç§°ï¼Œå†™æ­»ï¼ŒBGSJ_GWMC    è“ç‰™æµ‹è¯•
-					String zt = "1";// BGSJ_STATUS_CODE,é»˜è®¤å¯ç”¨
-					String ztName = "å¯ç”¨";
-					// String gxid = bean.get(0).getStr("BGSJ_GXID");// å·¥åºid
-//					String gxid = "zswfeRI8x4PqI3jqcPZ"; // xxp20190306 å·¥è‰ºè·¯çº¿å·¥åºID    b9KB9mNigBPjFqrjoSZ
-					String sl = "1";// æ•°é‡ï¼ŒBGSJ_SL
-					int gxsxh = 6;// å·¥åºé¡ºåºå·ï¼Œå†™æ­»ï¼ŒBGSJ_GXSXH    //2
-					String BGSJ_PDJG_CODE = "PDJG02"; // åˆ¤å®šç»“æœ
-					// String pdjg = TestResults;// åˆ¤å®šç»“æœï¼ŒBGSJ_PDJG_CODE
+					String gxbh = "GX0031";// ¹¤Ğò±àºÅ£¬Ğ´ËÀ£¬BGSJ_GXBH
+//					String gxmc = "À¶ÑÀ²âÊÔ";// ¹¤ĞòÃû³Æ£¬Ğ´ËÀ£¬BGSJ_GXMC
+//					String gwbh = "GW000038";// ¹¤Î»±àºÅ£¬Ğ´ËÀ£¬BGSJ_GWBH    GW000124
+//					String gwmc = "À¶ÑÀ²âÊÔ";// ¹¤Î»Ãû³Æ£¬Ğ´ËÀ£¬BGSJ_GWMC    À¶ÑÀ²âÊÔ
+					String zt = "1";// BGSJ_STATUS_CODE,Ä¬ÈÏÆôÓÃ
+					String ztName = "ÆôÓÃ";
+					// String gxid = bean.get(0).getStr("BGSJ_GXID");// ¹¤Ğòid
+//					String gxid = "zswfeRI8x4PqI3jqcPZ"; // xxp20190306 ¹¤ÒÕÂ·Ïß¹¤ĞòID    b9KB9mNigBPjFqrjoSZ
+					String sl = "1";// ÊıÁ¿£¬BGSJ_SL
+					int gxsxh = 6;// ¹¤ĞòË³ĞòºÅ£¬Ğ´ËÀ£¬BGSJ_GXSXH    //2
+					String BGSJ_PDJG_CODE = "PDJG02"; // ÅĞ¶¨½á¹û
+					// String pdjg = TestResults;// ÅĞ¶¨½á¹û£¬BGSJ_PDJG_CODE
 					Boolean re = false;
 					if(StringUtil.isEmpty(TestResults)) {
-						System.out.println("è¯¥æµ‹è¯•å€¼ç»“æœä¸ºç©ºï¼Œè¯·æ£€æŸ¥è¾“å…¥");
+						System.out.println("¸Ã²âÊÔÖµ½á¹ûÎª¿Õ£¬Çë¼ì²éÊäÈë");
 						result.setErrorCode(2);
-						result.setMessage("æµ‹è¯•å€¼ç»“æœä¸ºç©ºï¼Œè¯·æ£€æŸ¥è¾“å…¥");
+						result.setMessage("²âÊÔÖµ½á¹ûÎª¿Õ£¬Çë¼ì²éÊäÈë");
 						result.setIsSuccess(false);
 						result.setData(false);
 						return result;
@@ -134,23 +152,23 @@ public class GZJDDeviceServiceImpl implements GZJDDeviceService {
 						re = true;
 						BGSJ_PDJG_CODE = "PDJG01";
 					}
-					// ä»è¡¨æ•°æ®
-					String wlbh="";// "CP20190220144";// BGSJZB_WLBH,ç‰©æ–™ç¼–å·ï¼Œå†™æ­»
-					String wlmc="";// "è“ç‰™æ¿";// BGSJZB_WLMC,ç‰©æ–™åç§°ï¼Œå†™æ­»
-					String jcbh = "XM000076";// è“ç‰™æ£€æµ‹é¡¹ç›®ç¼–å·ï¼Œå¾…å®š,BGSJZB_JCXMBH     XM000080
-					String jcmz = "RSSIæµ‹è¯•";// è“ç‰™æ£€æµ‹é¡¹ç›®åç§°ï¼Œå¾…å®š,BGSJZB_JCXMMC
-					String jcz = BTTestData;// è“ç‰™æ£€æµ‹é¡¹ç›®æ£€æµ‹å€¼,BGSJZB_JCZ
+					// ´Ó±íÊı¾İ
+					String wlbh="";// "CP20190220144";// BGSJZB_WLBH,ÎïÁÏ±àºÅ£¬Ğ´ËÀ
+					String wlmc="";// "À¶ÑÀ°å";// BGSJZB_WLMC,ÎïÁÏÃû³Æ£¬Ğ´ËÀ
+					String jcbh = "XM000076";// À¶ÑÀ¼ì²âÏîÄ¿±àºÅ£¬´ı¶¨,BGSJZB_JCXMBH     XM000080
+					String jcmz = "RSSI²âÊÔ";// À¶ÑÀ¼ì²âÏîÄ¿Ãû³Æ£¬´ı¶¨,BGSJZB_JCXMMC
+					String jcz = BTTestData;// À¶ÑÀ¼ì²âÏîÄ¿¼ì²âÖµ,BGSJZB_JCZ
 					ResultString res = GetBluetoothAddressBySN(barCode);
-					String tmh = res.getData();// è“ç‰™åœ°å€
-//				// ç»´ä¿®æŠ¥å·¥è¡¨æ•°æ®
-//				String fxzmc = "è“ç‰™è¿”ä¿®ç«™";// å¾…å•†è®¨***************
-//				String gdzt = "ç”Ÿæ•ˆä¸­";// å·¥å•çŠ¶æ€åˆå§‹é»˜è®¤ç”Ÿæ•ˆä¸­ï¼ŒFXD_GDZT_CODE
-//				String wxzt = "å¾…ç»´ä¿®";// FXD_WXZT_NAMEï¼Œé»˜è®¤å¾…ç»´ä¿®
-//				String wxztCode = "WXZT01";// FXD_WXZT_CODE,ç»´ä¿®çŠ¶æ€ä»£ç 
-//				String wxztid = "O3Az0ws8IcbTVTCfsuv";// FXD_WXZT_IDï¼Œç»´ä¿®çŠ¶æ€id
-//				String fhgxid = bean.get(0).getStr("BGSJ_GXID");// è¿”å›å·¥åºid
-//				String cxid = bean.get(0).getStr("BGSJ_GXID");// äº§çº¿id
-					//ä¸»è¡¨æ•°æ®
+					String tmh = res.getData();// À¶ÑÀµØÖ·
+//				// Î¬ĞŞ±¨¹¤±íÊı¾İ
+//				String fxzmc = "À¶ÑÀ·µĞŞÕ¾";// ´ıÉÌÌÖ***************
+//				String gdzt = "ÉúĞ§ÖĞ";// ¹¤µ¥×´Ì¬³õÊ¼Ä¬ÈÏÉúĞ§ÖĞ£¬FXD_GDZT_CODE
+//				String wxzt = "´ıÎ¬ĞŞ";// FXD_WXZT_NAME£¬Ä¬ÈÏ´ıÎ¬ĞŞ
+//				String wxztCode = "WXZT01";// FXD_WXZT_CODE,Î¬ĞŞ×´Ì¬´úÂë
+//				String wxztid = "O3Az0ws8IcbTVTCfsuv";// FXD_WXZT_ID£¬Î¬ĞŞ×´Ì¬id
+//				String fhgxid = bean.get(0).getStr("BGSJ_GXID");// ·µ»Ø¹¤Ğòid
+//				String cxid = bean.get(0).getStr("BGSJ_GXID");// ²úÏßid
+					//Ö÷±íÊı¾İ
 					JSONObject mainJsonObject = new JSONObject();
 					mainJsonObject.put("BGSJ_CXBM", cxbm);
 					mainJsonObject.put("BGSJ_CXMC", cxmc);
@@ -175,7 +193,7 @@ public class GZJDDeviceServiceImpl implements GZJDDeviceService {
 					mainJsonObject.put("BGSJ_STATUS_CODE", zt);
 					mainJsonObject.put("BGSJ_STATUS_NAME", ztName);
 					String mainJson = mainJsonObject.toString();
-					//ä»è¡¨æ•°æ®
+					//´Ó±íÊı¾İ
 					JSONObject minorJsonObject = new JSONObject();
 					minorJsonObject.put("BGSJZB_WLBH", wlbh);
 					minorJsonObject.put("BGSJZB_WLMC", wlmc);
@@ -200,17 +218,17 @@ public class GZJDDeviceServiceImpl implements GZJDDeviceService {
 						}
 				}else {
 					result.setData(false);
-					result.setMessage(String.format("æ¡å½¢ç :%sæ— æ‰¾åˆ°ç›¸å…³è“ç‰™çš„æ•°æ®",barCode));}
+					result.setMessage(String.format("ÌõĞÎÂë:%sÎŞÕÒµ½Ïà¹ØÀ¶ÑÀµÄÊı¾İ",barCode));}
 			}else{
-				System.out.println("æ¡ç å·ä¸ºç©ºï¼Œè¯·æ£€æŸ¥è¾“å…¥");
+				System.out.println("ÌõÂëºÅÎª¿Õ£¬Çë¼ì²éÊäÈë");
 				result.setErrorCode(1);
-				result.setMessage("æ¡ç å·ä¸ºç©ºï¼Œè¯·æ£€æŸ¥è¾“å…¥");
+				result.setMessage("ÌõÂëºÅÎª¿Õ£¬Çë¼ì²éÊäÈë");
 				result.setData(false);
 				return result;
 			}
 		}catch (Exception e){
 			e.printStackTrace();
-			result.setMessage("ç³»ç»Ÿå¼‚å¸¸é”™è¯¯ï¼");
+			result.setMessage("ÏµÍ³Òì³£´íÎó£¡");
 			result.setData(false);
 		}
 		return result;
@@ -237,7 +255,7 @@ public class GZJDDeviceServiceImpl implements GZJDDeviceService {
 		// String path =fileDic+newFileName;
 
 		String url = fileName + "*/" + FileUrl + "/" + name + "." + prefix;
-		File loadFile = new File(fileDic, newFileName); // æ–°æ–‡ä»¶
+		File loadFile = new File(fileDic, newFileName); // ĞÂÎÄ¼ş
 		InputStream in = new ByteArrayInputStream(Base64.decode(file));
 		byte[] buffer = new byte[1024 * 1024];
 		int len = -1;
@@ -253,7 +271,7 @@ public class GZJDDeviceServiceImpl implements GZJDDeviceService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			resultBoolean.setMessage("ä¸Šä¼ æ–‡ä»¶å‘ç”Ÿå¼‚å¸¸");
+			resultBoolean.setMessage("ÉÏ´«ÎÄ¼ş·¢ÉúÒì³£");
 		}
 		if (b) {
 			String strSql = "INSERT INTO CLIO_TEST_FILE (CLIO_TEST_FILE_ID,FILE_NAME,FILE_UPLOAD_DATE,FILE_UPLOAD_TIME,FILE_SEVICE_FILE_ADRESS) "
@@ -264,7 +282,7 @@ public class GZJDDeviceServiceImpl implements GZJDDeviceService {
 	}
 
 	/**
-	 * è¿”å› å­—ç¬¦ä¸²å¯¹è±¡
+	 * ·µ»Ø ×Ö·û´®¶ÔÏó
 	 * 
 	 * @author John
 	 *
@@ -318,7 +336,7 @@ public class GZJDDeviceServiceImpl implements GZJDDeviceService {
 	}
 
 	/**
-	 * è¿”å› å¸ƒå°”ç±»å‹å¯¹è±¡
+	 * ·µ»Ø ²¼¶ûÀàĞÍ¶ÔÏó
 	 * 
 	 * @author John
 	 *

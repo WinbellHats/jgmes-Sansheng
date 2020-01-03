@@ -1,5 +1,7 @@
 package com.jgmes.action;
 
+import com.gexin.fastjson.JSONArray;
+import com.gexin.fastjson.JSONObject;
 import com.je.core.action.DynaAction;
 import com.je.core.util.StringUtil;
 import com.je.core.util.bean.DynaBean;
@@ -11,6 +13,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -66,7 +69,7 @@ public class SanShengAction extends DynaAction {
         if (StringUtil.isNotEmpty(DH)) {
             selectSql.append(" and (SCRW_DDHM like '%" + DH + "%' or SCRW_RWDH like '%" + DH + "%' or SCRW_GDHM like '%" + DH+ "%')");
         }
-
+        selectSql.append(" ORDER BY SY_CREATETIME ASC");
         List<DynaBean> jgmes_plan_scrw = serviceTemplate.selectList("JGMES_PLAN_SCRW", selectSql.toString());
         ret.TotalCount = Long.valueOf(jgmes_plan_scrw.size());
         if (pageSize != null && !"".equals(pageSize) && currPage != null && !"".equals(currPage)) {
@@ -74,19 +77,6 @@ public class SanShengAction extends DynaAction {
             int size = Integer.parseInt(pageSize);
             selectSql.append("  LIMIT " + start + "," + size + "");
             List<DynaBean> jgmes_plan_scrw_limit = serviceTemplate.selectList("JGMES_PLAN_SCRW", selectSql.toString());
-//            /* 若为首工站，则查询该生产任务单是否已经绑定满生产任务单，若已满绑定，则不统计 */
-//            if (IsFirstStation!=null&&IsFirstStation.equals("1")) {
-//                List<DynaBean> newScrwBean1 = new ArrayList<>();
-//                for (DynaBean dynaBean : jgmes_plan_scrw_limit) {
-//                    /* 绑定的该生产任务的条码数 */
-//                    long bingingNum = serviceTemplate.selectCount("JGMES_BASE_GDCPTM", "and GDCPTM_SCRWDH='" + dynaBean.getStr("SCRW_RWDH") + "'");
-//                    if (dynaBean.getLong("SCRW_PCSL")>bingingNum){
-//                        newScrwBean1.add(dynaBean);
-//                    }
-//                }
-//                jgmes_plan_scrw_limit = newScrwBean1;
-//            }
-
             //根据生产任务单ID获取上线数（投入数量），进线数量（第二个工序的数量）
             for (DynaBean dynaBean : jgmes_plan_scrw_limit) {
                 String id = dynaBean.getStr("JGMES_PLAN_SCRW_ID");
@@ -349,6 +339,28 @@ public class SanShengAction extends DynaAction {
                 ret.setMessage("未知条码号！");
             }
         }
+        toWrite(jsonBuilder.toJson(ret));
+    }
+
+    /*
+     * @Author Jiansong Lu
+     * @Description 实时工序报工数量获取方法————看板
+     * @Date 15:37 2019/12/23
+     * @Param []
+     * @return void
+     **/
+    public void getGxOptionData(){
+        List<?> objects = pcServiceTemplate.queryBySql("CALL `gxxq2`");
+        List<HashMap<String,Object>> optionDatas = new ArrayList<>();
+        JgmesResult<List<HashMap<String,Object>>> ret = new JgmesResult<>();
+        for (Object object : objects) {
+            JSONArray objectsArry = JSONObject.parseArray(JSONObject.toJSONString(object));
+            HashMap<String,Object> optionData = new HashMap<>();
+            optionData.put("gxName",objectsArry.get(0));
+            optionData.put("sl",objectsArry.get(1));
+            optionDatas.add(optionData);
+        }
+        ret.Data = optionDatas;
         toWrite(jsonBuilder.toJson(ret));
     }
 
